@@ -55,13 +55,26 @@ The rules for the agenda for all team meetings are as follows:
 	The codebase and documentation will be managed through GitHub. Code quality reviews and tasks will assigned and communicated through GitHub comments and tasks. Members are expected to make appropriate merge and pull requests when contributing to the repository.
 
 \section{Team Member Roles}
+Roles of each team member are
+\begin{itemize}
+    \item Veerash Palanichamy: Team Leader, Domain expert with Git and Documentation 
+    \item Faiq Ahmed: Domain expert with Rust and CI/CD tooling
+    \item Eesha Qureshi: Domain expert with React and Testing
+    \item Kevin Kannammalil: Scribe, Domain expert with MongoDB
+\end{itemize}
 
 \section{Workflow Plan}
 
+A public GitHub repository has been made with each group member as a maintainer. We will be using that as our source of version control, where we will keep track of our product and it's releases. We will make different revisions of the product based on our milestones, which will be indicated by tags in GitHub. We will be using ZenHub as our productivity management tool to keep track of issues that are pending and completed. 
+
+Our team will be using the Git Feature Branch Workflow to encapsulate the work that each developer is doing on a separate feature. This allows us to reduce the chance of the main branch containing broken code and improves productivity.\\
+
+An example Git workflow would be 
 \begin{itemize}
-	\item How will you be using git, including branches, pull request, etc.?
-	\item How will you be managing issues, including template issues, issue
-	classificaiton, etc.?
+    \item Pull changes from the main branch
+    \item If it's the start of a new feature for the project, create a separate branch off of the main branch
+    \item Create the code for the logic and testing of that component
+    \item If significant code has been added or changed, there will be a code review with other teammates before the change is merged to the main branch
 \end{itemize}
 
 \section{Proof of Concept Demonstration Plan}
