@@ -66,23 +66,40 @@ The rules for the agenda for all team meetings are as follows:
 
 \section{Proof of Concept Demonstration Plan}
 
-What is the main risk, or risks, for the success of your project?  What will you
-demonstrate during your proof of concept demonstration to convince yourself that
-you will be able to overcome this risk?
+To prepare for the proof of concept demonstration, we will be focusing firstly on getting the text editor where users can see eachother cursors and contributions in real time set up, since this will be the most difficult part of the project.
+Since having live edits on a single file would require the combined use of a rest api server and web sockets, and on a lower level would require concurrency to handle reads and writes, this would be the most difficult process in terms of 
+both implementing and testing. In comparison the remaining aspect such as integrating with github and compiling the latex code can easily be done with api calls and libraries. Another complexity that may arise is from the Rust's ownership
+model in a more complex project since the team only has a limited amount of experience with programing in Rust.\\
+
+In terms of testing, aside from the portion related to the concurrency aspect of the project, the remaining testing should be relatively straight forward and will use common and easy to use testing frameworks.\\
+
+Installing libraries would be handled by Rust's cargo build tool and would not be difficult and only common libraries such as rocket and the default websockets library would be needed for the web server and web sockets.\\
+
+Portability will also not be a concern for this project as we would be using docker to containerize all modules of the app and have a docker compose to easily run the modules. All machines that support docker should be easily able to run this
+project.\\
+
+To demonstrate that the risk can be overcome we will focus on creating a preliminary version of the core functionality of real time multi user editing first, without paying much attention to the UI and the other remaining features. This will
+help us gauge how feasible this implemention is early on in the project in case we need to redefine some of the reqruirements.\\
+
+If the risks are proven to be real, we can redefine the project by switching languages to Java and/or to disclude the real time editing by multiple users and instead have the updates only occur in the document once a user makes a commit. 
+This change will allow us to use the memory management model of Java that we are more familiar with and/or remove the need of web sockets abd concurrency which is the biggest risk factor. Instead the focus for the project can then be 
+shifted to some of the strech goals such as adding in features to make working with images and tables easier to work in latex.
 
 \section{Technology}
 
 \begin{itemize}
-\item Specific programming language
-\item Specific linter tool (if appropriate)
-\item Specific unit testing framework
-\item Investigation of code coverage measuring tools
-\item Specific plans for Continuous Integration (CI), or an explanation that CI
-  is not being done
-\item Specific performance measuring tools (like Valgrind), if
-  appropriate
-\item Libraries you will likely be using?
-\item Tools you will likely be using?
+\item This project will be using Javascript, HTML, CSS for the frontend, and Rust for the backend
+\item We will be using Clippy (the default linter for Rust) for Rust and jslint for Javascript
+\item For the unit testing frameworks we will be using the default testing library that comes with Rust
+\item We will be using the bullt in code coverage utlity that comes with Cargo, the Rust compiler
+\item Basic CI/CD will be setup for running unit testing and deploying using terraform
+\item No performance measuring tools will be used, as we do not see a need for them yet
+\item We will need the basic reactjs library for the frontend, Rocket for the backend web server, and websockets library for the websockets
+\item For the database we will be using MongoDB, since our project does not require complex relationships
+\item The IDE we will be using is VSCode
+\item The build tool we will be using is Cargo, which is used for both compiling and testing Rust code
+\item We will not be using any hardware aside from a VPS (virtual private server) from digital ocean
+\item We will be using rustdoc for documentation of the code
 \end{itemize}
 
 \section{Coding Standard}
