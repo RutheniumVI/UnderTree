@@ -22,35 +22,59 @@
 \toprule
 \textbf{Date} & \textbf{Developer(s)} & \textbf{Change}\\
 \midrule
-Date1 & Name(s) & Description of changes\\
-Date2 & Name(s) & Description of changes\\
-... & ... & ...\\
+September 24th, 2022 & \begin{tabular}{@{}c@{}} Veerash Palanichamy, \\ Faiq Ahmed, \\ Eesha Qureshi, \\ Kevin Kannammalil \end{tabular}  & Initial Draft\\
+\\
+September 25th, 2022 & \begin{tabular}{@{}c@{}} Veerash Palanichamy, \\ Faiq Ahmed, \\ Eesha Qureshi, \\ Kevin Kannammalil \end{tabular} & Added our changes\\
 \bottomrule
 \end{tabularx}
 \end{table}
 
 \section{Problem Statement}
 
-\wss{You should check your problem statement with the
-\href{https://github.com/smiths/capTemplate/blob/main/docs/Checklists/ProbState-Checklist.pdf}
-{problem statement checklist}.}
-\wss{You can change the section headings, as long as you include the required information.}
+%\wss{You should check your problem statement with the
+%\href{https://github.com/smiths/capTemplate/blob/main/docs/Checklists/ProbState-Checklist.pdf}
+%{problem statement checklist}.}
+%\wss{You can change the section headings, as long as you include the required information.}
 
 \subsection{Problem}
 
+Latex is a common tool used by both students and researchers for writing reports and documents in an academic setting. Additionally, most of these academic works written in latex require a collaborative effort between multiple parties.
+This then introduces the need to be able to see what the other parties have written in real time for the sake of editing and revising the work, as well as a need for version control to be able to track contributions between the parties 
+in a safe manner. However, there is no current solution in the market to deal with both these issues at the same time in an effectively integrated environment.
+
 \subsection{Inputs and Outputs}
 
-\wss{Characterize the problem in terms of ``high level'' inputs and outputs.  
-Use abstraction so that you can avoid details.}
+Latex code provided by the users will be used as an input for the system which will be used to output the tex file and its processed PDF file.\\
+Other input to the system is the git repository which will be used by the system to output the tex file and the output PDF file.
 
 \subsection{Stakeholders}
 
+The stakeholders for this project besides Dr. Spencer Smith are primarily end users making publications, reports, and lab assignments in several fields like CS, Math, Physics, etc. 
+
 \subsection{Environment}
 
-\wss{Hardware and software}
+The software can be run on any device that is able to run a web browser like Google Chrome. The users of this software would be required to have a pre-existing git repository to keep track of the commits. 
 
 \section{Goals}
 
+The goals for the project are as follows:
+
+\begin{enumerate}
+	\item Users should be able to invite and work with other users on a project
+	\item Users should be able to see live edits made to the document by other users similarly to google docs
+	\item Users should have the ability to make commits to the github repo using the changes they have made to the document
+	\item Users should be able to log into the web application using their github account
+	\item Users should be able to communicate with each other on the web app
+        \item Users should be able to create a git repository on the web app
+\end{enumerate}
+
 \section{Stretch Goals}
+
+\begin{enumerate}
+	\item The app should have the ability to import microsoft word document and automatically convert it to a latex document
+	\item The app should support the ability to copy and paste images into latex and simplify the process
+	\item The app should make it simpler to add tables into into latex
+	\item The app should include a spell checker to help the user avoid spelling mistakes
+\end{enumerate}
 
 \end{document}
