@@ -3,7 +3,7 @@
 \usepackage{booktabs}
 \usepackage{tabularx}
 
-\title{Development Plan\\\progname}
+\title{Development Plan UnderTree}
 
 \author{\authname}
 
@@ -20,9 +20,11 @@
 \toprule
 \textbf{Date} & \textbf{Developer(s)} & \textbf{Change}\\
 \midrule
-Date1 & Name(s) & Description of changes\\
-Date2 & Name(s) & Description of changes\\
-... & ... & ...\\
+September 24th, 2022 & \begin{tabular}{@{}c@{}} Veerash Palanichamy, \\ Faiq Ahmed, \\ Eesha Qureshi, \\ Kevin Kannammalil \end{tabular}  & Initial Draft\\
+\\
+September 25th, 2022 & \begin{tabular}{@{}c@{}} Veerash Palanichamy, \\ Faiq Ahmed, \\ Eesha Qureshi, \\ Kevin Kannammalil \end{tabular} & Added our changes\\
+\\
+September 26th, 2022 & \begin{tabular}{@{}c@{}} Kevin Kannammalil \end{tabular} & Final modifications\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -31,47 +33,103 @@ Date2 & Name(s) & Description of changes\\
 
 \maketitle
 
-\wss{Put your introductory blurb here.}
+UnderTree is a project aimed at integrating a real time multi-user latex editing software similar to google docs with
+integrated version control using GitHub API.
 
 \section{Team Meeting Plan}
 
+	The team will meet twice a week on Tuesday and Thursday evenings between 6:00 PM and 7:30 PM. The length of meeting time may be adjusted according to the demands of the upcoming deliverable, setbacks and points of discussion. The meetings will take place primarily in the engineering library meeting rooms. Members may join through Discord or Messenger call or chat, and some meetings may be held completely virtually when appropriate.
+
+\subsection{Rules for Agenda}
+The rules for the agenda for all team meetings are as follows:
+\begin{enumerate}
+    \item  The members will alternate being the designated note-taker and chair for each meeting
+    \item Meeting minutes will be taken accordingly 
+    \item The meeting agenda will focus on planning for the next milestone, agreements for distribution of the work, discussion of any pain points or concerns from any members, and review of current progress as necessary
+    \item All members are expected to attend meetings either in person or virtually
+    \item Members should prepare for meetings by noting down their current progress, roadblocks and any concerns that have arisen prior to the meeting
+    \item The meeting will primarily be lead by the chair of each meeting, however the remaining members are expected to contribute to discussions and provide insight
+    \item Meetings should conclude with decisions being made regarding the topics discussed
+\end{enumerate}
+
 \section{Team Communication Plan}
 
+	The team will primarily communicate in person as most meetings will occur in person. The secondary avenue of communication will be through Messenger text chat or Discord voice chat. These may be used to address critical issues as they occur outside of meeting times, or issues and concerns that may be resolved quickly and efficiently in a virtual manner. \\
+	The codebase and documentation will be managed through GitHub. Code quality reviews and tasks will assigned and communicated through GitHub comments and tasks. Members are expected to make appropriate merge and pull requests when contributing to the repository.
+
 \section{Team Member Roles}
+Roles of each team member are
+\begin{itemize}
+    \item Veerash Palanichamy: Team Leader, Domain expert with Git and Documentation 
+    \item Faiq Ahmed: Domain expert with Rust and CI/CD tooling
+    \item Eesha Qureshi: Domain expert with React and Testing
+    \item Kevin Kannammalil: Scribe, Domain expert with MongoDB
+\end{itemize}
 
 \section{Workflow Plan}
 
+A public GitHub repository has been made with each group member as a maintainer. We will be using that as our source of version control, where we will keep track of our product and it's releases. We will make different revisions of the product based on our milestones, which will be indicated by tags in GitHub. We will be using ZenHub as our productivity management tool to keep track of issues that are pending and completed. 
+
+Our team will be using the Git Feature Branch Workflow to encapsulate the work that each developer is doing on a separate feature. This allows us to reduce the chance of the main branch containing broken code and improves productivity.\\
+
+An example Git workflow would be 
 \begin{itemize}
-	\item How will you be using git, including branches, pull request, etc.?
-	\item How will you be managing issues, including template issues, issue
-	classificaiton, etc.?
+    \item Pull changes from the main branch
+    \item If it's the start of a new feature for the project, create a separate branch off of the main branch
+    \item Create the code for the logic and testing of that component
+    \item If significant code has been added or changed, there will be a code review with other teammates before the change is merged to the main branch
 \end{itemize}
 
 \section{Proof of Concept Demonstration Plan}
 
-What is the main risk, or risks, for the success of your project?  What will you
-demonstrate during your proof of concept demonstration to convince yourself that
-you will be able to overcome this risk?
+To prepare for the proof of concept demonstration, we will be focusing firstly on getting the text editor where users can see eachother cursors and contributions in real time set up, since this will be the most difficult part of the project.
+Since having live edits on a single file would require the combined use of a rest api server and web sockets, and on a lower level would require concurrency to handle reads and writes, this would be the most difficult process in terms of 
+both implementing and testing. In comparison the remaining aspect such as integrating with github and compiling the latex code can easily be done with api calls and libraries. Another complexity that may arise is from the Rust's ownership
+model in a more complex project since the team only has a limited amount of experience with programing in Rust.\\
+
+In terms of testing, aside from the portion related to the concurrency aspect of the project, the remaining testing should be relatively straight forward and will use common and easy to use testing frameworks.\\
+
+Installing libraries would be handled by Rust's cargo build tool and would not be difficult and only common libraries such as rocket and the default websockets library would be needed for the web server and web sockets.\\
+
+Portability will also not be a concern for this project as we would be using docker to containerize all modules of the app and have a docker compose to easily run the modules. All machines that support docker should be easily able to run this
+project.\\
+
+To demonstrate that the risk can be overcome we will focus on creating a preliminary version of the core functionality of real time multi user editing first, without paying much attention to the UI and the other remaining features. This will
+help us gauge how feasible this implemention is early on in the project in case we need to redefine some of the reqruirements.\\
+
+If the risks are proven to be real, we can redefine the project by switching languages to Java and/or to disclude the real time editing by multiple users and instead have the updates only occur in the document once a user makes a commit. 
+This change will allow us to use the memory management model of Java that we are more familiar with and/or remove the need of web sockets abd concurrency which is the biggest risk factor. Instead the focus for the project can then be 
+shifted to some of the strech goals such as adding in features to make working with images and tables easier to work in latex.
 
 \section{Technology}
 
 \begin{itemize}
-\item Specific programming language
-\item Specific linter tool (if appropriate)
-\item Specific unit testing framework
-\item Investigation of code coverage measuring tools
-\item Specific plans for Continuous Integration (CI), or an explanation that CI
-  is not being done
-\item Specific performance measuring tools (like Valgrind), if
-  appropriate
-\item Libraries you will likely be using?
-\item Tools you will likely be using?
+\item This project will be using Javascript, HTML, CSS for the frontend, and Rust for the backend
+\item We will be using Clippy (the default linter for Rust) for Rust and jslint for Javascript
+\item For the unit testing frameworks we will be using the default testing library that comes with Rust
+\item We will be using the bullt in code coverage utlity that comes with Cargo, the Rust compiler
+\item Basic CI/CD will be setup for running unit testing and deploying using terraform
+\item No performance measuring tools will be used, as we do not see a need for them yet
+\item We will need the basic reactjs library for the frontend, Rocket for the backend web server, and websockets library for the websockets
+\item For the database we will be using MongoDB, since our project does not require complex relationships
+\item The IDE we will be using is VSCode
+\item The build tool we will be using is Cargo, which is used for both compiling and testing Rust code
+\item We will not be using any hardware aside from a VPS (virtual private server) from digital ocean
+\item We will be using rustdoc for documentation of the code
 \end{itemize}
 
 \section{Coding Standard}
 
+Code written should conform to the official rust style guideline, found at: \url{https://doc.rust-lang.org/1.0.0/style/README.html} and to google's JavaScript style guide, found at: \url{https://google.github.io/styleguide/jsguide.html}.\\
+Classes and methods are to be named using $PascalCase$, and variables and parameters are to be named using $camelCase$.
+\newline
+The goal is to maintain readability and ease of maintenance for any other developers.
+
 \section{Project Scheduling}
-
-\wss{How will the project be scheduled?}
-
+\subsection{Scheduling software}
+The project schedule is organized as epics and issues in the team's Zenhub board. The epics are based of major milestones such as POC, Revision 0, Revision 1, etc. The issues are various tasks associated to these epics.
+\subsection{Task breakdown}
+The big tasks are broken down to issues which can be completed by the individual developers in 1-5 days any bigger tasks will be needed to be broken down. There will be some tasks such as the documents which will be worked on by multiple developers at once.
+\subsection{Task assignment}
+The developer assigned to each of the task will be assigned based on their proficiency related to the task, interest and available capacity. For example, one of our developer is extremely proficient at working with front end, thus will work on tasks related to front end. Some developers that are really interested in gaining experience in certain subjects will be assigned tasks related to that subject. Lastly, leftovers tasks will be assigned to developers who have leftover capacity.
 \end{document}
