@@ -1,4 +1,4 @@
-# Project Name
+# UnderTree
 
 Developer Names: Veerash Palanichamy, Faiq Ahmed, Eesha Qureshi, Kevin Kannammalil
 
