@@ -1,10 +1,10 @@
-# Project Name
+# UnderTree
 
 Developer Names: Veerash Palanichamy, Faiq Ahmed, Eesha Qureshi, Kevin Kannammalil
 
 Date of project start: 19/09/2022
 
-This project is UnderTree, latex editor made with git in mind
+This project is UnderTree, latex editor made with git and users in mind
 
 The folders and files for this project are as follows:
 
