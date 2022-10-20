@@ -1,15 +1,26 @@
 \documentclass{article}
 
+\usepackage[shortlabels]{enumitem}
 \usepackage{booktabs}
 \usepackage{tabularx}
+\usepackage{hyperref}
+\usepackage{multirow}
+\usepackage{geometry}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{enumitem}
+
+\hypersetup{
+	colorlinks=true,       % false: boxed links; true: colored links
+	linkcolor=red,          % color of internal links (change box color with linkbordercolor)
+	citecolor=green,        % color of links to bibliography
+	filecolor=magenta,      % color of file links
+	urlcolor=cyan           % color of external links
+}
 
 \title{Hazard Analysis\\\progname}
 
-\author{Team \#, Team Name
-		\\ Student 1 name and macid
-		\\ Student 2 name and macid
-		\\ Student 3 name and macid
-}
+\author{\authname}
 
 \date{}
 
@@ -17,23 +28,338 @@
 \input{../Common}
 
 \begin{document}
-
-\begin{table}[hp]
-\caption{Revision History} \label{TblRevisionHistory}
-\begin{tabularx}{\textwidth}{llX}
-\toprule
-\textbf{Date} & \textbf{Developer(s)} & \textbf{Change}\\
-\midrule
-Date1 & Name(s) & Description of changes\\
-Date2 & Name(s) & Description of changes\\
-... & ... & ...\\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-\newpage
-
-\maketitle
-
-
+	
+	\maketitle
+	\thispagestyle{empty}
+	
+	~\newpage
+	
+	\pagenumbering{roman}
+	
+	\begin{table}[H]
+		\caption{Revision History} \label{TblRevisionHistory}
+		\begin{tabularx}{\textwidth}{llX}
+			\toprule
+			\textbf{Date} & \textbf{Developer(s)} & \textbf{Change}\\
+			\midrule
+			October 18, 2022 & Faiq, Veerash & Came up with system boundaries and FMEA table\\
+			October 19, 2022 & All members & Finished FMEA table\\
+			October 19, 2022 & Eesha & Finished section 1 and 2\\
+			October 19, 2022 & Faiq & Finished section 4\\
+			October 19, 2022 & Veerash & Finished section 3 and 7\\
+			October 19, 2022 & Kevin & Finished section 6\\
+			\bottomrule
+		\end{tabularx}
+	\end{table}
+	
+	~\newpage
+	
+	\tableofcontents
+	
+	~\newpage
+	
+	\pagenumbering{arabic}
+	
+	% \wss{You are free to modify this template.}
+	
+	\section{Introduction}
+	
+	% \wss{You can include your definition of what a hazard is here.}
+	This document outlines the hazard analysis for the Undertree Latex editing software. Undertree is a collaborative Latex editor that allows multiple users to edit a Latex document concurrently, and also provides version control capabilities. The software is complex and consists of multiple components that work together to provide the intended functionalities. As such, each component runs the risk of failure due to hazards that may affect the system's behaviour.\\
+	
+	\noindent For the purpose of this document a hazard is defined as a state of a system along with an action on the system that would lead to the system integrity being damaged or causing a complete failure.\\
+	
+	\section{Scope and Purpose of Hazard Analysis}
+	
+	The purpose of this document is to provide a detailed analysis of the possible hazards to the system, their causes, and the intended preventative measures that will be taken against them.\\
+	
+	\noindent First, any critical assumptions will be stated. These are assumptions that will eliminate the need for preventing a hazard as it is assumed to never occur. This is followed by the failure mode and effect analysis which will present a detailed table documenting all components and their potential failures, causes of the failures, effects of the failure, and preventative measures. Then, the safety and security requirements will be derived from the FMEA table and outlined as NFRs. Finally, the document will present a roadmap for when these security requirements will be implemented.\\
+	
+	\noindent When considering the hazards for this project, the following hazards are out of scope as they are not directly part of the project:
+	\begin{itemize}
+		\item Issues with the user's browser such as compatibility with out of date or legacy browsers such as Internet Explorer are not part of the scope of the project.
+		\item Issues with the rented hosting hardware and it's uptime are not part of the scope of the project.
+	\end{itemize}
+	
+	\section{System Boundaries and Components}
+	The system consists of 4 distinct major features that also make up our system boundaries are:
+	\begin{enumerate}
+		\item Client - The client is the latex editor that will be accesses in a web browser, and it has the following components:
+		\begin{itemize}
+			\item Editor
+			\item Chat box
+			\item Logging in into the application
+		\end{itemize}
+		\item Server - The server is what the client will be communicating with to acces the main functionality which are:
+		\begin{itemize}
+			\item Accessing the database
+			\item File Synchronization
+			\item Latex Compilation
+			\item Chat Synchronization
+			\item Authentication
+			\item GitHub Integration
+			\item Latex Editor
+		\end{itemize}
+		\item Github - Our application will also be using GitHub API to carry out various git functionality
+		\item Database - Our application will also be saving user specific data to the database
+	\end{enumerate}
+	
+	\section{Critical Assumptions}
+	
+	We are making the following assumptions when considering our hazards:
+	
+	\begin{itemize}
+		\item The user will be using the most up to date version of a Chromium based browser, Firefox, or Safari to prevent any hazards with the front-end system.
+		\item Users and admins will not have direct access to the database, all access to the database will be defined by strict queries executed from the back end
+		\item We will not be considering any issues that may arise on strictly just the front-end from a user acting maliciously, as this will only effect the malicious user them self. For example, if a user tries to create a fake and invalid access token from their browser, this token would not work and cause errors for the user when trying to communicate with the back-end until this token is cleared and a valid token is accessed by logging in.
+	\end{itemize}
+	
+	\section{Failure Mode and Effect Analysis}
+	
+	% \newcounter{failureNum}
+	\newcounter{componentNum}
+	\newcommand\newComponent{\stepcounter{componentNum}\thecomponentNum}
+	\setlist[enumerate]{noitemsep, topsep=0pt}
+	
+	\newgeometry{left=1cm,right=2.5cm, top=1cm, bottom=1.5cm} 
+	% \begin{table}[hp]
+		% \centering
+		\def\arraystretch{1.5}%padding
+		\small %font
+		\begin{longtable}{ | l | p{2.5cm} | p{3cm} | p{3cm} | p{3.5cm} | p{1.5cm} | c | }
+			\caption{FMEA Table\label{long}}\\
+			\hline
+			Component & Failure Modes & Effects of Failure & Causes of Failure & Recommended Action & SR & Ref.\\
+			\hline
+			
+			\multirow{3}{4em}{Database} & Data is unintentionally deleted  & User data is lost &
+			\begin{enumerate}[leftmargin=*]
+				\item Database failure
+				\item Malicious Actor
+			\end{enumerate} 
+			& 
+			\begin{enumerate}[leftmargin=*]
+				\item Backup data frequently
+				\item Establish strict queries to fetch and add data to database, and escape all user provided information that is used in queries.
+			\end{enumerate} 
+			& 
+			\begin{enumerate}[leftmargin=*]
+				\item NFR32
+				\item NFR27 NFR35
+			\end{enumerate}
+			& H\newComponent-1 \\
+			\cline{2-7}
+			&  Database is unavailable & User loses access to personal data &
+			\begin{enumerate}[leftmargin=*]
+				\item Database failure
+				\item Database Maintenance
+				\item Malicious Actor
+			\end{enumerate} 
+			& 
+			\begin{enumerate}[leftmargin=*]
+				\item Display an error stating that the work is unable to be synchronized with the database and allow them to continue working offline.
+				\item Display an error stating that the database is down for maintenance and give an expected downtime. Allow users to continue working offline.
+				\item Display an error stating that the website is down. Prevent access to website while the scope of the attack by the malicious actor is investigated.
+			\end{enumerate} 
+			& 
+			\begin{enumerate}[leftmargin=*]
+				\item NFR28
+				\item NFR28 
+				\item NFR28
+			\end{enumerate}
+			% NFR28
+			% NFR28
+			% NFR28
+			& H\thecomponentNum-2 \\
+			\cline{2-7}
+			& Data overwritten & User data is lost &
+			\begin{enumerate}[leftmargin=*]
+				\item Identical keys
+			\end{enumerate} & 
+			Enforce unique primary key constraints 
+			& 
+			NFR35
+			& H\thecomponentNum-3 \\
+			\hline
+			\multirow{2}{4em}{File Synchronization} & Changes to file overwritten & Inaccurate file version stored &
+			\begin{enumerate}[leftmargin=*]
+				\item Race condition
+			\end{enumerate}
+			& Implement synchronization between concurrent changes to file data store & 
+			NFR35
+			& H\newComponent-1\\
+			\cline{2-7}
+			& Back-end Unavailable to synchronize changes & Inaccurate file version stored &
+			\begin{enumerate}[leftmargin=*]
+				\item Backend server down/unreachable
+			\end{enumerate}
+			& Store current version locally in client side &
+			NFR34
+			& H\thecomponentNum-2 \\
+			\hline
+			Latex Compilation & Compilation Crashes/Stuck & User does not see built PDF &
+			\begin{enumerate}[leftmargin=*]
+				\item Compilation times out due to error
+			\end{enumerate} 
+			& Stop the compilation and display an error message to the user stating that the compilation timed out &
+			NFR28
+			& H\newComponent-1\\
+			\hline
+			\newpage
+			\hline
+			\multirow{2}{4em}{Chat synchronization} & Messages overwritten & Overwritten message would not be delivered to all users &
+			\begin{enumerate}[leftmargin=*]
+				\item Race condition
+			\end{enumerate}
+			& Implement synchronization between concurrent changes to messages data store &
+			NFR35
+			& H\newComponent-1\\
+			\cline{2-7}
+			& Back-end unavailable to synchronize messages & New messages would be unable to be delivered &
+			\begin{enumerate}[leftmargin=*]
+				\item Error in back end causing crash
+			\end{enumerate}
+			& Display a message stating that the messages cannot be synchronized and allow users to continue working in offline mode &
+			NFR28
+			& H\thecomponentNum-2\\
+			\hline
+			
+			\multirow{2}{4em}{GitHub Integration} & GitHub services are unavailable & User is not able to use any of the GitHub functionality &
+			\begin{enumerate}[leftmargin=*]
+				\item GitHub servers are not reachable
+				\item Maintenance with GitHub services
+			\end{enumerate} 
+			&
+			Display a message stating the commit and push functionalities are currently unavailable
+			&
+			NFR28
+			& H\newComponent-1\\
+			\cline{2-7}
+			& GitHub API key is invalid & User is not able to use any of the authorized GitHub functionality&
+			\begin{enumerate}[leftmargin=*]
+				\item GitHub API key is expired
+				\item GitHub API key is invalid 
+			\end{enumerate} 
+			&
+			\begin{enumerate}[leftmargin=*]
+				\item Renew the key using the refresh token
+				\item Ask the user to login again
+			\end{enumerate} 
+			&      
+			\begin{enumerate}[leftmargin=*]
+				\item NFR40
+				\item NFR42
+			\end{enumerate}
+			& H\thecomponentNum-2\\
+			\hline
+			\multirow{2}{4em}{Latex editor} & File is unintentionally deleted & File data is lost & 
+			\begin{enumerate}[leftmargin=*]
+				\item Misclick
+			\end{enumerate} &
+			User should be prompted when file is deleted. Most recently edited files should be also stored even after deleted for some time
+			% \begin{enumerate}[leftmargin=*]
+				%     \item User should be prompted when file is deleted. Most recently edited files should be also stored even after deleted for some time
+				% \end{enumerate} 
+			& 
+			NFR29
+			& H\newComponent-1\\
+			\cline{2-7}
+			& Project is unintentionally deleted & Project belonging to the user are lost &
+			\begin{enumerate}[leftmargin=*]
+				\item Misclick
+			\end{enumerate}
+			&
+			User should be prompted when project is deleted
+			% \begin{enumerate}[leftmargin=*]
+				%     \item User should be prompted when project is deleted
+				% \end{enumerate} 
+			& NFR29 & H\thecomponentNum-2\\
+			\hline
+			Authentication & Unauthorized user gets access to privileged data & Unauthorized user will be able to get access to and modify data of other users &
+			\begin{enumerate}[leftmargin=*]
+				\item Unsecure authentication system
+			\end{enumerate} 
+			&
+			Inform users of the breach and restore database backup to undo any changes made by malicious actor
+			&
+			\begin{enumerate}[leftmargin=*]
+				\item [] NFR26 NFR27 NFR36 NFR38
+			\end{enumerate} 
+			& H\newComponent-1\\
+			\hline
+		\end{longtable}
+		% \end{table}
+	\restoregeometry
+	
+	
+	% \wss{Include your FMEA table here}
+	
+	\section{Safety and Security Requirements}
+	
+	% \wss{Newly discovered requirements.  These should also be added to the SRS.  (A
+		% rationale design process how and why to fake it.)}
+	
+	\subsection{Access Requirements}
+	\begin{enumerate}[{NFR}1.]
+		\setcounter{enumi}{23}
+		\item The system’s code will only be view-able to the public through the Git repository
+		\item The system restricts it's editing privileges for the code to only the maintainers\\
+		{\color{red}Fit Criterion: Users will be able to view the source code on the \textbf{GitHub} repository page}
+		\item Users can only access projects that they are authorized to do so
+		\item The system will retrieve the minimum required data needed for the user
+		\item The system will provide appropriate errors to communicate system issues to user
+		\item The system will provide necessary confirmations to crucial changes
+	\end{enumerate}
+	
+	\subsection{Integrity Requirements}
+	\begin{enumerate}[resume*]
+		\item The system will not manipulate or modify any of the user’s data that is stored on it
+		\item The system will protect itself from intentional abuse
+		\item The system will back up the data in the database frequently
+		\item The system will retain user's projects even after being deleted for a few days 
+		\item The system will store the editor data locally on the client's device 
+		\item The system will implement strict measures in the back end to prevent unintentional behaviour
+	\end{enumerate}
+	
+	\subsection{Privacy Requirements}
+	\begin{enumerate}[resume*]
+		\item The system will require the user to create an account
+		\item The system will not use the user's personal information for anything than what is required and consented to by the user
+		\item The system will store all user credentials securely
+		\item Users can only access projects that they are authorized to do so
+		\item The system will renew API keys regularly
+		\item The system will re-authenticate the user when required
+	\end{enumerate}
+	
+	\subsection{Audit Requirements}
+	N/A
+	
+	\subsection{Immunity Requirements}
+	N/A
+	
+	\section{Roadmap}
+	
+	Some of the new requirements that were discovered as part of this Hazard Analysis will be phased in alongside our Requirements mentioned in \href{https://github.com/RutheniumVI/UnderTree/blob/main/docs/SRS/SRS.pdf}{\textcolor{blue}{SRS document}}. Due to project time constraints, some of the requirements will not be able to implemented within the final project deadline. However since most of the hazards are integral towards the functional requirements, we will be looking to implement solutions for all hazards aside from the database backup. 
+	
+	% The requirements related to the following components will be implemented by the final revision are presented in the table below\\
+	% \begin{table}[]
+		%     \centering
+		%     \begin{tabular}{|c|c|}
+			%     \hline
+			%     Component & Deadline  \\
+			%     \hline
+			%     Latex Compilation & Dec 2nd 2022\\
+			%     Authentication & Dec 10th 2022\\
+			%     GitHub Integration & Dec 25th 2022\\
+			%     Latex Editor & Jan 6th 2023 \\
+			%     File \& Chat synchronization & Feb 10th 2023\\
+			%     \hline
+			%     \end{tabular}
+		%     \caption{Phase in table mapping components to deadlines}
+		%     \label{tab:my_label}
+		% \end{table}
+	
+	% \wss{Which safety requirements will be implemented as part of the capstone timeline?
+		% Which requirements will be implemented in the future?}
+	
 \end{document}

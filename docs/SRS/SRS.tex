@@ -30,34 +30,31 @@
 \input{../Common}
 
 \date{\today}
-
 \begin{document}
 	
 	\maketitle
 	
-	\begin{table}[H]
-	\caption{\bf Revision History}
-	\begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
-		\toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
-		\midrule
-		October 4th & 1.0 & Introduction added by Eesha\\
-		October 4th & 1.1 & Functional requirements started by Faiq and Veerash\\
-		October 4th & 1.2 & Nonfunctional requirements started by Kevin\\
-		October 5th & 1.3 & Project Issues added by Faiq and Veerash \\
-		October 5th & 1.4 & Functional requirements finished and revised \\
-		October 5th & 1.5 & Non functional requirements finished and revised \\
-		October 5th & 1.6 & Appendix added\\
-		October 5th & 1.7 & Traceability matrix added\\
-		\bottomrule
-	\end{tabularx}
-\end{table}
-
-\newpage
-
 	\pagenumbering{roman}
 	\tableofcontents
 	\listoftables
 	\listoffigures
+	
+	\begin{table}[H]
+		\caption{\bf Revision History}
+		\begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
+			\toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
+			\midrule
+			October 4th & 1.0 & Introduction added by Eesha\\
+			October 4th & 1.1 & Functional requirements started by Faiq and Veerash\\
+			October 4th & 1.2 & Nonfunctional requirements started by Kevin\\
+			October 5th & 1.3 & Project Issues added by Faiq and Veerash \\
+			October 5th & 1.4 & Functional requirements finished and revised \\
+			October 5th & 1.5 & Non functional requirements finished and revised \\
+			October 5th & 1.6 & Appendix added\\
+			October 5th & 1.7 & Traceability matrix added\\
+			\bottomrule
+		\end{tabularx}
+	\end{table}
 	
 	\newpage
 	
@@ -100,10 +97,10 @@
 	\begin{itemize}
 		\item \textbf{LaTex}:A document preparation system and language
 		\item \textbf{Tex}: A shorthand for \textbf{LaTex}
-		\item \textbf{Git}: Shorthand for Git
-		\item \textbf{GitHub} A \textbf{git} version control management system   
+		\item \textbf{Git}: A version control software
+		\item \textbf{GitHub} A propriety hosting software for \textbf{git} version control
 		\item \textbf{Commit}: A snapshot or the creation of a snapshot of a project that is stored in a commit history log and can be viewed at any time
-		\item \textbf{Repository}: Central location where all version history of data is stored
+		\item \textbf{Repository}: Central location where all \textbf{git} version history of data is stored
 		\item \textbf{PDF}: A printable document file
 		\item \textbf{API}: An interface between two services
 	\end{itemize}
@@ -452,22 +449,38 @@
 	\subsection{Security Requirements}
 	\subsubsection{Access Requirements}
 	\begin{enumerate}[resume*]
-		\item The system's code will only be view-able to the public through the \textbf{Git} repository
+		\item The system’s code will only be view-able to the public through the Git repository
 		\item The system restricts it's editing privileges for the code to only the maintainers\\
 		{\color{red}Fit Criterion: Users will be able to view the source code on the \textbf{GitHub} repository page}
+		\item Users can only access projects that they are authorized to do so
+		\item The system will retrieve the minimum required data needed for the user
+		\item The system will provide appropriate errors to communicate system issues to user
+		\item The system will provide necessary confirmations to crucial changes
 	\end{enumerate}
+	
 	\subsubsection{Integrity Requirements}
 	\begin{enumerate}[resume*]
-		\item The system will not manipulate or modify any of the user's data that is stored on it
-		\item The system shall protect itself from intentional abuse
+		\item The system will not manipulate or modify any of the user’s data that is stored on it
+		\item The system will protect itself from intentional abuse
+		\item The system will back up the data in the database frequently
+		\item The system will retain user's projects even after being deleted for a few days 
+		\item The system will store the editor data locally on the client's device 
+		\item The system will implement strict measures in the back end to prevent unintentional behaviour
 	\end{enumerate}
+	
 	\subsubsection{Privacy Requirements}
 	\begin{enumerate}[resume*]
 		\item The system will require the user to create an account
 		\item The system will not use the user's personal information for anything than what is required and consented to by the user
+		\item The system will store all user credentials securely
+		\item Users can only access projects that they are authorized to do so
+		\item The system will renew API keys regularly
+		\item The system will re-authenticate the user when required
 	\end{enumerate}
+	
 	\subsubsection{Audit Requirements}
 	N/A
+	
 	\subsubsection{Immunity Requirements}
 	N/A
 	\subsection{Cultural Requirements}
@@ -499,12 +512,12 @@
 		\caption{\textbf{Traceability Matrix between FR \& NFR}}
 		\begin{tabular}{l|l|l|l|l|l|}
 			\cline{2-6}
-			& NFR3 & NFR7 & NFR11 & NFR28 & NFR29 \\ \hline
+			& NFR3  & NFR7 & NFR11 & NFR36 & NFR37 \\ \hline
 			\multicolumn{1}{|l|}{FR1}  &  & X &  &  &  \\ \hline
 			\multicolumn{1}{|l|}{FR3}  &  &  &  & X & X \\ \hline
 			\multicolumn{1}{|l|}{FR4}  &  &  &  & X & X \\ \hline
-			\multicolumn{1}{|l|}{FR20} & X &  &  &  &  \\ \hline
-			\multicolumn{1}{|l|}{FR36} &  &  & X &  &  \\ \hline
+			\multicolumn{1}{|l|}{FR20}  & X &  &  &  &  \\ \hline
+			\multicolumn{1}{|l|}{FR36}  &  &  & X &  &  \\ \hline
 		\end{tabular}
 	\end{table}
 	
