@@ -103,6 +103,7 @@
 		\item \textbf{Repository}: Central location where all \textbf{git} version history of data is stored
 		\item \textbf{PDF}: A printable document file
 		\item \textbf{API}: An interface between two services
+		\item \textbf{JSON Web Tokens}: Compact tokenized methods of verifiable data transfer that use JavaScript string object notation
 	\end{itemize}
 	
 	\subsection{Relevant Facts and Assumptions}
@@ -391,7 +392,8 @@
 	\subsection{Performance Requirements}
 	\subsubsection{Speed and Latency Requirements}
 	\begin{enumerate}[resume*]
-		\item The system shall provide a response to the user in a reasonable time to avoid interrupting the user's flow
+		\item The system shall provide a response to the user in a reasonable time to avoid interrupting the user's flow\\
+		{\color{red}Fit Criterion: New users will be surveyed on the responsiveness of the app $\hyperlink{responsiveness_rating}{RESPONSIVENESS\_RATING}$ on ease of use}
 		\item The system shall be able to compile the user's \textbf{LaTex} file in less than $\hyperlink{compile_time}{COMPILE\_TIME}$ seconds\\
 	\end{enumerate}
 	\subsubsection{Safety-Critical Requirements}
@@ -400,7 +402,7 @@
 	N/A
 	\subsubsection{Reliability and Availability Requirements}
 	\begin{enumerate}[resume*]
-		\item The system shall have an up time of at least 99\%
+		\item The system shall have an up time of at least $\hyperlink{uptime}{UPTIME}$\%
 	\end{enumerate}
 	\subsubsection{Robustness or Fault-Tolerance Requirements}
 	N/A
@@ -643,10 +645,12 @@
 	Their values are defined in this section for easy maintenance.\\
 	
 	\noindent $\hypertarget{easiness_rating}{EASINESS\_RATING}$ = 7/10 \\
+	$\hypertarget{responsiveness_rating}{RESPONSIVENESS\_RATING}$ = 7/10 \\
 	$\hypertarget{compile_time}{COMPILE\_TIME}$ = 60 \\
 	$\hypertarget{learning_time}{LEARNING\_TIME}$  = 30\\
 	$\hypertarget{simplicity_rating}{SIMPLICITY\_RATING}$ = 8/10\\
 	$\hypertarget{num_colours}{NUM\_COLOURS}$ = 4\\
+	$\hypertarget{uptime}{UPTIME} = 99\%
 	
 	
 \end{document}
