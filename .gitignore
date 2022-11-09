@@ -278,3 +278,6 @@ TSWLatexianTemp*
 # DS_Store file from Mac computers
 .DS_Store
 *.code-workspace
+
+# intellij idea
+/.idea
