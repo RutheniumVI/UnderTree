@@ -7,11 +7,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class TextEditDelta {
+public class TextEditOperation {
 
     private String user;
-    private String text;
-    private int position;
-    private int updatedCursorPosition;
+    private OperationTypes operation;
+    private String editedText;
+    private int editPosition;
 
 }
