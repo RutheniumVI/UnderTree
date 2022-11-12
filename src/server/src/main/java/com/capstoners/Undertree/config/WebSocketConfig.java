@@ -1,4 +1,4 @@
-package com.capstoners.Undertree.realTime.socketConfig;
+package com.capstoners.Undertree.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;

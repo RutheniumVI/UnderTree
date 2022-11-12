@@ -284,3 +284,6 @@ TSWLatexianTemp*
 
 # environment variables
 .env
+
+# Database files
+mongodb-data/
