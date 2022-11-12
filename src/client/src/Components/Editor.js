@@ -3,10 +3,15 @@ import React from 'react';
 import { useEffect } from 'react';
 import { over } from 'stompjs';
 import SockJS from 'sockjs-client';
+import { useState } from 'react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 var stompClient;
 
 function Editor() {
+    const [value, setValue] = useState('');
+
     // Connect to socket when editor page is opened
     useEffect(() => {
         let socket = new SockJS("http://localhost:8080/socket");
@@ -27,7 +32,11 @@ function Editor() {
         console.log(err);
     }
 
-    return <h2>Text Editor</h2>
+    return ( 
+        <div id='container'>
+            <ReactQuill theme="snow" value={value} onChange={setValue} />
+        </div>
+    )
 }
 
 export default Editor
