@@ -1,11 +1,12 @@
 import React from 'react';
 import Editor from '../components/Editor';
+import Chat from './Chat';
 
 function Home() {
   return (
     <div>
-      <h2>Home</h2>
-      <Editor/>
+      <h2></h2>
+      <Chat/>
     </div>
   );
 }
