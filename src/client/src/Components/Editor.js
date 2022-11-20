@@ -6,6 +6,8 @@ import SockJS from 'sockjs-client';
 import { useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import '../Styles/Editor.css'
+
 
 var stompClient;
 
@@ -33,8 +35,8 @@ function Editor() {
     }
 
     return ( 
-        <div id='container'>
-            <ReactQuill theme="snow" value={value} onChange={setValue} />
+        <div className='container'>
+            <ReactQuill className="editor" theme="snow" value={value} onChange={setValue} />
         </div>
     )
 }

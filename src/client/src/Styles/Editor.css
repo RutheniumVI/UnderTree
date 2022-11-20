@@ -1,0 +1,13 @@
+.container{
+    margin: auto;
+    width: 50%;
+}
+
+.container .quill.editor{
+    width: 8in;
+    min-height: 11 in;
+    padding: 11 in;
+    margin: 1 rem;
+    box-shadow: black;
+    background-color: rgb(251, 251, 251);
+}
