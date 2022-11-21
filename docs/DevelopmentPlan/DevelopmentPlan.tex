@@ -82,10 +82,14 @@ An example Git workflow would be
 
 \section{Proof of Concept Demonstration Plan}
 
-To prepare for the proof of concept demonstration, we will be focusing firstly on getting the text editor where users can see eachother cursors and contributions in real time set up, since this will be the most difficult part of the project.
-Since having live edits on a single file would require the combined use of a rest api server and web sockets, and on a lower level would require concurrency to handle reads and writes, this would be the most difficult process in terms of 
-both implementing and testing. In comparison the remaining aspect such as integrating with github and compiling the latex code can easily be done with api calls and libraries. Another complexity that may arise is from the Rust's ownership
-model in a more complex project since the team only has a limited amount of experience with programing in Rust.\\
+To prepare for the proof of concept demonstration, we will be first getting a basic text editor where users can see eachother cursors and contributions in real time set up, since this will be the most difficult part of the project.
+Since having live edits on a single file would require the combined use of a rest API server and web sockets, and on a lower level would require concurrency to handle reads and writes, this would be the most difficult process in terms of 
+both implementing and testing. Similarly, this application of websockets and rest API can also be applied to the chatting feature in our application. This may be a more direct implementation with minimal use of libraries to assist us with
+creating this feature, thus a very basic implementation of this feature will also help us get a better understanding of both websockets and rest API server to better gauage the complexity of the rest of the project that directly and heavily
+relies on them. Additionally, and least importantly, having a very basic login functionality and utilization of the GitHub API would help us understand the scope and potential difficulties that may come from creating a secure authentication
+system to protect the user's GitHub information. The GitHub integration would also help us ensure that it can be properly implemented and how long it would take, this is something that is improtant to discover early on in the project since 
+GitHub integration is one of the most important features that the application requires to function. However, this is a topic that is covered in depth online and can easily be researched, thus it is unlikely that any major risk would arise 
+from this feature. Lastly, another complexity that may arise is from the Rust's ownership model in a more complex project since the team only has a limited amount of experience with programing in Rust.\\
 
 In terms of testing, aside from the portion related to the concurrency aspect of the project, the remaining testing should be relatively straight forward and will use common and easy to use testing frameworks.\\
 
@@ -94,11 +98,12 @@ Installing libraries would be handled by Rust's cargo build tool and would not b
 Portability will also not be a concern for this project as we would be using docker to containerize all modules of the app and have a docker compose to easily run the modules. All machines that support docker should be easily able to run this
 project.\\
 
-To demonstrate that the risk can be overcome we will focus on creating a preliminary version of the core functionality of real time multi user editing first, without paying much attention to the UI and the other remaining features. This will
-help us gauge how feasible this implemention is early on in the project in case we need to redefine some of the reqruirements.\\
+To demonstrate that the risk can be overcome we will focus on creating a preliminary version of the core functionality of real time multi user editing and chatting first without paying much attention to the UI and the other remaining features.
+We would also look into implementating a very basic GitHub authenticaion system to get a better understanding of how complex this major feature of our project can be.  This will help us gauge how feasible this implemention is early on in the 
+project in case we need to redefine some of the reqruirements.\\
 
 If the risks are proven to be real, we can redefine the project by switching languages to Java and/or to disclude the real time editing by multiple users and instead have the updates only occur in the document once a user makes a commit. 
-This change will allow us to use the memory management model of Java that we are more familiar with and/or remove the need of web sockets abd concurrency which is the biggest risk factor. Instead the focus for the project can then be 
+This change will allow us to use the memory management model of Java that we are more familiar with and/or remove the need of web sockets and concurrency which is the biggest risk factor. Instead the focus for the project can then be 
 shifted to some of the strech goals such as adding in features to make working with images and tables easier to work in latex.
 
 \section{Technology}
