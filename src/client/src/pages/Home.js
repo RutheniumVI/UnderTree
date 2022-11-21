@@ -4,9 +4,10 @@ import Chat from './Chat';
 
 function Home() {
   return (
-    <div>
-      <h2></h2>
-      <Editor/>
+    <div className='home-container' style={{display: 'flex', flexDirection: 'row'}}>
+      <div style={{}}>
+        <Editor/>
+      </div>
       <Chat/>
     </div>
   );

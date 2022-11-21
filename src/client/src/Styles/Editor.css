@@ -1,13 +1,18 @@
 .container{
-    margin: auto;
-    width: 50%;
+    /*margin: auto;
+    width: 50%;*/
+    width: 100%
 }
 
 .container .quill.editor{
-    width: 8in;
-    min-height: 11 in;
+    /*width: 8in;*/
+    min-height: 20vh;
     padding: 11 in;
     margin: 1 rem;
     box-shadow: black;
     background-color: rgb(251, 251, 251);
+}
+
+.container .ql-editor.ql-blank{
+    min-height: 20vh;
 }
