@@ -281,3 +281,9 @@ TSWLatexianTemp*
 
 # intellij idea
 /.idea
+
+# environment variables
+.env
+
+# Database files
+mongodb-data/
