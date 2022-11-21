@@ -1,42 +1,59 @@
 import React from 'react';
 
 import { useEffect } from 'react';
-import { over } from 'stompjs';
-import SockJS from 'sockjs-client';
 import { useState } from 'react';
-import ReactQuill from 'react-quill';
+import * as Y from "yjs";
+import { WebsocketProvider } from 'y-websocket'
+import { QuillBinding } from 'y-quill'
+
+import randomColor from 'randomcolor';
+
+import ReactQuill, { Quill } from 'react-quill';
+import QuillCursors from 'quill-cursors';
 import 'react-quill/dist/quill.snow.css';
 import '../Styles/Editor.css'
 
+Quill.register('modules/cursors', QuillCursors);
 
-var stompClient;
+
+const modules = {
+    cursors: true,
+}
 
 function Editor() {
+    const username = localStorage.getItem("username");
     const [value, setValue] = useState('');
+    let edtRef = null;
+
 
     // Connect to socket when editor page is opened
     useEffect(() => {
-        let socket = new SockJS("http://localhost:8080/socket");
-        stompClient = over(socket);
-        stompClient.connect({}, onConnected, onError);
-    })
-    
-    const onConnected = () => {
-        console.log("connected");
-        stompClient.subscribe("/editor/init", (payload) => {
-        console.log(payload);
-        })
+        console.log(edtRef)
+        const ydoc = new Y.Doc();
+        const provider = new WebsocketProvider('wss://demos.yjs.dev', 'test1', ydoc);
+        const ytext = ydoc.getText('quill');
 
-        stompClient.send("/editor/trigger", {}, "hello");
-    }
+        const awareness = provider.awareness; 
+        
+        const color = randomColor(); 
+        
+        awareness.setLocalStateField("user", {
+          name: username,
+          color: color,
+        });
+        new QuillBinding(ytext, edtRef.getEditor(), awareness);
+    }, [])
 
-    const onError = (err) => {
-        console.log(err);
-    }
 
     return ( 
-        <div className='container'>
-            <ReactQuill className="editor" theme="snow" value={value} onChange={setValue} />
+        <div id='container'>
+            <ReactQuill 
+                ref={(el) => { edtRef = el; }}
+                theme="snow"
+                className="editor"
+                modules={modules}
+                value={value} 
+                onChange={setValue} />
         </div>
     )
 }

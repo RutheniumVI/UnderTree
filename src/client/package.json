@@ -10,6 +10,8 @@
     "bootstrap": "^5.2.2",
     "net": "^1.0.2",
     "quill": "^1.3.6",
+    "quill-cursors": "^4.0.0",
+    "randomcolor": "^0.6.2",
     "react": "^18.2.0",
     "react-bootstrap": "^2.6.0",
     "react-dom": "^18.2.0",
@@ -17,7 +19,10 @@
     "react-scripts": "5.0.1",
     "sockjs-client": "^1.6.1",
     "stompjs": "^2.3.3",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "y-quill": "^0.1.5",
+    "y-websocket": "^1.4.5",
+    "yjs": "^13.5.42"
   },
   "scripts": {
     "start": "react-scripts start",
