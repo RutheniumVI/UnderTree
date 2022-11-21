@@ -1,12 +1,13 @@
 package com.capstoners.Undertree.github;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.capstoners.Undertree.database.model.User;
+import com.capstoners.Undertree.database.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -19,6 +20,7 @@ import java.util.Map;
 
 @Component
 @RestController
+@RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000/", allowCredentials = "true")
 public class GitController {
 
@@ -26,6 +28,8 @@ public class GitController {
 	private String client_id;
 	@Value("${spring.github.cs}")
 	private String client_secret;
+
+	private final UserService userService;
 
 	@GetMapping(path = "/github/code={code}")
 	public Map<String, String> getUsername(@PathVariable(required=true, name="code") String code, HttpServletResponse response) throws IOException, URISyntaxException {
@@ -53,6 +57,9 @@ public class GitController {
 		ResponseEntity<String> userResult = restTemplate.exchange(RequestEntity.get(new URI(userUrl)).headers(userHeaders).build(), String.class);
 		Map<String, String> userResultMap = new ObjectMapper().readValue(userResult.getBody(), HashMap.class);
 		String username = userResultMap.get("login");
+		String avatarUrl = userResultMap.get("avatar_url");
+
+		userService.saveAndUpdateUser(username, accessToken, avatarUrl);
 
 		Cookie userCookie = new Cookie("username", username);
 		userCookie.setHttpOnly(true);
@@ -60,12 +67,8 @@ public class GitController {
 
 		HashMap<String, String> map = new HashMap<>();
 		map.put("username", username);
+
 		return map;
 	}
-
-
-
-
-
 }
             

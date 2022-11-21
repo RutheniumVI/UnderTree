@@ -1,0 +1,18 @@
+.userAvatar {
+    border-radius: 100%;
+    width: 5vw;
+    margin-bottom: 30px;
+}
+
+.col {
+    text-align: left;
+}
+
+.avatarCol {
+    flex: 0 0 30px;
+}
+
+.container {
+    margin: auto;
+    width: 90%;
+}
