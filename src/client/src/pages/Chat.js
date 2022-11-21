@@ -38,6 +38,19 @@ function Chat() {
         console.log(newMessage)
     }
 
+    const receiveMessage = (message) => {
+        message = {
+            "id": uuid, 
+            "person": "2",
+            "messageContent": "placeholder",
+            "timestamp": ""
+           }
+        setUuid(uuid + 1);
+        setMessages(messages.concat(message))
+        console.log(messages)
+        console.log(newMessage)
+    }
+
   return (
     <div className='container'>
         <div className='messages-container'>
