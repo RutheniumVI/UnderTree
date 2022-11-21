@@ -22,3 +22,17 @@ p.person1 {
     text-align: left;
     min-width: min-content;
     padding-left: 2vh;}
+
+#newtext{
+    /*width: 75%;*/
+    margin-left:2%;
+}
+
+#submit{
+    margin-left: auto;
+}
+
+.flex {
+    display: flex;
+    flex-direction: row;
+ }

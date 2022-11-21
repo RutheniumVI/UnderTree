@@ -33,6 +33,7 @@ function Chat() {
         setUuid(uuid + 1);
         setMessages(messages.concat(message))
         //setNewMessage();
+        setNewMessage()
         console.log(messages)
         console.log(newMessage)
     }
@@ -51,14 +52,14 @@ function Chat() {
             })}
         </div>
         <div className='write-message-container'>
-            <Form>
-                <Form.Group className="mb-3" controlId="newMessage">
+            <Form id="new-message-form">
+                <Form.Group className="flex" controlId="newMessage">
                     <Form.Label></Form.Label>
-                    <Form.Control type="textarea" placeholder="new message" onChange={(e) => setNewMessage(e.target.value)} />
+                    <Form.Control id="newtext" type="textarea" placeholder="new message" onChange={(e) => setNewMessage(e.target.value)}/>
+                    <Button id="submit" variant="primary" onClick={()=>sendMessage(newMessage)}>
+                        Send
+                    </Button>
                 </Form.Group>
-                <Button variant="primary" onClick={()=>sendMessage(newMessage)}>
-                    Submit
-                </Button>
             </Form>
         </div>
     </div>
