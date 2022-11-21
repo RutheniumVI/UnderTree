@@ -1,82 +1,73 @@
 import React from 'react';
-import './Styles/Chat.css';
-import {useState} from 'react';
+import '../Styles/Chat.css';
+import {useState, useEffect, useRef} from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import { over } from 'stompjs';
+import SockJS from 'sockjs-client';
+
+var stompClient;
 
 function Chat() {
-    const [uuid, setUuid] = useState(4)
-    const [currentUser, setCurrentUser] = useState("person1")
+    const username = localStorage.getItem("username");
     const [newMessage, setNewMessage] = useState();
-    const [messages, setMessages] = useState([
-        {"id": 1, 
-         "person": "1",
-         "messageContent": "hi",
-         "timestamp": ""},
-        {"id": 2, 
-        "person": "2",
-        "messageContent": "hello",
-        "timestamp": ""},
-        {"id": 3, 
-        "person": "2",
-        "messageContent": "hello",
-        "timestamp": ""}
-    ]);    
-      //return <ul>{renderAnimals}</ul>;
+    const [messages, setMessages] = useState([]);
+    const inputField = useRef();
+
     const sendMessage = (message) => {
-        message = {
-         "id": uuid, 
-         "person": "1",
-         "messageContent": message,
-         "timestamp": ""
-        }
-        setUuid(uuid + 1);
-        setMessages(messages.concat(message))
-        //setNewMessage();
-        setNewMessage()
-        console.log(messages)
-        console.log(newMessage)
+        let msg = {"user": username, "message": message}
+        stompClient.send("/chat/send", {}, JSON.stringify(msg));
     }
 
     const receiveMessage = (message) => {
-        message = {
-            "id": uuid, 
-            "person": "2",
-            "messageContent": "placeholder",
-            "timestamp": ""
-           }
-        setUuid(uuid + 1);
-        setMessages(messages.concat(message))
-        console.log(messages)
-        console.log(newMessage)
+        setMessages(messages => [...messages, JSON.parse(message.body)]);
     }
 
-  return (
-    <div className='container'>
-        <div className='messages-container'>
-            {/*<p className='person1'>test tes te ste ste stestes et ste ste ste ste st ste st</p>
-            <p className='person2'>testsetstststsets setsets tsteests stests</p>
-    <p className='person1'>test tes te ste ste stestes et ste ste ste ste st ste st</p>*/}
-            {messages.map((item, index) => {
-            if (item.person == 1) {
-            return <p className='person1' key={item.id}>{item.messageContent}</p>;
-            }
-            return <p className='person2' key={item.id}>{item.messageContent}</p>;
-            })}
+    useEffect(() => {
+        let socket = new SockJS("http://localhost:8080/socket");
+        stompClient = over(socket);
+        stompClient.connect({}, onConnected, onError);
+    }, [])
+
+    const onConnected = () => {
+        console.log("connected");
+        stompClient.subscribe("/chat/receive", (payload) => {
+            receiveMessage(payload);
+        })
+    }
+
+    const onError = (err) => {
+        console.log(err);
+    }
+
+    const submitClicked = () => {
+        sendMessage(newMessage);
+        inputField.current.value = "";
+    }
+
+    return (
+        <div className='container'>
+            <div className='messages-container'>
+                {messages.map((item, index) => {
+                    if (item.user == username) {
+                        return <p className='person1' key={index}>{item.message}</p>;
+                    }
+                        return <p className='person2' key={index}>{item.message}</p>;
+                })}
+            </div>
+            <div className='write-message-container'>
+                <Form id="new-message-form">
+                    <Form.Group className="flex">
+                        <Form.Label></Form.Label>
+                        <Form.Control id="newtext" ref={inputField} type="textarea" placeholder="new message" onChange={(e) => setNewMessage(e.target.value)}/>
+                        <Button id="submit" variant="primary" onClick={submitClicked}>
+                            Send
+                        </Button>
+                    </Form.Group>
+                </Form>
+            </div>
         </div>
-        <div className='write-message-container'>
-            <Form id="new-message-form">
-                <Form.Group className="flex" controlId="newMessage">
-                    <Form.Label></Form.Label>
-                    <Form.Control id="newtext" type="textarea" placeholder="new message" onChange={(e) => setNewMessage(e.target.value)}/>
-                    <Button id="submit" variant="primary" onClick={()=>sendMessage(newMessage)}>
-                        Send
-                    </Button>
-                </Form.Group>
-            </Form>
-        </div>
-    </div>
-  )
+    )
 }
 
 export default Chat
