@@ -13,7 +13,7 @@
 \usepackage{xfrac}
 \usepackage{tabularx}
 \usepackage{float}
-\usepackage{siunitx}
+
 \usepackage{booktabs}
 \usepackage{multirow}
 \usepackage[section]{placeins}
@@ -21,12 +21,12 @@
 \usepackage{fullpage}
 
 \hypersetup{
-bookmarks=true,     % show bookmarks bar?
-colorlinks=true,       % false: boxed links; true: colored links
-linkcolor=red,          % color of internal links (change box color with linkbordercolor)
-citecolor=blue,      % color of links to bibliography
-filecolor=magenta,  % color of file links
-urlcolor=cyan          % color of external links
+	bookmarks=true,     % show bookmarks bar?
+	colorlinks=true,       % false: boxed links; true: colored links
+	linkcolor=red,          % color of internal links (change box color with linkbordercolor)
+	citecolor=blue,      % color of links to bibliography
+	filecolor=black,  % color of file links
+	urlcolor=cyan          % color of external links
 }
 
 \usepackage{array}
@@ -37,205 +37,2533 @@ urlcolor=cyan          % color of external links
 \input{../../Common}
 
 \begin{document}
-
-\title{Module Interface Specification for \progname{}}
-
-\author{Author Name}
-
-\date{\today}
-
-\maketitle
-
-\pagenumbering{roman}
-
-\section{Revision History}
-
-\begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
-\toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
-\midrule
-Date 1 & 1.0 & Notes\\
-Date 2 & 1.1 & Notes\\
-\bottomrule
-\end{tabularx}
-
-~\newpage
-
-\section{Symbols, Abbreviations and Acronyms}
-
-See SRS Documentation at \wss{give url}
-
-\wss{Also add any additional symbols, abbreviations or acronyms}
-
-\newpage
-
-\tableofcontents
-
-\newpage
-
-\pagenumbering{arabic}
-
-\section{Introduction}
-
-The following document details the Module Interface Specifications for
-\wss{Fill in your project name and description}
-
-Complementary documents include the System Requirement Specifications
-and Module Guide.  The full documentation and implementation can be
-found at \url{...}.  \wss{provide the url for your repo}
-
-\section{Notation}
-
-\wss{You should describe your notation.  You can use what is below as
-  a starting point.}
-
-The structure of the MIS for modules comes from \citet{HoffmanAndStrooper1995},
-with the addition that template modules have been adapted from
-\cite{GhezziEtAl2003}.  The mathematical notation comes from Chapter 3 of
-\citet{HoffmanAndStrooper1995}.  For instance, the symbol := is used for a
-multiple assignment statement and conditional rules follow the form $(c_1
-\Rightarrow r_1 | c_2 \Rightarrow r_2 | ... | c_n \Rightarrow r_n )$.
-
-The following table summarizes the primitive data types used by \progname. 
-
-\begin{center}
-\renewcommand{\arraystretch}{1.2}
-\noindent 
-\begin{tabular}{l l p{7.5cm}} 
-\toprule 
-\textbf{Data Type} & \textbf{Notation} & \textbf{Description}\\ 
-\midrule
-character & char & a single symbol or digit\\
-integer & $\mathbb{Z}$ & a number without a fractional component in (-$\infty$, $\infty$) \\
-natural number & $\mathbb{N}$ & a number without a fractional component in [1, $\infty$) \\
-real & $\mathbb{R}$ & any number in (-$\infty$, $\infty$)\\
-\bottomrule
-\end{tabular} 
-\end{center}
-
-\noindent
-The specification of \progname \ uses some derived data types: sequences, strings, and
-tuples. Sequences are lists filled with elements of the same data type. Strings
-are sequences of characters. Tuples contain a list of values, potentially of
-different types. In addition, \progname \ uses functions, which
-are defined by the data types of their inputs and outputs. Local functions are
-described by giving their type signature followed by their specification.
-
-\section{Module Decomposition}
-
-The following table is taken directly from the Module Guide document for this project.
-
-\begin{table}[h!]
-\centering
-\begin{tabular}{p{0.3\textwidth} p{0.6\textwidth}}
-\toprule
-\textbf{Level 1} & \textbf{Level 2}\\
-\midrule
-
-{Hardware-Hiding} & ~ \\
-\midrule
-
-\multirow{7}{0.3\textwidth}{Behaviour-Hiding} & Input Parameters\\
-& Output Format\\
-& Output Verification\\
-& Temperature ODEs\\
-& Energy Equations\\ 
-& Control Module\\
-& Specification Parameters Module\\
-\midrule
-
-\multirow{3}{0.3\textwidth}{Software Decision} & {Sequence Data Structure}\\
-& ODE Solver\\
-& Plotting\\
-\bottomrule
-
-\end{tabular}
-\caption{Module Hierarchy}
-\label{TblMH}
-\end{table}
-
-\newpage
-~\newpage
-
-\section{MIS of \wss{Module Name}} \label{Module} \wss{Use labels for
-  cross-referencing}
-
-\wss{You can reference SRS labels, such as R\ref{R_Inputs}.}
-
-\wss{It is also possible to use \LaTeX for hypperlinks to external documents.}
-
-\subsection{Module}
-
-\wss{Short name for the module}
-
-\subsection{Uses}
-
-
-\subsection{Syntax}
-
-\subsubsection{Exported Constants}
-
-\subsubsection{Exported Access Programs}
-
-\begin{center}
-\begin{tabular}{p{2cm} p{4cm} p{4cm} p{2cm}}
-\hline
-\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
-\hline
-\wss{accessProg} & - & - & - \\
-\hline
-\end{tabular}
-\end{center}
-
-\subsection{Semantics}
-
-\subsubsection{State Variables}
-
-\wss{Not all modules will have state variables.  State variables give the module
-  a memory.}
-
-\subsubsection{Environment Variables}
-
-\wss{This section is not necessary for all modules.  Its purpose is to capture
-  when the module has external interaction with the environment, such as for a
-  device driver, screen interface, keyboard, file, etc.}
-
-\subsubsection{Assumptions}
-
-\wss{Try to minimize assumptions and anticipate programmer errors via
-  exceptions, but for practical purposes assumptions are sometimes appropriate.}
-
-\subsubsection{Access Routine Semantics}
-
-\noindent \wss{accessProg}():
-\begin{itemize}
-\item transition: \wss{if appropriate} 
-\item output: \wss{if appropriate} 
-\item exception: \wss{if appropriate} 
-\end{itemize}
-
-\wss{A module without environment variables or state variables is unlikely to
-  have a state transition.  In this case a state transition can only occur if
-  the module is changing the state of another module.}
-
-\wss{Modules rarely have both a transition and an output.  In most cases you
-  will have one or the other.}
-
-\subsubsection{Local Functions}
-
-\wss{As appropriate} \wss{These functions are for the purpose of specification.
-  They are not necessarily something that is going to be implemented
-  explicitly.  Even if they are implemented, they are not exported; they only
-  have local scope.}
-
-\newpage
-
-\bibliographystyle {plainnat}
-\bibliography {../../../refs/References}
-
-\newpage
-
-\section{Appendix} \label{Appendix}
-
-\wss{Extra information if required}
-
+	
+	\title{Module Interface Specification for \progname{}}
+	
+	\author{\authname}
+	
+	\date{\today}
+	
+	\maketitle
+	
+	\pagenumbering{roman}
+	
+	\section{Revision History}
+	
+	\begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
+		\toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
+		\midrule
+		Jan 13th & 1.0 & Created MIS Document\\
+		Jan 14th & 1.1 & Assigned Sections\\
+		Jan 17th & 1.2 & Completed Modules\\
+		Jan 18th 2022 & 1.3 & Final Changes\\
+		\bottomrule
+	\end{tabularx}
+	
+	~\newpage
+	
+	\section{Symbols, Abbreviations and Acronyms}
+	
+	See SRS Documentation at \href{https://github.com/RutheniumVI/UnderTree/blob/main/docs/SRS/SRS.pdf}{SRS}
+	
+	\newpage
+	
+	\tableofcontents
+	
+	\newpage
+	
+	\pagenumbering{arabic}
+	
+	\section{Introduction}
+	
+	The following document details the Module Interface Specifications for
+	UnderTree.
+	
+	
+	\section{Notation}
+	
+	The structure of the MIS for modules comes from \citet{HoffmanAndStrooper1995},
+	with the addition that template modules have been adapted from
+	\cite{GhezziEtAl2003}.  The mathematical notation comes from Chapter 3 of
+	\citet{HoffmanAndStrooper1995}.  For instance, the symbol := is used for a
+	multiple assignment statement and conditional rules follow the form $(c_1
+	\Rightarrow r_1 | c_2 \Rightarrow r_2 | ... | c_n \Rightarrow r_n )$.
+	
+	The following table summarizes the primitive data types used by \progname. 
+	
+	\begin{center}
+		\renewcommand{\arraystretch}{1.2}
+		\noindent 
+		\begin{tabular}{l l p{7.5cm}} 
+			\toprule 
+			\textbf{Data Type} & \textbf{Notation} & \textbf{Description}\\ 
+			\midrule
+			character & char & a single symbol or digit\\
+			integer & $\mathbb{Z}$ & a number without a fractional component in (-$\infty$, $\infty$) \\
+			natural number & $\mathbb{N}$ & a number without a fractional component in [1, $\infty$) \\
+			real & $\mathbb{R}$ & any number in (-$\infty$, $\infty$)\\
+			boolean & $\mathbb{B}$ & a True or False value\\
+			\bottomrule
+		\end{tabular} 
+	\end{center}
+	
+	\noindent
+	The specification of \progname \ uses some derived data types: sequences, strings, and
+	tuples. Sequences are lists filled with elements of the same data type. Strings
+	are sequences of characters. Tuples contain a list of values, potentially of
+	different types. In addition, \progname \ uses functions, which
+	are defined by the data types of their inputs and outputs. Local functions are
+	described by giving their type signature followed by their specification.
+	
+	\section{Module Decomposition}
+	
+	The following table is taken directly from the Module Guide document for this project.
+	
+	\begin{table}[h!]
+		\centering
+		\begin{tabular}{p{0.3\textwidth} p{0.6\textwidth}}
+			\toprule
+			\textbf{Level 1} & \textbf{Level 2}\\
+			\midrule
+			
+			{Hardware-Hiding} & ~ \\
+			\midrule
+			
+			\multirow{7}{0.3\textwidth}{Behaviour-Hiding} & Input Parameters\\
+			& Output Format\\
+			& Output Verification\\
+			& Temperature ODEs\\
+			& Energy Equations\\ 
+			& Control Module\\
+			& Specification Parameters Module\\
+			\midrule
+			
+			\multirow{3}{0.3\textwidth}{Software Decision} & {Sequence Data Structure}\\
+			& ODE Solver\\
+			& Plotting\\
+			\bottomrule
+			
+		\end{tabular}
+		\caption{Module Hierarchy}
+		\label{TblMH}
+	\end{table}
+	
+	\newpage
+	
+	\section{MIS of PDF} \label{Module}
+	
+	\subsection{Module}
+	
+	PDF
+	
+	\subsection{Uses}
+	
+	PDFRenderer, FileServices
+	
+	\subsection{Syntax}
+	
+	\subsubsection{Exported Constants}
+	
+	N/A
+	
+	\subsubsection{Exported Access Programs}
+	
+	\begin{center}
+		\begin{tabular}{l l l l}
+			\hline
+			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			\hline
+			init & String, String & & \\
+			compilePDF & &  &  \\
+			downloadPDF &  &  &  \\
+			\hline
+		\end{tabular}
+	\end{center}
+	
+	\subsection{Semantics}
+	
+	\subsubsection{State Variables}
+	
+	\textit{projectName}: String
+	
+	\noindent \textit{fileName}: String
+	
+	\subsubsection{Environment Variables}
+	
+	\textit{pdfComponent}: The browser component that will display the PDF file\\
+	
+	\noindent \textit{errorRenderer}: The browser component that will display any error text\\
+	
+	\noindent \textit{fileDownloader}: The component responsible for downloading a file in a browser\\
+	
+	\noindent \textit{compileButton}: Button that will trigger the compilation of the LaTeX file, specifically calling the \textbf{compilePDF()} function when clicked\\
+	
+	\noindent \textit{downloadButton}: Button that will download the PDF unto to the user's PC, specifically calling the \textbf{downloadPDF()} function when clicked
+	
+	\subsubsection{Assumptions}
+	
+	Upon loading the editor page, the \textit{pdfComponent} displays an empty PDF file.
+	
+	\subsubsection{Access Routine Semantics}
+	
+	\noindent init(project, file):
+	\begin{itemize}
+		\item transition: \textit{projectName}, \textit{fileName} $:=$ project, file
+		
+		\noindent Render \textit{pdfComponent}. Also render \textit{compileButton}, and \textit{downloadButton} and attach onClickListerners on them. 
+	\end{itemize}
+	
+	\noindent compilePDF():
+	\begin{itemize}
+		\item transition: \textit{pdfComponent} $:=$ PDFRenderer.render(
+		
+		(FileServices.compilePDF(\textit{projectName}, \textit{fileName}).error $\equiv$ "") $\Rightarrow$\\
+		FileServices.compilePDF(\textit{projectName}, \textit{fileName}).fileData$|$\\
+		(FileServices.compilePDF(\textit{projectName}, \textit{fileName}).error $\neq$ "") $\Rightarrow$ NULL)
+		
+		\item transition: \textit{errorRenderer} $:=$
+		
+		(FileServices.compilePDF(\textit{projectName}, \textit{fileName})).error $\equiv$ "") $\Rightarrow$ NULL\\
+		$|$(FileServices.compilePDF(\textit{projectName}, \textit{fileName})).error $\neq$ "") $\Rightarrow$\\
+		FileServices.compilePDF(\textit{projectName}, \textit{fileName}).error
+	\end{itemize}
+	
+	\noindent downloadPDF():
+	\begin{itemize}
+		\item transition: \textit{fileDownloader} $:=$ add the file stored in \textit{pdfComponent} to the download queue of the browser in \textit{fileDownloader} regardless of whether the PDF file is empty or not.
+	\end{itemize}
+	
+	\subsubsection{Local Functions}
+	
+	N/A
+	
+	\newpage
+	
+	\section{MIS of File Services} \label{Module}
+	
+	\subsection{Module}
+	
+	FileServices
+	
+	\subsection{Uses}
+	
+	AuthService, PDFCompiler, FileDatabaseInterface
+	
+	\subsection{Syntax}
+	
+	\subsubsection{Exported Constants}
+	
+	N/A
+	
+	\subsubsection{Exported Access Programs}
+	
+	\footnotesize\begin{center}
+		\begin{tabular}{l  l  l  l}
+			\hline
+			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			\hline
+			compilePDF & String, String & tuple of (fileData: Sequence of $\mathbb{R}$, error: String) &  \\
+			\hline
+			renameFileByIndex & String, $\mathbb{N}$, String & & \\
+			\hline
+			createNewFile & String, String & & \\
+			\hline
+			uploadFile & String, String, String & & \\
+			\hline
+		\end{tabular}
+	\end{center}
+	\normalsize
+	
+	
+	\subsection{Semantics}
+	
+	\subsubsection{State Variables}
+	
+	N/A
+	
+	\subsubsection{Environment Variables}
+	
+	\textit{JWT}: JSON Web Token that is passed to the server from the user's client as a cookie
+	
+	\subsubsection{Assumptions}
+	
+	N/A
+	
+	\subsubsection{Access Routine Semantics}
+	
+	\noindent compilePDF(projectName, fileName):
+	\begin{itemize}
+		
+		\item output: out :=
+		AuthService.authenticate(\textit{JWT}, projectName) $\equiv$ true $\Rightarrow$(
+		(PDFCompiler.compile(FileDatabaseInterface.getFile(projectName, fileName)).error $\equiv$ NULL) $\Rightarrow$
+		$\langle$\\PDFCompiler.compile(FileDatabaseInterface.getFile(projectName, fileName)).data, ""$\rangle |$\\
+		(PDFCompiler.compile(FileDatabaseInterface.getFile(projectName, fileName)).error $\neq$ NULL) $\Rightarrow$\\
+		$\langle$"", PDFCompiler.compile(FileDatabaseInterface.getFile(projectName, fileName)).error$\rangle$) $|$\\
+		AuthService.authenticate(\textit{JWT}, projectName) $\equiv$ false $\Rightarrow$ $\langle$"", "failed to authenticate"$\rangle$
+		
+	\end{itemize}
+	
+	\noindent renameFileByIndex(projectName, currentFileIndex, newName):
+	\begin{itemize}
+		
+		\item output: out :=
+		AuthService.authenticate(\textit{JWT}, projectName) $\equiv$ true $\Rightarrow$ \\ FileDatabaseInterface.renameFile(projectName, index, fileName)
+		
+	\end{itemize}
+	
+	\noindent createNewFile(projectName, fileName):
+	\begin{itemize}
+		
+		\item output: out :=
+		AuthService.authenticate(\textit{JWT}, projectName) $\equiv$ true $\Rightarrow$ \\ FileDatabaseInterface.createNewFile(projectName, fileName)
+		
+	\end{itemize}
+	
+	\noindent uploadFile(projectName, fileName, fileData):
+	\begin{itemize}
+		
+		\item output: out :=
+		AuthService.authenticate(\textit{JWT}, projectName) $\equiv$ true $\Rightarrow$ \\
+		FileDatabaseInterface.createNewFile(projectName, fileName) $\Rightarrow$ \\ FileDatabaseInterface.writeToFile(projectName, filename, fileData)
+		
+	\end{itemize}
+	
+	\subsubsection{Local Functions}
+	
+	N/A
+	
+	\newpage
+	
+	\section{MIS of Chat} \label{Module}
+	
+	\subsection{Module}
+	
+	Chat
+	
+	\subsection{Uses}
+	
+	ChatServices, ChatSocket
+	
+	\subsection{Syntax}
+	
+	\subsubsection{Exported Constants}
+	
+	N/A
+	
+	\subsubsection{Exported Access Programs}
+	
+	\begin{center}
+		\begin{tabular}{l  l  l  l}
+			\hline
+			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			\hline
+			init & String & & \\
+			updateChatMessage & String & & \\
+			sendMessage & & & \\
+			processSocketEvents & & & \\
+			\hline
+		\end{tabular}
+	\end{center}
+	
+	\subsection{Semantics}
+	
+	\subsubsection{State Variables}
+	
+	\textit{projectName}: String
+	
+	\noindent \textit{connectedUsers}: Sequence of (tuple of (userName: String, profilePictureUrl: String))
+	
+	\noindent \textit{messages}: Sequence of (tuple of (userName: String, message: String))
+	
+	\noindent \textit{chatMessage}: String
+	
+	\subsubsection{Environment Variables}
+	
+	\noindent \textit{chatComponent}: The overall state of the chat interface.\\
+	
+	% \noindent \textit{chatSocket}: Used to communicate chat messages between users, connects to the Chat Socket Module in the Module Guide. When a new message event is emitted to this connection, it adds a "newMessage" to the chat or specifically calls the \\
+	% \textbf{addChatMessage(\textit{chatSocket.data.message})} function. When a "newUser" event is emitted, it calls the \textbf{addUser(\textit{chatSocket.data.user})} function. When a "userRemoved" event is emitted it calls the \textbf{removeUser(\textit{chatSocket.data.user})}\\
+	
+	\noindent \textit{messageInputField}: This input field is responsible for updating the chat message the user is sending, or specifically calls the \textbf{updateChatMessage(messageInputField.textValue)} function when the input value is updated.\\
+	
+	\noindent \textit{sendChatButton}: This button sends a new chat message from the user, or specifically calls the \textbf{sendChatMessage()} function when clicked.
+	
+	\subsubsection{Assumptions}
+	
+	\textit{messages} and \textit{connectedUsers} are automatically re-rendered once they change.
+	
+	\subsubsection{Access Routine Semantics}
+	
+	\noindent init(project):
+	\begin{itemize}
+		
+		\item transition: \textit{projectName, connectedUsers, messages} := project,\\ ChatServices.getConnectedUsers(project), ChatServices.getChatMessages(project)
+		
+		\item transition: \textit{chatComponent} $:=$ //Described by the following operational spec
+		
+		\noindent ChatSocket.connect(ChatServices.SERVER\_URL$||$project)
+		
+		\noindent Render messages, \textit{connectedUsers.userName}, and \textit{connectedUsers.profilePictureUrl}. Also render the \textit{sendChatButton} and \textit{messageInputField} on the user interface. Lastly, attach a onClickListener to the \textit{sendChatButton} and a keyPressListener to \textit{messageInputField}.
+		
+	\end{itemize}
+	
+	\noindent updateChatMessage(newMessage):
+	\begin{itemize}
+		\item transition: \textit{chatMessage} $:=$ newMessage
+	\end{itemize}
+	
+	\noindent sendMessage():
+	\begin{itemize}
+		\item transition: \textit{chatComponent} $:=$ //Described by the following operational spec 
+		
+		ChatSocket.emit("newMessage",  \textit{chatMessage})
+	\end{itemize}
+	
+	\noindent processSocketEvents():\\
+	
+	\noindent Data is the JSON fields passed into the socket event into each event and then passed into each conditional. These events can be emitted from other clients or the Chat Services Module.
+	
+	\begin{itemize}
+		
+		\item transition: \textit{connectUsers} $:=$ \\
+		ChatSocket.on("newUser", data) $\Rightarrow$ \textit{connectedUsers}$|| \langle \langle$data.userName, data.profilePictureUrl$\rangle \rangle$ $|$ ChatSocket.on("userRemoved", data) $\Rightarrow \langle$user : tuple of (userName: String, profilePictureUrl: String)$|$user $\in$ \textit{connectedUsers} $\land$ user.userName $\neq$ data.userName : $\langle$user.userName, user.profilePictureUrl$\rangle\rangle$
+		
+		\item transition: \textit{messages} $:=$ \\
+		ChatSocket.on("newMessage", data) $\Rightarrow$ \textit{messages}$|| \langle \langle$data.userName, data.message$\rangle \rangle$
+	\end{itemize}
+	
+	\subsubsection{Local Functions}
+	
+	N/A
+	
+	\newpage
+	
+	\section{MIS of Chat Data} \label{Module}
+	
+	\subsection{Module}
+	
+	ChatData
+	
+	\subsection{Uses}
+	
+	N/A
+	
+	\subsection{Syntax}
+	
+	\subsubsection{Exported Data Types}
+	
+	ChatMessage: tuple of (userName: String, message: String)
+	
+	\noindent ConnectedUser: tuple of (userName: String, profilePictureUrl: String)
+	
+	\subsubsection{Exported Constants}
+	
+	N/A
+	
+	\subsubsection{Exported Access Programs}
+	
+	N/A
+	
+	\subsection{Semantics}
+	
+	\subsubsection{State Variables}
+	
+	N/A
+	
+	\subsubsection{Environment Variables}
+	
+	N/A
+	
+	\subsubsection{Assumptions}
+	
+	N/A
+	
+	\subsubsection{Access Routine Semantics}
+	
+	N/A
+	
+	\subsubsection{Local Functions}
+	
+	N/A
+	
+	\newpage
+	
+	\section{MIS of Chat Services} \label{Module}
+	
+	\subsection{Module}
+	
+	ChatServices
+	
+	\subsection{Uses}
+	
+	ChatData, ChatDatabaseInterface, ChatSocket, AuthService
+	
+	\subsection{Syntax}
+	
+	\subsubsection{Exported Constants}
+	
+	SERVER\_URL: The url of the main chat socket on the server.
+	
+	\subsubsection{Exported Access Programs}
+	
+	\begin{center}
+		\begin{tabular}{l  l  l  l}
+			\hline
+			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			\hline
+			getConnectedUsers & String & Sequence of ChatData.ConnectedUser & \\
+			getChatMessages & String & Sequence of ChatData.ChatMessage & \\
+			processSocketEvents & & & \\
+			\hline
+		\end{tabular}
+	\end{center}
+	
+	\subsection{Semantics}
+	
+	\subsubsection{State Variables}
+	
+	N/A
+	
+	\subsubsection{Environment Variables}
+	
+	\textit{httpServer}: The REST API server setup in the backend that processes all requests on "/connectedUsers" to \textbf{getConnectedUsers(project)} and "/chatMessages" to \textbf{getChatMessages(project)}.\\
+	
+	\noindent \textit{JWT}: JSON Web Token that is passed to the server from the user's client as a cookie
+	
+	\subsubsection{Assumptions}
+	
+	\textit{httpServer} is initialized before any of the functions are called in this module.
+	
+	\subsubsection{Access Routine Semantics}
+	
+	\noindent getConnectedUsers(project):
+	\begin{itemize}
+		
+		\item output: out $:=$ AuthService.authenticate(\textit{JWT}, project) $\equiv$ true $\Rightarrow$ ChatDatabaseInterface.getConnectedUsers(project) $|$
+		AuthService.authenticate(\textit{JWT}, project) $\equiv$ false $\Rightarrow$ $\langle \rangle$
+		
+	\end{itemize}
+	
+	\noindent getChatMessages(project):
+	\begin{itemize}
+		\item output: out $:=$ AuthService.authenticate(\textit{JWT}, project) $\equiv$ true $\Rightarrow$ ChatDatabaseInterface.getChatMessages(project) $|$
+		AuthService.authenticate(\textit{JWT}, project) $\equiv$ false $\Rightarrow$ $\langle \rangle$
+	\end{itemize}
+	
+	\noindent processSocketEvents():\\
+	
+	\noindent Data is the JSON fields passed into the socket event into each event and then passed into each conditional. These events can be emitted from other clients or the Chat Services Module.
+	
+	\begin{itemize}
+		
+		\item transition: //Described by the following operational spec
+		
+		(ChatSocket.on("connected", data) $\land$ AuthService.authenticate(\textit{JWT}, project) $\equiv$ true) $\Rightarrow$ (ChatDatabaseInterface.addUser(data.userName, data.profilePictureUrl, data.project) $\land$ ChatSocket.emit("newUser", data)) $|$\\
+		ChatSocket.on("connected", data) $\land$ AuthService.authenticate(\textit{JWT}, project) $\equiv$ false) $\Rightarrow$ (ChatSocket.disconnect(data.userName))\\
+		
+		(ChatSocket.on("disconnect", data) $\Rightarrow$ (ChatDatabaseInterface.removeUser(data.userName, data.project) $\land$ ChatSocket.emit("userRemoved", data))\\
+		
+		(ChatSocket.on("newMessage", data) $\land$ AuthService.authenticate(\textit{JWT}, project) $\equiv$ true) $\Rightarrow$ (ChatDatabaseInterface.addMessage(data.userName, data.message, data.project) $|$\\
+		(ChatSocket.on("newMessage", data) $\land$ AuthService.authenticate(\textit{JWT}, project) $\equiv$ false) $\Rightarrow$ (ChatSocket.disconnect(data.userName))
+		
+	\end{itemize}
+	
+	\subsubsection{Local Functions}
+	
+	N/A
+	
+	\newpage
+	
+	\section{MIS of Chat Database Interface} \label{Module}
+	
+	\subsection{Module}
+	
+	ChatDatabaseInterface
+	
+	\subsection{Uses}
+	
+	ChatData, MongoDB
+	
+	\subsection{Syntax}
+	
+	\subsubsection{Exported Constants}
+	
+	N/A
+	
+	\subsubsection{Exported Access Programs}
+	
+	\begin{center}
+		\begin{tabular}{l  l  l  l}
+			\hline
+			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			\hline
+			getConnectedUsers & String & Sequence of ChatData.ConnectedUser & \\
+			getChatMessages & String & Sequence of ChatData.ChatMessage & \\
+			addUser & String, String, String & & \\
+			removeUser & String, String & & \\
+			addMessage & String, String, String & & \\
+			\hline
+		\end{tabular}
+	\end{center}
+	
+	\subsection{Semantics}
+	
+	\subsubsection{State Variables}
+	
+	\subsubsection{Environment Variables}
+	
+	N/A
+	
+	\subsubsection{Assumptions}
+	
+	N/A
+	
+	\subsubsection{Access Routine Semantics}
+	
+	\noindent getConnectedUsers(projectName):
+	\begin{itemize}
+		
+		\item output: out := Return the list of users associated with projectName in the chatUsers documents from MongoDB
+		
+	\end{itemize}
+	
+	\noindent getChatMessages(projectName):
+	\begin{itemize}
+		
+		\item output: out := Return all the chat messages in ascending order of time added with projectName in the chat documents from MongoDB
+		
+	\end{itemize}
+	
+	\noindent addUser(userName, profilePictureUrl, projectName):
+	\begin{itemize}
+		
+		\item output: out := Add a new user to chatUsers document with projectName in MongoDB with the following data ChatData.ConnectedUser(userName, profilePicture)
+		
+	\end{itemize}
+	
+	\noindent removeUser(userName, projectName):
+	\begin{itemize}
+		
+		\item output: out := Add a new user to chatUsers document with projectName and ChatData.ConnectedUser.userName $equiv$ userName in MongoDB
+		
+	\end{itemize}
+	
+	\noindent addMessage(userName, message, projectName):
+	\begin{itemize}
+		
+		\item output: out := Add a new message to chat document with projectName in MongoDB with the following data ChatData.ChatMessage(userName, message)
+		
+	\end{itemize}
+	
+	\subsubsection{Local Functions}
+	
+	N/A
+	
+	\newpage
+	
+	\section{MIS of Instructions View} \label{Module}
+	
+	\subsection{Module}
+	
+	InstructionsView
+	
+	\subsection{Uses}
+	
+	N/A
+	
+	\subsection{Syntax}
+	
+	\subsubsection{Exported Constants}
+	
+	N/A
+	
+	\subsubsection{Exported Access Programs}
+	
+	\begin{center}
+		\begin{tabular}{l l l l}
+			\hline
+			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			\hline
+			init & & & \\
+			openInstructions & &  &  \\
+			closeInstructions &  &  &  \\
+			\hline
+		\end{tabular}
+	\end{center}
+	
+	\subsection{Semantics}
+	
+	\subsubsection{State Variables}
+	
+	\textit{isOpen}: $\mathbb{B}$
+	
+	\subsubsection{Environment Variables}
+	
+	\textit{instructionsModal}: The popup UI component for displaying the instructions\\
+	
+	\noindent \textit{openButton}: Button that will trigger the \textbf{openInstructions()} function when clicked\\
+	
+	\noindent \textit{closeButton}: Button that will trigger the \textbf{closeInstructions()} function when clicked
+	
+	\subsubsection{Assumptions}
+	
+	The init function is ran on page load
+	
+	\subsubsection{Access Routine Semantics}
+	
+	\noindent init(project, file):
+	\begin{itemize}
+		\item transition: \textit{isOpen} $:=$ false
+		
+		\noindent Render \textit{openButton} and \textit{closeButton}, and attach onClickListerners on them. 
+	\end{itemize}
+	
+	\noindent openInstructions():
+	\begin{itemize}
+		\item transition: instructionsModal $:=$ \textit{isOpen} $\equiv$ false $\Rightarrow$ instructionModal.render()
+	\end{itemize}
+	
+	\noindent closeInstructions():
+	\begin{itemize}
+		\item transition: instructionsModal $:=$ \textit{isOpen} $\equiv$ true $\Rightarrow$ instructionModal.unRender()
+	\end{itemize}
+	
+	\subsubsection{Local Functions}
+	
+	N/A
+	
+	\newpage
+	
+	\section{MIS of File Database Interface} \label{Module}
+	
+	\subsection{Module}
+	
+	FileDatabaseInterface
+	
+	\subsection{Uses}
+	
+	MongoDB
+	
+	\subsection{Syntax}
+	
+	\subsubsection{Exported Constants}
+	
+	N/A
+	
+	\subsubsection{Exported Access Programs}
+	
+	\begin{center}
+		\begin{tabular}{l  l  l  l}
+			\hline
+			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			\hline
+			getFile & String, String & String &  RecordDoesNotExist \\
+			\hline
+			renameFileByIndex & String, $\mathbb{N}$ & String &  RecordDoesNotExist \\
+			\hline
+			createNewFile & String, String & String &  ~ \\
+			\hline
+			writeToFile & String, String, String & String &  RecordDoesNotExist \\
+			\hline
+		\end{tabular}
+	\end{center}
+	
+	\subsection{Semantics}
+	
+	\subsubsection{State Variables}
+	
+	\subsubsection{Environment Variables}
+	
+	\textit{MongoDB}: MongoDB is a database where the projects and files will be stored which can be represented mathematically as a set of projects which has a list of files
+	
+	\subsubsection{Assumptions}
+	
+	N/A
+	
+	\subsubsection{Access Routine Semantics}
+	
+	\noindent getFile(projectName, fileName):
+	\begin{itemize}
+		
+		\item output: out := Return the file associated with the projectName and fileName from MongoDB if it exists
+		
+		\item exception: exc := Throw a RecordDoesNotExist exception if no such record exists in MongoDB
+		
+	\end{itemize}
+	
+	\noindent renameFileByIndex(projectName, index, newName):
+	\begin{itemize}
+		
+		\item output: out := ($\exists p| p \in \text{MongoDB} : \text{p.projectName} \equiv \text{projectName}$) $\Rightarrow$ (p.files[index].fileName $:=$ newName)
+		
+		\item exception: exc := Throw a RecordDoesNotExist exception if no such record exists in MongoDB
+		
+	\end{itemize}
+	
+	\noindent createNewFile(projectName, fileName):
+	\begin{itemize}
+		
+		\item output: out := Creates a new file entry in the MongoDB database with the requested projectName and fileName
+		
+		\item exception: N/A
+		
+	\end{itemize}
+	
+	\noindent writeToFile(projectName, fileName, fileData):
+	\begin{itemize}
+		
+		\item transition: $\exists p| p \in \text{MongoDB} ~\land~ \text{p.projectName} \equiv \text{projectName}: (\exists f| f \in p.files ~\land ~ \text{f.fileName} \equiv \text{fileName}:  $ f.content $:=$ fileData)
+		
+		\item exception: exc := Throw a RecordDoesNotExist exception if no such record exists in MongoDB
+		
+	\end{itemize}
+	
+	\subsubsection{Local Functions}
+	
+	N/A
+	
+	\newpage
+	
+	\section{MIS of Project Editing} \label{Module} 
+	
+	\subsection{Module}
+	
+	ProjectEditor
+	
+	\subsection{Uses}
+	ProjectDetails, PDF, FileList, Editor, Chat
+	
+	\subsection{Syntax}
+	
+	\subsubsection{Exported Constants}
+	
+	\subsubsection{Exported Access Programs}
+	
+	\begin{center}
+		\begin{tabular}{p{2cm} p{4cm} p{4cm} p{2cm}}
+			\hline
+			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			\hline
+			ProjectEditor &  &  & - \\
+			\hline
+		\end{tabular}
+	\end{center}
+	
+	\subsection{Semantics}
+	
+	\subsubsection{State Variables}
+	
+	
+	\subsubsection{Environment Variables}
+	
+	\textit{editor}: editor is the area where the current file to be edited will displayed \\\\ 
+	\textit{fileList}: fileList is the area where the list of file in the current project will be displayed \\\\
+	\textit{projectDetails}: projectDetails is the area where the details such as name and collaborators of the file will be displayed \\\\
+	\textit{pdf}: pdf is the area where the compiled pdf of the current LaTex file will be shown \textit{chat}: chat is the area where chat between collaborators will be shown 
+	
+	\subsubsection{Assumptions}
+	N/A
+	
+	\subsubsection{Access Routine Semantics}
+	
+	\noindent ProjectEditor():
+	\begin{itemize}
+		\item transition: renders \textit{editor}, \textit{fileList}, \textit{projectDetails}, \textit{pdf}, \textit{chat}
+		% \item output: \wss{if appropriate} 
+		\item exception: N/A
+	\end{itemize}
+	
+	\subsubsection{Local Functions}
+	
+	N/A
+	
+	\newpage
+	
+	\section{MIS of File List} \label{Module} 
+	
+	\subsection{Module}
+	
+	FileList
+	
+	\subsection{Uses}
+	FileToolbar, FileServices, ProjectServices
+	
+	\subsection{Syntax}
+	
+	\subsubsection{Exported Constants}
+	
+	\subsubsection{Exported Access Programs}
+	
+	\begin{center}
+		\begin{tabular}{p{4cm} p{2cm} p{2cm} p{2cm}}
+			\hline
+			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			\hline
+			FileList  & ~ &  & ~ \\
+			\hline
+			openFilePressed & $\mathbb{N}$ & ~ & ~ \\
+			\hline
+		\end{tabular}
+	\end{center}
+	
+	\subsection{Semantics}
+	
+	\subsubsection{State Variables}
+	
+	projectName: String
+	
+	\subsubsection{Environment Variables}
+	
+	\textit{fileListArea}: is the GUI component that contains the \textit{fileToolbar} and \textit{listArea}\\\\
+	\textit{fileToolbar}: fileToolbar is a toolbar to do quick actions on file which is implemented by FileToolbar Module\\\\
+	\textit{listArea}: listArea is a list which renders multiple GUI components into a list\\\\
+	\textit{fileButton}: fileButton is a gui component that will trigger openFilePressed()
+	
+	\subsubsection{Assumptions}
+	N/A
+	
+	\subsubsection{Access Routine Semantics}
+	
+	\noindent FileList(project):
+	\begin{itemize}
+		\item transition: \\
+		projectName $:=$ project \\\\
+		$\forall i | 0 \leq i \leq \text{SIZE}: \text{add(ProjectServices.getFilesName(projectName, fileName)[i], i)}$ where SIZE is the size of the list returned by ProjectServices.getFilesName(projectName, fileName) \\\\
+		render \textit{fileToolbar} and \textit{listArea} in fileList Area
+		\item exception: N/A
+	\end{itemize}
+	
+	\subsubsection{Local Functions}
+	
+	\noindent add(fileName):
+	\begin{itemize}
+		\item transition: add a new \textit{fileButton} with the name \textit{filename} to \textit{listArea} where when \textit{fileButton} is pressed, it will call openFilePressed(fileName) \\
+	\end{itemize}
+	
+	\newpage
+	
+	\section{MIS of File Toolbar} \label{Module} 
+	
+	\subsection{Module}
+	
+	FileToolbar
+	
+	\subsection{Uses}
+	NewFile, UploadFile, DeleteFile, FileServices
+	
+	\subsection{Syntax}
+	
+	\subsubsection{Exported Constants}
+	
+	\subsubsection{Exported Access Programs}
+	
+	\begin{center}
+		\begin{tabular}{p{4cm} p{2cm} p{2cm} p{4cm}}
+			\hline
+			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			\hline
+			FileToolbar  & ~ &  & ~ \\
+			\hline
+			newFilePressed & ~ & ~ & ~ \\
+			\hline
+			uploadFilePressed & ~ & ~ & ~ \\
+			\hline
+			deleteFilePressed & ~ & ~ & ~ \\
+			\hline
+			renameFilePressed & ~ & ~ & RenameFailed \\
+			\hline
+		\end{tabular}
+	\end{center}
+	
+	\subsection{Semantics}
+	
+	\subsubsection{State Variables}
+	
+	projectName: String\\
+	currentFileIndex: $\mathbb{N}$
+	
+	\subsubsection{Environment Variables}
+	
+	\textit{newFileButton}: is a button that will trigger newFilePressed() when it is pressed\\\\
+	\textit{uploadFileButton}: is a button that will trigger uploadFilePressed() when it is pressed\\\\
+	\textit{deleteFileButton}: is a button that will trigger deleteFilePressed() when it is pressed\\\\
+	\textit{renameFileButton}: is a button that will trigger renameFilePressed() when it is pressed\\\\
+	\textit{newFileModal}: is a modal implemented by NewFile module\\\\
+	\textit{uploadFileModal}: is a modal implemented by UploadFile module\\\\
+	\textit{renameFileInputField}: it is an input field used to type a new name for the file\\\\
+	
+	\subsubsection{Assumptions}
+	N/A
+	
+	\subsubsection{Access Routine Semantics}
+	
+	\noindent FileToolbar(project, index):
+	\begin{itemize}
+		\item transition: \\
+		projectName $:=$ project \\
+		currentFileIndex $:=$ index \\
+		render \textit{newFileButton} and \textit{uploadFileButton}
+		\item exception: N/A
+	\end{itemize}
+	
+	\noindent newFilePressed():
+	\begin{itemize}
+		\item transition: render \textit{newFileModal} and make it visible
+		\item exception: N/A
+	\end{itemize}
+	
+	\noindent uploadFilePressed():
+	\begin{itemize}
+		\item transition: render \textit{uploadFileModal} and make it visible
+		\item exception: N/A
+	\end{itemize}
+	
+	\noindent deleteFilePressed():
+	\begin{itemize}
+		\item transition: renders \textit{deleteFileModal} modal onto the screen using the current file index as a parameter: DeleteFile(currentFileIndex)
+		\item exception: N/A
+	\end{itemize}
+	
+	\noindent renameFilePressed():
+	\begin{itemize}
+		\item transition: renders \textit{renameFileInputField} on top of the button of the current file selected in the list of files. Once the new name is typed and \textit{Enter} key is pressed, the following steps will happen: \\\\
+		FileServices.renameFileInProjectByIndex(projectName, currentFileIndex, newName) where \textit{newName} is the name typed in \textit{renameFileInputField}
+		\item exception: RenameFailed
+	\end{itemize}
+	
+	\subsubsection{Local Functions}
+	N/A
+	
+	\newpage
+	
+	\section{MIS of New File} \label{Module} 
+	\# This module is a GUI component
+	\subsection{Module}
+	
+	NewFile
+	
+	\subsection{Uses}
+	FileServices
+	
+	\subsection{Syntax}
+	
+	\subsubsection{Exported Constants}
+	
+	\subsubsection{Exported Access Programs}
+	
+	\begin{center}
+		\begin{tabular}{p{2cm} p{4cm} p{4cm} p{2cm}}
+			\hline
+			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			\hline
+			NewFile &  &  & - \\
+			\hline
+			confirmButtonPressed &  &  & FileNotCreated \\
+			\hline
+			cancelButtonPressed &  &  & - \\
+			\hline
+		\end{tabular}
+	\end{center}
+	
+	\subsection{Semantics}
+	
+	\subsubsection{State Variables}
+	\textit{projectName}: String
+	
+	
+	\subsubsection{Environment Variables}
+	
+	\textit{fileNameInputField}: input field where the name of the file will be inputted \\\\
+	\textit{confirmButton}: button that will trigger confirmButtonPressed when it is pressed \\\\ 
+	\textit{cancelButton}: button that will trigger cancelButtonPressed when it is pressed \\\\ 
+	
+	\subsubsection{Assumptions}
+	N/A
+	
+	\subsubsection{Access Routine Semantics}
+	
+	\noindent NewFile(project):
+	\begin{itemize}
+		\item transition:\\
+		projectName $:=$ project \\
+		renders \textit{fileNameInputField}, \textit{confirmButton}, \textit{cancelButton}
+		\item exception: N/A
+	\end{itemize}
+	
+	\noindent confirmButtonPressed():
+	\begin{itemize}
+		\item transition: FileServices.createNewFile(projectName)\\
+		\item exception: FileNotCreated
+	\end{itemize}
+	
+	\noindent cancelButtonPressed():
+	\begin{itemize}
+		\item transition: closes this modal
+		\item exception: N/A
+	\end{itemize}
+	
+	\subsubsection{Local Functions}
+	
+	N/A
+	
+	\newpage
+	
+	\section{MIS of Upload File} \label{Module} 
+	\# This module is a GUI component
+	\subsection{Module}
+	
+	UploadFile
+	
+	\subsection{Uses}
+	FileServices
+	
+	\subsection{Syntax}
+	
+	\subsubsection{Exported Constants}
+	
+	\subsubsection{Exported Access Programs}
+	
+	\begin{center}
+		\begin{tabular}{p{2cm} p{4cm} p{4cm} p{2cm}}
+			\hline
+			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			\hline
+			UploadFile &  &  & - \\
+			\hline
+			confirmButtonPressed &  &  & FileNotCreated \\
+			\hline
+			cancelButtonPressed &  &  & - \\
+			\hline
+			onChange &  &  & - \\
+			\hline
+		\end{tabular}
+	\end{center}
+	
+	\subsection{Semantics}
+	
+	\subsubsection{State Variables}
+	\textit{projectName}: String\\
+	\textit{file}: File \# File is web representation of a file
+	
+	
+	\subsubsection{Environment Variables}
+	
+	\textit{fileInput}: file uploader GUI component that opens the window that lets you choose your local file and will trigger onChange(event) once file is selected \\\\
+	\textit{confirmButton}: button that will trigger confirmButtonPressed when it is pressed \\\\ 
+	\textit{cancelButton}: button that will trigger cancelButtonPressed when it is pressed \\\\ 
+	
+	\subsubsection{Assumptions}
+	N/A
+	
+	\subsubsection{Access Routine Semantics}
+	
+	\noindent UploadFile(project):
+	\begin{itemize}
+		\item transition:\\
+		projectName $:=$ project \\
+		renders \textit{fileInput}, \textit{confirmButton}, \textit{cancelButton}
+		\item exception: N/A
+	\end{itemize}
+	
+	\noindent confirmButtonPressed():
+	\begin{itemize}
+		\item transition: FileServices.uploadFile(projectName, file)\\
+		\item exception: FileNotCreated
+	\end{itemize}
+	
+	\noindent cancelButtonPressed():
+	\begin{itemize}
+		\item transition: closes this modal
+		\item exception: N/A
+	\end{itemize}
+	
+	\noindent onChange(event):
+	\begin{itemize}
+		\item transition: file $:=$ event.target.files[0]
+		\item exception: N/A
+	\end{itemize}
+	
+	\subsubsection{Local Functions}
+	
+	N/A
+	
+	
+	\newpage
+	
+	
+	\section{MIS of Editor File} \label{Module} 
+	\# This module is a GUI component
+	\subsection{Module}
+	
+	Editor
+	
+	\subsection{Uses}
+	UserCursor, TextHighlighting, SyntaxHighlighting, SpellingError, FileSynchronization
+	
+	\subsection{Syntax}
+	
+	\subsubsection{Exported Constants}
+	
+	\subsubsection{Exported Access Programs}
+	
+	\begin{center}
+		\begin{tabular}{p{2cm} p{4cm} p{4cm} p{2cm}}
+			\hline
+			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			\hline
+			Editor &  &  & - \\
+			\hline
+		\end{tabular}
+	\end{center}
+	
+	\subsection{Semantics}
+	
+	\subsubsection{State Variables}
+	
+	
+	\subsubsection{Environment Variables}
+	
+	\textit{quill}: quill is the editor component that is implemented by Quill.js libary\\
+	\textit{localStorage}: localStorage is storage used by the browser which Undertree will use to store data such as username \\
+	\textit{websocketProvider}: websocketProvider is a web socket used by the YJS library to synchronize file content between the collaborators
+	
+	\subsubsection{Assumptions}
+	N/A
+	
+	\subsubsection{Access Routine Semantics}
+	
+	\noindent Editor(project):
+	\begin{itemize}
+		\item transition: \\
+		Register UserCursor, SyntaxHighlighting, SpellingError modules with \textit{quill} \\\\
+		Bind \textit{quill} to \textit{webSocketProvider} so that the editor is synchronized using YJS's websocket.\\\\
+		Render the \textit{quill} component
+		\item exception: N/A
+	\end{itemize}
+	
+	\subsubsection{Local Functions}
+	
+	N/A
+	
+	
+	\newpage
+	
+	\section{MIS of Projects} \label{Module} 
+	
+	\subsection{Module}
+	
+	Projects
+	
+	\subsection{Uses}
+	ProjectList, ProjectCreation
+	
+	\subsection{Syntax}
+	
+	\subsubsection{Exported Constants}
+	
+	\subsubsection{Exported Access Programs}
+	
+	\begin{center}
+		\begin{tabular}{p{2cm} p{4cm} p{4cm} p{2cm}}
+			\hline
+			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			\hline
+			createProjectButtonPressed &  &  & - \\
+			\hline
+		\end{tabular}
+	\end{center}
+	
+	\subsection{Semantics}
+	
+	\subsubsection{State Variables}
+	
+	
+	\subsubsection{Environment Variables}
+	
+	\textit{createProjectButton}: a button that leads to the project creation screen implemented in the projectCreation module, triggers the createProjectButtonPressed() function \\\\ 
+	\textit{projectList}: a GUI component implemented in the projectList module \\\\
+	
+	\subsubsection{Assumptions}
+	N/A
+	
+	\subsubsection{Access Routine Semantics}
+	
+	\noindent createProjectButtonPressed():
+	\begin{itemize}
+		\item transition: triggers ProjectCreation.ProjectCreation()
+		% \item output: \wss{if appropriate} 
+		\item exception: N/A
+	\end{itemize}
+	
+	\subsubsection{Local Functions}
+	
+	N/A
+	
+	\newpage
+	
+	\section{MIS of Project List} \label{Module} 
+	
+	\subsection{Module}
+	
+	ProjectList
+	
+	\subsection{Uses}
+	ProjectServices, ProjectDeletion
+	
+	\subsection{Syntax}
+	
+	\subsubsection{Exported Constants}
+	
+	\subsubsection{Exported Access Programs}
+	
+	\begin{center}
+		\begin{tabular}{p{2cm} p{4cm} p{4cm} p{2cm}}
+			\hline
+			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			\hline
+			ProjectList &  &  & - \\
+			\hline
+			openButtonPressed &  &  & - \\
+			\hline
+			deleteButtonPressed &  &  & - \\
+			\hline
+		\end{tabular}
+	\end{center}
+	
+	\subsection{Semantics}
+	
+	\subsubsection{State Variables}
+	\textit{selectedProject}: String
+	
+	\subsubsection{Environment Variables}
+	
+	\textit{projectList}: projectList is the area where the list of projects is displayed \\\\ 
+	\textit{projectLabel}: project is a block in the projectList for an individual project being displayed\\\\
+	\textit{openButton}: openButton is a button next to a projectLabel, clicking it triggers openButtonPressed()\\\\
+	\textit{deleteButton}: deleteButton is a button next to a projectLabel, clicking it triggers deleteButtonPressed() \\\\
+	
+	\subsubsection{Assumptions}
+	N/A
+	
+	\subsubsection{Access Routine Semantics}
+	
+	\noindent openButtonPressed():
+	\begin{itemize}
+		\item transition: triggers ProjectEditing.ProjectEditor()
+		% \item output: \wss{if appropriate} 
+		\item exception: N/A
+	\end{itemize}
+	
+	\noindent deleteButtonPressed():
+	\begin{itemize}
+		\item transition: triggers ProjectDeletion.ProjectDeletion()
+		% \item output: \wss{if appropriate} 
+		\item exception: N/A
+	\end{itemize}
+	
+	\noindent ProjectList():
+	\begin{itemize}
+		\item transition: renders ProjectList module
+		% \item output: \wss{if appropriate} 
+		\item exception: N/A
+	\end{itemize}
+	
+	\subsubsection{Local Functions}
+	
+	N/A
+	
+	\newpage
+	
+	\section{MIS of Project Deletion} \label{Module} 
+	
+	\subsection{Module}
+	
+	ProjectDeletion
+	
+	\subsection{Uses}
+	ProjectServices
+	
+	\subsection{Syntax}
+	
+	\subsubsection{Exported Constants}
+	
+	\subsubsection{Exported Access Programs}
+	
+	\begin{center}
+		\begin{tabular}{p{2cm} p{4cm} p{4cm} p{2cm}}
+			\hline
+			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			\hline
+			ProjectDeletion & & & - \\
+			\hline
+			confirmButtonPressed & & & - \\
+			\hline
+			cancelButtonPressed & & & - \\
+			\hline
+		\end{tabular}
+	\end{center}
+	
+	\subsection{Semantics}
+	
+	\subsubsection{State Variables}
+	\textit{projectName}: String \\
+	\textit{ownerName}: String
+	
+	\subsubsection{Environment Variables}
+	
+	\textit{confirmButton}: confirmButton is the button that will appear in the modal to confirm delete action. It will trigger the confirmButtonPressed() function. \\\\ 
+	\textit{confirmActionMessage}: confirmActionMessage is a text message that will ask the user if they are sure they want to delete the selected project \\\\
+	\textit{cancelButton}: cancelButton is the button that will appear in the modal to abort deletion and return, it will trigger the cancelButtonPressed() function \\\\ 
+	\textit{successMessage}: a message showing that the deletion was successful
+	
+	\subsubsection{Assumptions}
+	N/A
+	
+	\subsubsection{Access Routine Semantics}
+	
+	\noindent ProjectDeletion():
+	\begin{itemize}
+		\item transition: renders ProjectDeletion module
+		% \item output: \wss{if appropriate} 
+		\item exception: N/A
+	\end{itemize}
+	
+	\noindent confirmButtonPressed():
+	\begin{itemize}
+		\item transition: triggers ProjectServices.deleteProject(projectName, ownerName), renders \textit{successMessage}, closes \textit{confirmActionMessage}
+		% \item output: \wss{if appropriate} 
+		\item exception: N/A
+	\end{itemize}
+	
+	\noindent cancelButtonPressed():
+	\begin{itemize}
+		\item transition: closes \textit{confirmActionMessage}
+		% \item output: \wss{if appropriate} 
+		\item exception: N/A
+	\end{itemize}
+	
+	
+	\subsubsection{Local Functions}
+	
+	N/A
+	
+	\newpage
+	
+	\section{MIS of Project Creation} \label{Module} 
+	
+	\subsection{Module}
+	
+	ProjectCreation
+	
+	\subsection{Uses}
+	NewProject, ImportProject
+	
+	\subsection{Syntax}
+	
+	\subsubsection{Exported Constants}
+	
+	\subsubsection{Exported Access Programs}
+	
+	\begin{center}
+		\begin{tabular}{p{2cm} p{4cm} p{4cm} p{2cm}}
+			\hline
+			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			\hline
+			ProjectCreation &  &  & - \\
+			\hline
+			newButtonPressed &  &  & - \\
+			\hline
+			importButtonPressed &  &  & - \\
+			\hline
+		\end{tabular}
+	\end{center}
+	
+	\subsection{Semantics}
+	
+	\subsubsection{State Variables}
+	
+	\subsubsection{Environment Variables}
+	
+	\textit{createNewButton}: button that will allow user to create a project from scratch, triggers newButtonPressed() \\\\ 
+	\textit{createFromImportButton}: button that will allow user to import a project, triggers importButtonPressed() \\\\
+	
+	\subsubsection{Assumptions}
+	N/A
+	
+	\subsubsection{Access Routine Semantics}
+	
+	\noindent newButtonPressed():
+	\begin{itemize}
+		\item transition: triggers NewProject.NewProject()
+		% \item output: \wss{if appropriate} 
+		\item exception: N/A
+	\end{itemize}
+	\noindent importButtonPressed():
+	\begin{itemize}
+		\item transition: triggers ImportProject.ImportProject()
+		% \item output: \wss{if appropriate} 
+		\item exception: N/A
+	\end{itemize}
+	\noindent ProjectCreation():
+	\begin{itemize}
+		\item transition: renders ProjectCreation module
+		% \item output: \wss{if appropriate} 
+		\item exception: N/A
+	\end{itemize}
+	
+	\subsubsection{Local Functions}
+	
+	N/A
+	
+	\newpage
+	
+	\section{MIS of New Project} \label{Module} 
+	
+	\subsection{Module}
+	
+	NewProject
+	
+	\subsection{Uses}
+	ProjectServices
+	
+	\subsection{Syntax}
+	
+	\subsubsection{Exported Constants}
+	
+	\subsubsection{Exported Access Programs}
+	
+	\begin{center}
+		\begin{tabular}{p{2cm} p{4cm} p{4cm} p{2cm}}
+			\hline
+			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			\hline
+			NewProject &  &  & - \\
+			\hline
+			createButtonPressed &  &  & InvalidInput \\
+			\hline
+		\end{tabular}
+	\end{center}
+	
+	\subsection{Semantics}
+	
+	\subsubsection{State Variables}
+	\textit{projectName}: String \\\\ 
+	\textit{ownerName}: String \\\\ 
+	\textit{collaborators}: Set of Strings \\\\
+	%\textit{visibility}: String \\\\ 
+	\textit{creationDate}: String \\\\
+	
+	\subsubsection{Environment Variables}
+	\textit{projectForm}: Form area on page that contains input fields
+	\textit{projectNameField}: Text input field where user will enter the desired project name \\\\ 
+	\textit{collaboratorsField}: Text input field where user will list the desired collaborators\\\\
+	%\textit{visibilityForm}: Radiobutton where user will select Public or Private \\\\ 
+	\textit{creationDateTag}: Text feild with auto-populated date \\\\
+	\textit{createButton}: Button that will submit the project form content, triggers createButtonPressed()
+	
+	\subsubsection{Assumptions}
+	N/A
+	
+	\subsubsection{Access Routine Semantics}
+	
+	\noindent NewProject():
+	\begin{itemize}
+		\item transition: renders NewProject module
+		%\item output: out := a new project is created
+		\item exception: N/A
+	\end{itemize}
+	
+	\noindent createButtonPressed():
+	\begin{itemize}
+		\item transition: triggers ProjectServices.addProject(projectName, projectOwner, creationDate, collaborators, []), closes NewProject module
+		%\item output: out := a new project is created
+		\item exception: exc := Throw InvalidInputError if any of the input fields contain forbidden or null characters
+	\end{itemize}
+	
+	\subsubsection{Local Functions}
+	
+	N/A
+	
+	\newpage
+	\section{MIS of Import Project} \label{Module} 
+	
+	\subsection{Module}
+	
+	ImportProject
+	
+	\subsection{Uses}
+	ProjectServices
+	
+	\subsection{Syntax}
+	
+	\subsubsection{Exported Constants}
+	
+	\subsubsection{Exported Access Programs}
+	
+	\begin{center}
+		\begin{tabular}{p{2cm} p{4cm} p{4cm} p{2cm}}
+			\hline
+			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			\hline
+			ImportProject &  &  & - \\
+			\hline
+			createButtonPressed &  &  & InvalidInput \\
+			\hline
+			selectProjectButtonPressed &  &  & - \\
+			\hline
+		\end{tabular}
+	\end{center}
+	
+	\subsection{Semantics}
+	
+	\subsubsection{State Variables}
+	\textit{projectName}: String \\\\ 
+	\textit{ownerName}: String \\\\ 
+	\textit{collaborators}: Set of Strings \\\\
+	%\textit{visibility}: String \\\\ 
+	\textit{creationDate}: String \\\\
+	
+	\subsubsection{Environment Variables}
+	\textit{projectList}: Area on page that displays a list of possible projects to import from
+	\textit{selectProjectButton}: Button that triggers selectProjectButtonPressed()
+	\textit{projectDetails}: Form area on page that contains input fields \textit{projectNameField}, \textit{collaboratorsField}, \textit{creationDateTag}, and \textit{createButton}\\\\
+	\textit{projectNameField}: Text input field where user will enter the desired project name\\\\ 
+	\textit{collaboratorsField}: Text input field where user will list the desired collaborators\\\\
+	%\textit{visibilityForm}: Radiobutton where user will select Public or Private \\\\ 
+	\textit{creationDateTag}: Text feild with auto-populated date \\\\
+	\textit{createButton}: Button that will submit the project form content, triggers createButtonPressed()
+	
+	\subsubsection{Assumptions}
+	N/A
+	
+	\subsubsection{Access Routine Semantics}
+	
+	\noindent ImportProject():
+	\begin{itemize}
+		\item transition: renders ImportProject module
+		% \item output: \wss{if appropriate} 
+		\item exception: N/A
+	\end{itemize}
+	
+	\noindent selectProjectButtonPressed():
+	\begin{itemize}
+		\item transition: triggers ProjectServices.getProject(projectName, ownerName), renders \textit{projectDetails}
+		\item transition: projectName := ProjectServices.getProject().projectName
+		\item transition: collaborators := ProjectServices.getProject().collaborators
+		\item transition: creationDate := ProjectServices.getProject().date
+		% \item output: \wss{if appropriate} 
+		\item exception: N/A
+	\end{itemize}
+	
+	\noindent createButtonPressed():
+	\begin{itemize}
+		\item transition: triggers ProjectServices.addProject(projectName, projectOwner, creationDate, collaborators, []), closes ImportProject module
+		%\item output: out := a new project is created
+		\item exception: exc := Throw InvalidInputError if any of the input fields contain forbidden or null characters
+	\end{itemize}
+	
+	\subsubsection{Local Functions}
+	
+	N/A
+	
+	\newpage
+	
+	\section{MIS of Project Database Interface} \label{Module} 
+	
+	\subsection{Module}
+	
+	ProjectDatabaseInterface
+	
+	\subsection{Uses}
+	ProjectData
+	
+	\subsection{Syntax}
+	
+	\subsubsection{Exported Constants}
+	
+	\subsubsection{Exported Access Programs}
+	
+	\footnotesize\begin{center}
+		\begin{tabular}{l l l l}
+			\hline
+			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			\hline
+			getProject & String, String, String & Sequence of Strings & RecordDoesNotExist \\
+			\hline
+			addProject & String, String, String[], String[] & & InvalidInput \\
+			\hline
+			deleteProject & String, String & & RecordDoesNotExist \\
+			\hline
+			editProjectDetail & String, String, String, String & &InvalidInput, RecordDoesNotExist \\
+			\hline
+		\end{tabular}
+	\end{center}
+	\normalsize
+	
+	\subsection{Semantics}
+	
+	\subsubsection{State Variables}
+	
+	
+	\subsubsection{Environment Variables}
+	
+	\textit{projectDirectory}: The storage on the server where project details are stored \\\\ 
+	
+	\subsubsection{Assumptions}
+	N/A
+	
+	\subsubsection{Access Routine Semantics}
+	
+	\noindent getProject(projectName, projectOwner):
+	\begin{itemize}
+		\item output: out := Return the project associated with the project name and owner name from MongoDB if it exists
+		
+		\item exception: exc := Throw a RecordDoesNotExist exception if no such record exists in MongoDB
+		%\item exception: N/A
+	\end{itemize}
+	
+	\noindent addProject(projectName, projectOwner, date, collaborators[], files[] ):
+	\begin{itemize}
+		\item transition: Insert a record for a project into MongoDB with the given name, owner, date, collaborators, and files
+		
+		\item exception: exc := Throw a InvalidInput exception if any of the supplied parameters contain forbidden characters or are null
+		%\item exception: N/A
+	\end{itemize}
+	
+	\noindent deleteProject(projectName, projectOwner):
+	\begin{itemize}
+		\item transition: Remove the record for the project associated with the project name and owner name from MongoDB if it exists
+		
+		\item exception: exc := Throw a RecordDoesNotExist exception if no such record exists in MongoDB
+		%\item exception: N/A
+	\end{itemize}
+	
+	\noindent editProjectDetail(projectName, owner, key, newValue):
+	\begin{itemize}
+		\item transition: Update the given key with the given newValue for a record with the given projectName and owner
+		
+		\item exception: exc := Throw a InvalidInput exception if any of the supplied parameters contain forbidden characters or are null
+		\item exception: exc := Throw a RecordDoesNotExist exception if no such record exists in MongoDB
+	\end{itemize}
+	
+	\subsubsection{Local Functions}
+	
+	N/A
+	
+	\newpage
+	
+	\section{MIS of Project Services} \label{Module} 
+	
+	\subsection{Module}
+	
+	ProjectServices
+	
+	\subsection{Uses}
+	ProjectDatabaseInterface, ProjectData, AuthService
+	
+	\subsection{Syntax}
+	
+	\subsubsection{Exported Constants}
+	
+	\subsubsection{Exported Access Programs}
+	
+	\footnotesize\begin{center}
+		\begin{tabular}{l l l l}
+			\hline
+			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			\hline
+			deleteProject & String, String &  & - \\
+			\hline
+			addProject & String, String, String, String[], String[] &  & - \\
+			\hline
+			getProject & String, String & Sequence of Strings & - \\
+			\hline
+			editProjectDetail & String, String, String, String &  & - \\
+			\hline
+		\end{tabular}
+	\end{center}
+	\normalsize
+	\subsection{Semantics}
+	
+	\subsubsection{State Variables}
+	
+	
+	\subsubsection{Environment Variables}
+	\noindent \textit{JWT}: JSON Web Token that is passed to the server from the user's client as a cookie
+	
+	\subsubsection{Assumptions}
+	AuthService.authenticate(JWT, project) will be called and all functions will only run if AuthService.authenticate(jwt, project) returns true.
+	
+	\subsubsection{Access Routine Semantics}
+	
+	\noindent getProject(projectName, projectOwner):
+	\begin{itemize}
+		\item output: out := Return ProjectDatabaseInterface.deleteProject(projectName, projectOwner)
+		
+		%\item exception: exc := Throw a RecordDoesNotExist exception if no such record exists in MongoDB
+		\item exception: N/A
+	\end{itemize}
+	
+	\noindent addProject(projectName, projectOwner, date, collaborators[], files[] ):
+	\begin{itemize}
+		\item transition: trigger ProjectDatabaseInterface.addProject(projectName, projectOwner, date, collaborators[], files[])
+		
+		%\item exception: exc := Throw a InvalidInput exception if any of the supplied parameters contain forbidden characters or are null
+		\item exception: N/A
+	\end{itemize}
+	
+	\noindent deleteProject(projectName, projectOwner):
+	\begin{itemize}
+		\item transition: returns ProjectDatabaseInterface.deleteProject(projectName, projectOwner)
+		
+		%\item exception: exc := Throw a RecordDoesNotExist exception if no such record exists in MongoDB
+		\item exception: N/A
+	\end{itemize}
+	
+	\noindent editProjectDetail(projectName, owner, key, newValue):
+	\begin{itemize}
+		\item transition : returns ProjectDatabaseInterface.editProjectDetail(projectName, owner, key, newValue)
+		
+		%\item exception: exc := Throw a InvalidInput exception if any of the supplied parameters contain forbidden characters or are null
+		%\item exception: exc := Throw a RecordDoesNotExist exception if no such record exists in MongoDB
+		\item exception: N/A
+	\end{itemize}
+	
+	\subsubsection{Local Functions}
+	
+	N/A
+	
+	\newpage
+	
+	% --------------------------- GITHUB ------------------------------
+	
+	\section{MIS of GitHub} \label{Module} 
+	
+	\subsection{Module}
+	GitHub
+	
+	\subsection{Uses}
+	GitHubServices
+	
+	\subsection{Syntax}
+	
+	\subsubsection{Exported Constants}
+	N/A
+	
+	\subsubsection{Exported Access Programs}
+	
+	\begin{center}
+		\begin{tabular}{l  l  l  l}
+			\hline
+			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			\hline
+			viewLog & ~ & ~ & ~ \\
+			\hline
+			commitChanges & Map of String & ~ & ~ \\
+			\hline
+			pushChanges & ~ & ~ & ~ \\
+			\hline
+			
+		\end{tabular}
+	\end{center}
+	
+	
+	\subsection{Semantics}
+	
+	\subsubsection{State Variables}
+	\textit{logReqData}: Map of String \\
+	\textit{logData}: Seq of String \\
+	\textit{changesSelected}: Map of String \\
+	
+	
+	\subsubsection{Environment Variables}
+	
+	\noindent \textit{viewLogButton}: is a button that will trigger viewLog() when it is pressed \\
+	
+	\noindent \textit{selectLines}: is a button that allows user to highlight blocks of text for changes they want to commit which is then stored in changesSelected \\
+	
+	\noindent \textit{commitChangesButton}: is a button that will trigger commitChanges() when it is pressed \\
+	
+	\textit{pushChangesButton}: is a button that will trigger pushChanges() when it is pressed \\
+	
+	
+	\subsubsection{Assumptions}
+	
+	You can only click the \textit{pushChangesButton} if you've committed previously. The UnderTree user data is cached and can be retrieved from a browser cookie.
+	
+	\subsubsection{Access Routine Semantics}
+	
+	\noindent viewLog: calls GitHubServices.retrieveLog(logReqData) and passes in the user that clicked it along with the necessary information in logReqData. The data is then retrieved from the backend and updates the log view. \\
+	
+	\noindent commitChanges(): calls GitHubServices.createCommit(data) and passes in $changesSelected$ along with other the necessary information in data. \\
+	
+	\noindent pushChanges(): calls GitHubServices.pushCommit(data) and passes in the user that clicked it along with the necessary information in data. \\
+	\subsubsection{Local Functions}
+	
+	N/A
+	
+	\newpage
+	
+	\section{MIS of GitHub Services} \label{Module} 
+	
+	\subsection{Module}
+	GitHubServices
+	
+	\subsection{Uses}
+	ProjectServices, FileServices
+	
+	\subsection{Syntax}
+	
+	\subsubsection{Exported Constants}
+	N/A
+	
+	\subsubsection{Exported Access Programs}
+	
+	\begin{center}
+		\begin{tabular}{l l l l}
+			\hline
+			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			\hline
+			retrieveLog & String & ~ & ~ \\
+			\hline
+			createCommit & String & ~ & ~ \\
+			\hline
+			pushCommit & String & ~ & ~ \\
+			\hline
+		\end{tabular}
+	\end{center}
+	
+	\subsection{Semantics}
+	
+	\subsubsection{State Variables}
+	N/A
+	
+	\subsubsection{Environment Variables}
+	N/A
+	
+	\subsubsection{Assumptions}
+	N/A
+	
+	\subsubsection{Access Routine Semantics}
+	
+	\noindent retrieveLog(data): Extracts the user data from the parameter and calls AuthService.checkAuth(user, log) and validates that the user is authorized to make this operation. Then it obtains the project id from the data object, based on that user object, It runs a GitHub API to retrieve the logs and then returns the logs. \\
+	
+	\noindent createCommit(data): Extracts the user data from the parameter and calls AuthService.checkAuth(user, commit) and validates that the user is authorized to make this operation. Then it obtains the necessary information from the data object, like user id, project id and file content. It then gets the HEAD commit by calling getHEADCommit(), and the tree that the HEAD commit points to by calling getTree(). Then it creates a new tree with the new content and creates a new commit. This commit is then stored in Project Data for later when the user wants to push it.  \\
+	
+	\noindent pushCommit(data): Extracts the user data from the parameter and calls AuthService.checkAuth( user, push) and validates that the user is authorized to make this operation. Then it obtains the latest commit from Project Data and then pushes it to GitHub using the API. It will use the SHA from the commit to update the reference, effectively moving the HEAD reference to the latest commit. \\
+	
+	\subsubsection{Local Functions}
+	
+	\noindent getHEADCommit(): Obtains the commit that HEAD points to using the GitHub API and returns it. \\
+	
+	\noindent getTree(): Obtains the tree that HEAD commit refers to using the GitHub API and returns it. \\
+	
+	\newpage
+	
+	% \section{MIS of Log Controller} \label{Module} 
+	
+	% \subsection{Module}
+	% LogController
+	
+	% \subsection{Uses}
+	% LogView
+	
+	% \subsection{Syntax}
+	
+	% \subsubsection{Exported Constants}
+	% N/A
+	
+	% \subsubsection{Exported Access Programs}
+	
+	% \begin{center}
+		% \begin{tabular}{p{2cm} p{4cm} p{4cm} p{2cm}}
+			% \hline
+			% \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			% \hline
+			% retrieveLog & String &  & - \\
+			% \hline
+			% \end{tabular}
+		% \end{center}
+	
+	% \subsection{Semantics}
+	
+	% \subsubsection{State Variables}
+	% N/A
+	
+	% \subsubsection{Environment Variables}
+	% N/A
+	
+	% \subsubsection{Assumptions}
+	% N/A
+	
+	% \subsubsection{Access Routine Semantics}
+	
+	% \noindent retrieveLog(data): Obtains the user and project id from the data object, based on that user object, It runs a GitHub API to retrieve the logs and then returns the logs. 
+	
+	% \subsubsection{Local Functions}
+	
+	% N/A
+	
+	% \newpage
+	
+	
+	% \section{MIS of Log View} \label{Module} 
+	
+	% \subsection{Module}
+	% LogView
+	
+	% \subsection{Uses}
+	% N/A
+	
+	% \subsection{Syntax}
+	
+	% \subsubsection{Exported Constants}
+	% N/A
+	
+	% \subsubsection{Exported Access Programs}
+	
+	% \begin{center}
+		% \begin{tabular}{p{4cm} p{2cm} p{2cm} p{4cm}}
+			% \hline
+			% \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			% \hline
+			% viewLog & ~ & ~ & ~ \\
+			% \hline
+			% \end{tabular}
+		% \end{center}
+	
+	% \subsection{Semantics}
+	
+	% \subsubsection{State Variables}
+	% \textit{logReqData}: Map of String \\
+	% \textit{logData}: Seq of String
+	
+	% \subsubsection{Environment Variables}
+	
+	% \textit{viewLogButton}: is a button that will trigger viewLog() when it is pressed
+	
+	% \subsubsection{Assumptions}
+	% N/A
+	
+	% \subsubsection{Access Routine Semantics}
+	
+	% \noindent viewLog: calls Sync.chooseAction(action, logReqData) and passes in the user that clicked it along with the necessary information in logReqData. The data is then retrieved from the backend and updates the log view. 
+	
+	% \subsubsection{Local Functions}
+	
+	% N/A
+	
+	% \newpage
+	
+	
+	% \section{MIS of Commit Controller} \label{Module} 
+	
+	% \subsection{Module}
+	% CommitController
+	
+	% \subsection{Uses}
+	% CommitView, FileServices, ProjectServices
+	
+	% \subsection{Syntax}
+	
+	% \subsubsection{Exported Constants}
+	% N/A
+	
+	% \subsubsection{Exported Access Programs}
+	
+	% \begin{center}
+		% \begin{tabular}{p{4cm} p{2cm} p{2cm} p{4cm}}
+			% \hline
+			% \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			% \hline
+			% createCommit & String & ~ & ~ \\
+			% \hline
+			% \end{tabular}
+		% \end{center}
+	
+	% \subsection{Semantics}
+	
+	% \subsubsection{State Variables}
+	% N/A
+	
+	% \subsubsection{Environment Variables}
+	
+	% N/A
+	
+	% \subsubsection{Assumptions}
+	% N/A
+	
+	% \subsubsection{Access Routine Semantics}
+	
+	% \noindent createCommit(data): Obtains the necessary information from the data object, like user id, project id and file content. It then gets the HEAD commit by calling getHEADCommit(), and the tree that the HEAD commit points to by calling getTree(). Then it creates a new tree with the new content and creates a new commit. This commit is then stored in Project Data for later when the user wants to push it.  
+	
+	% \subsubsection{Local Functions}
+	
+	% \noindent getHEADCommit(): Obtains the commit that HEAD points to using the GitHub API and returns it. \\
+	
+	% \noindent getTree(): Obtains the tree that HEAD commit refers to using the GitHub API and returns it. 
+	
+	% \newpage
+	
+	
+	% \section{MIS of Commit View} \label{Module} 
+	
+	% \subsection{Module}
+	% CommitView
+	
+	% \subsection{Uses}
+	% N/A
+	
+	% \subsection{Syntax}
+	
+	% \subsubsection{Exported Constants}
+	% N/A
+	
+	% \subsubsection{Exported Access Programs}
+	
+	% \begin{center}
+		% \begin{tabular}{l  l  l  l}
+			% \hline
+			% \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			% \hline
+			% commitChanges & Map of String & ~ & ~ \\
+			% \hline
+			% \end{tabular}
+		% \end{center}
+	
+	% \subsection{Semantics}
+	
+	% \subsubsection{State Variables}
+	% \textit{changesSelected}: Map of String
+	
+	% \subsubsection{Environment Variables}
+	% \textit{selectLines}: is a button that allows user to highlight blocks of text for changes they want to commit which is then stored in changesSelected
+	
+	% \textit{commitChangesButton}: is a button that will trigger commitChanges() when it is pressed
+	
+	% \subsubsection{Assumptions}
+	% The UnderTree user data is cached and can be retrieved from a browser cookie.
+	
+	% \subsubsection{Access Routine Semantics}
+	
+	% \noindent commitChanges(): calls Sync.chooseAction(action, data) and passes in $changesSelected$ along with other the necessary information in data. 
+	
+	% \subsubsection{Local Functions}
+	
+	% N/A
+	
+	% \newpage
+	
+	
+	% \section{MIS of Push Controller} \label{Module} 
+	
+	% \subsection{Module}
+	% PushController
+	
+	% \subsection{Uses}
+	% PushView, ProjectServices
+	
+	% \subsection{Syntax}
+	
+	% \subsubsection{Exported Constants}
+	% N/A
+	
+	% \subsubsection{Exported Access Programs}
+	
+	% \begin{center}
+		% \begin{tabular}{p{4cm} p{2cm} p{2cm} p{4cm}}
+			% \hline
+			% \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			% \hline
+			% pushCommit & String & ~ & ~ \\
+			% \hline
+			% \end{tabular}
+		% \end{center}
+	
+	% \subsection{Semantics}
+	
+	% \subsubsection{State Variables}
+	% N/A
+	
+	% \subsubsection{Environment Variables}
+	% N/A
+	
+	% \subsubsection{Assumptions}
+	% N/A
+	
+	% \subsubsection{Access Routine Semantics}
+	
+	% \noindent pushCommit(data): Obtains the latest commit from Project Data and then pushes it to GitHub using the API. It will use the SHA from the commit to update the reference, effectively moving the HEAD reference to the latest commit.
+	
+	% \subsubsection{Local Functions}
+	% N/A
+	
+	% \newpage
+	
+	% \section{MIS of Push View} \label{Module} 
+	
+	% \subsection{Module}
+	% PushView
+	
+	% \subsection{Uses}
+	% N/A
+	
+	% \subsection{Syntax}
+	
+	% \subsubsection{Exported Constants}
+	% N/A
+	
+	% \subsubsection{Exported Access Programs}
+	
+	% \begin{center}
+		% \begin{tabular}{l  l  l  l}
+			% \hline
+			% \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			% \hline
+			% pushChanges & ~ & ~ & ~ \\
+			% \hline
+			% \end{tabular}
+		% \end{center}
+	
+	% \subsection{Semantics}
+	
+	% \subsubsection{State Variables}
+	% N/A
+	
+	% \subsubsection{Environment Variables}
+	% \textit{pushChangesButton}: is a button that will trigger pushChanges() when it is pressed
+	
+	% \subsubsection{Assumptions}
+	% You can only view the \textit{pushChangesButton} if you've committed previously.
+	
+	% \subsubsection{Access Routine Semantics}
+	
+	% \noindent pushChanges(): calls Sync.chooseAction(action, data) and passes in the user that clicked it along with the necessary information in data.
+	
+	% \subsubsection{Local Functions}
+	
+	% N/A
+	
+	% \newpage
+	
+	
+	% \section{MIS of Pull Controller} \label{Module} 
+	
+	% \subsection{Module}
+	% PullController
+	
+	% \subsection{Uses}
+	% PullView, FileServices
+	
+	% \subsection{Syntax}
+	
+	% \subsubsection{Exported Constants}
+	% N/A
+	
+	% \subsubsection{Exported Access Programs}
+	
+	
+	% \begin{center}
+		% \begin{tabular}{l  l  l  l}
+			% \hline
+			% \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			% \hline
+			% pullRepo & ~ & ~ & ~ \\
+			% \hline
+			% \end{tabular}
+		% \end{center}
+	
+	% \subsection{Semantics}
+	
+	% \subsubsection{State Variables}
+	% N/A
+	
+	% \subsubsection{Environment Variables}
+	% N/A
+	
+	% \subsubsection{Assumptions}
+	% N/A
+	
+	% \subsubsection{Access Routine Semantics}
+	
+	% \noindent pullRepo(): Gets the latest commit by calling getLatestCommit(). It can then compare the current commit in UnderTree and the latest commit using a GitHub API and then update the content in the files accordingly.
+	
+	% \subsubsection{Local Functions}
+	
+	% \noindent getLatestCommit(): Obtains the commit that HEAD points to in the repository using the GitHub API
+	
+	% \newpage
+	
+	% \section{MIS of Pull View} \label{Module} 
+	
+	% \subsection{Module}
+	% PullView
+	
+	% \subsection{Uses}
+	% N/A
+	
+	% \subsection{Syntax}
+	
+	% \subsubsection{Exported Constants}
+	% N/A
+	
+	% \subsubsection{Exported Access Programs}
+	
+	% \begin{center}
+		% \begin{tabular}{l  l  l  l}
+			% \hline
+			% \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			% \hline
+			% pullChanges & ~ & ~ & ~ \\
+			% \hline
+			% \end{tabular}
+		% \end{center}
+	
+	% \subsection{Semantics}
+	
+	% \subsubsection{State Variables}
+	% N/A
+	
+	% \subsubsection{Environment Variables}
+	% \textit{pullChangesButton}: is a button that will trigger pullChanges() when it is pressed
+	
+	% \subsubsection{Assumptions}
+	% The UnderTree user data is cached and can be retrieved from a browser cookie.
+	
+	% \subsubsection{Access Routine Semantics}
+	
+	% \noindent pullChanges(): calls Sync.chooseAction(action, data) and passes in user data along with other the necessary information in data. 
+	
+	% \subsubsection{Local Functions}
+	
+	% N/A
+	
+	% \newpage
+	
+	\section{MIS of Authentication} \label{Module} 
+	
+	\subsection{Module}
+	Authentication
+	
+	\subsection{Uses}
+	AuthService
+	
+	\subsection{Syntax}
+	
+	\subsubsection{Exported Constants}
+	N/A
+	
+	\subsubsection{Exported Access Programs}
+	
+	\begin{center}
+		\begin{tabular}{l  l  l  l}
+			\hline
+			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			\hline
+			loginUser & String & ~ & ~ \\
+			\hline
+			logoutUser & String & ~ & ~ \\
+			\hline
+			openLogin & ~ & ~ & ~ \\
+			\hline
+			closeLogin & ~ & ~ & ~ \\
+			\hline
+		\end{tabular}
+	\end{center}
+	
+	\subsection{Semantics}
+	
+	\subsubsection{State Variables}
+	\textit{openLogin}: $\mathbb{B}$ \\
+	
+	\subsubsection{Environment Variables}
+	\textit{loginButton}: is a button that will trigger \textbf{openLogin()} when it is pressed \\
+	\textit{loginModal}: The popup UI component for displaying the login form, it renders based on the value of \textbf{openLogin()} \\
+	\textit{submitLogin}: is a button that will trigger \textbf{loginUser()} when it is pressed and if successful, triggers \textbf{closeLogin()} \\
+	\textit{logoutButton}: is a button that will trigger \textbf{logoutUser()} when it is pressed \\
+	
+	
+	\subsubsection{Assumptions}
+	The user's auth data will be cached on browser which can be retrieved as well.
+	
+	\subsubsection{Access Routine Semantics}
+	
+	\noindent loginUser(userData): Calls the AuthService.loginAuth(userData) and passes along the login details that the user entered. \\
+	
+	\noindent logoutUser(userData): Calls AuthService.logoutAuth(userData) passing along the userData saved on browser. \\
+	
+	\noindent openLogin(): Assigns openLogin value to True, which opens the login modal. \\
+	
+	\noindent closeLogin(): Assigns openLogin value to False, which closes the login modal. \\\\
+	
+	\subsubsection{Local Functions}
+	
+	N/A
+	
+	\newpage
+	
+	
+	% ------------------------ Auth Service ------------------------
+	
+	
+	\section{MIS of Auth Service} \label{Module} 
+	
+	\subsection{Module}
+	AuthService
+	
+	\subsection{Uses}
+	AuthDatabaseInterface, AuthData
+	
+	\subsection{Syntax}
+	
+	\subsubsection{Exported Constants}
+	N/A
+	
+	\subsubsection{Exported Access Programs}
+	
+	\begin{center}
+		\begin{tabular}{l  l  l  l}
+			\hline
+			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			\hline
+			loginAuth & String & ~ & ~ \\
+			\hline
+			logoutAuth & String & ~ & ~ \\
+			\hline
+			checkAuth & String, String & $\mathbb{B}$ & ~ \\
+			\hline
+			authenticate & String, String & $\mathbb{B}$ & ~ \\
+			\hline
+		\end{tabular}
+	\end{center}
+	
+	
+	\subsection{Semantics}
+	
+	\subsubsection{State Variables}
+	N/A
+	
+	\subsubsection{Environment Variables}
+	N/A
+	
+	\subsubsection{Assumptions}
+	N/A
+	
+	\subsubsection{Access Routine Semantics}
+	
+	\noindent loginAuth(userData): Extracts the code needed to authenticate with the GitHub API, and then uses that to receive the tokens from GitHub which will be stored to make GitHub operations on behalf of the user by calling AuthDatabaseInterface.saveToken(token).  \\
+	
+	\noindent logoutAuth(userData): Retrieves the access token of the user and then communicates with the GitHub API to delete it to log the user out of the system. \\
+	
+	\noindent checkAuth(userData, operation): Uses the access token to determine the user’s roles and if they are authorized to perform the GitHub operation that is requested and then returns a boolean based on if it accepts or rejects the request. \\
+	
+	\noindent authenticate(jwt, projectName): Validates the JWT token and that the user logged in to the browser has access to the project. It returns a boolean based on the answer. \\
+	
+	\subsubsection{Local Functions}
+	
+	N/A
+	
+	\newpage
+	
+	\section{MIS of Auth Database Interface} \label{Module} 
+	
+	\subsection{Module}
+	AuthDatabaseInterface
+	
+	\subsection{Uses}
+	AuthData
+	
+	\subsection{Syntax}
+	
+	\subsubsection{Exported Constants}
+	N/A
+	
+	\subsubsection{Exported Access Programs}
+	
+	\begin{center}
+		\begin{tabular}{l  l  l  l}
+			\hline
+			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+			\hline
+			saveToken & String & ~ & ~ \\
+			\hline
+			tokenExists & String & $\mathbb{B}$ & ~ \\
+			\hline
+		\end{tabular}
+	\end{center}
+	
+	\subsection{Semantics}
+	
+	\subsubsection{State Variables}
+	N/A
+	
+	\subsubsection{Environment Variables}
+	
+	N/A
+	
+	\subsubsection{Assumptions}
+	N/A
+	
+	\subsubsection{Access Routine Semantics}
+	
+	\noindent saveToken(token): Receives the token and saves it in the MongoDB database based on the type of token. \\
+	
+	\noindent tokenExists(token): Checks to see if the token exists in the database to validate several use cases like the user is logged in. \\
+	
+	\subsubsection{Local Functions}
+	
+	N/A
+	
+	\newpage
+	
+	
+	\section{MIS of Auth Data} \label{Module} 
+	
+	\subsection{Module}
+	AuthData
+	
+	\subsection{Uses}
+	N/A
+	
+	\subsection{Syntax}
+	\subsubsection{Exported Data Types}
+	
+	UserData: tuple of (userName: String, token: String)
+	
+	\subsubsection{Exported Constants}
+	N/A
+	
+	\subsubsection{Exported Access Programs}
+	N/A
+	
+	\subsection{Semantics}
+	
+	\subsubsection{State Variables}
+	N/A
+	
+	\subsubsection{Environment Variables}
+	N/A
+	
+	\subsubsection{Assumptions}
+	N/A
+	
+	\subsubsection{Access Routine Semantics}
+	N/A
+	
+	\subsubsection{Local Functions}
+	N/A
+	
+	\newpage
+	
+	
+	
+	\bibliographystyle {plainnat}
+	\bibliography {../../../refs/References}
+	
+	\newpage
+	
+	\section{Appendix} \label{Appendix}
+	
+	
 \end{document}
