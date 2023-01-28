@@ -287,3 +287,6 @@ TSWLatexianTemp*
 
 # Database files
 mongodb-data/
+
+# Node modules
+node_modules/
