@@ -1,15 +1,22 @@
 import express from 'express'
 import http from 'http'
 
+import { DBClient } from './utils/MongoDBUtil.js';
 import {router as projectRoutes} from './services/ProjectServices.js';
 
 const app = express();
 const server = http.createServer(app);
 
-app.use(express.json());
+await main();
 
-app.use("/api/projects", projectRoutes);
-
-server.listen(3000, () => {
-    console.log('listening on *:3000');
+server.listen(8000, () => {
+    console.log('listening on *8000');
 });
+
+async function main(){
+    await DBClient.connect();
+    console.log("Connected successfully to database");
+
+    app.use(express.json());
+    app.use("/api/projects", projectRoutes);
+}
