@@ -1,11 +1,18 @@
 import express from 'express';
 
+import { ProjectDB } from '../database_interace/ProjectDB.js';
+import { ProjectData } from '../data/ProjectData.js';
+
 const router = express.Router();
 
-router.route("/addProject").get(addProject);
+router.route("/addProject").post(addProject);
 
-function addProject(req, res): void {
-    res.json("hello world!");
+async function addProject(req, res){
+
+    const data: ProjectData = JSON.parse(JSON.stringify(req.body));
+    const result = await ProjectDB.addProject(data)
+    res.json(result);
+
 }
 
 export { router };

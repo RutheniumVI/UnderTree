@@ -1,3 +1,4 @@
+import cors from 'cors'
 import express from 'express'
 import http from 'http'
 
@@ -5,6 +6,9 @@ import { DBClient } from './utils/MongoDBUtil.js';
 import {router as projectRoutes} from './services/ProjectServices.js';
 
 const app = express();
+app.use(cors({
+    origin: "*"
+}))
 const server = http.createServer(app);
 
 await main();
