@@ -6,15 +6,10 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-router.route("/getAuth").get(getAuth);
 router.route("/github").get(getGitHubCode);
 
 let CLIENT_ID = process.env.GITHUB_CI;
 let CLIENT_SECRET = process.env.GITHUB_CS;
-
-function getAuth(req, res): void {
-    res.json("Auth Page!");
-}
 
 export interface GitHubUser {
     login: string;
@@ -95,7 +90,7 @@ async function getGitHubUser({ code }: { code: string }): Promise<GitHubUser> {
       return user;
   }
 
-async function getGitHubCode(req: Request, res: Response): Promise<any> {
+async function getGitHubCode(req: Request, res: Response): Promise<void> {
     let code = req.query.code;
 
     if (!code) {
@@ -109,9 +104,7 @@ async function getGitHubCode(req: Request, res: Response): Promise<any> {
         throw new Error("No user found");
     }
 
-    // res.json("Github User: " + gitHubUser.login);
-    res.redirect("http://localhost:3000/auth/"+gitHubUser.login);
-    return gitHubUser;
+    res.redirect("http://localhost:3000/login?user=" + gitHubUser.login);
 }
 
 export { router }

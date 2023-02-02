@@ -4,21 +4,12 @@ import axios from 'axios';
 
 function signIn() {
   console.log('signing in');
-
+  
   const urlParams = new URLSearchParams(window.location.search);
-  let code = urlParams.get('code');
-  console.log(code);
+  let username = urlParams.get('user');
+  console.log(username);
 
-  if (code) {
-    axios.get('http://localhost:8080/github/code=' + code)
-    .then((response) => {
-      localStorage.setItem('username', response.data.username);
-      console.log(localStorage.getItem('username'));
-      })
-    .catch((error) => {
-      console.log(error);
-    });
-  }
+  localStorage.setItem('username', username);
 }
 
 function Login() {
