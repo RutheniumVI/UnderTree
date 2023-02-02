@@ -3,6 +3,7 @@ import http from 'http'
 
 import { DBClient } from './utils/MongoDBUtil.js';
 import {router as projectRoutes} from './services/ProjectServices.js';
+import { router as authRoutes } from './services/auth/AuthServices.js';
 
 const app = express();
 const server = http.createServer(app);
@@ -19,4 +20,5 @@ async function main(){
 
     app.use(express.json());
     app.use("/api/projects", projectRoutes);
+    app.use("/api/auth", authRoutes);
 }
