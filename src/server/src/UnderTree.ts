@@ -10,7 +10,8 @@ import {router as fileRoutes} from './services/FileServices.js';
 
 const app = express();
 app.use(cors({
-    origin: "*"
+    origin: "http://localhost:3000",
+    credentials: true,
 }))
 const server = http.createServer(app);
 

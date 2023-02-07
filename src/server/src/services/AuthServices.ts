@@ -3,13 +3,18 @@ const router = express.Router();
 import querystring from "querystring";
 import axios from "axios";
 import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
+router.use(cookieParser());
 router.route("/github").get(getGitHubCode);
+router.route("/getUser").get(getUser);
 
 let CLIENT_ID = process.env.GITHUB_CI;
 let CLIENT_SECRET = process.env.GITHUB_CS;
+let JWT_SECRET = process.env.JWT_SECRET;
 
 export interface GitHubUser {
     login: string;
@@ -78,7 +83,6 @@ async function getGitHubUser({ code }: { code: string }): Promise<GitHubUser> {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       .then((res) => {
-        console.log("USER: " + res.data);
         return res.data;
         // res.data
         })
@@ -91,7 +95,7 @@ async function getGitHubUser({ code }: { code: string }): Promise<GitHubUser> {
   }
 
 async function getGitHubCode(req: Request, res: Response): Promise<void> {
-    let code = req.query.code;
+    let code = req.query.code as string;
 
     if (!code) {
          throw new Error("No code provided");
@@ -104,7 +108,34 @@ async function getGitHubCode(req: Request, res: Response): Promise<void> {
         throw new Error("No user found");
     }
 
-    res.redirect("http://localhost:3000?user=" + gitHubUser.login);
+    const token = jwt.sign({ username: gitHubUser.login }, JWT_SECRET)
+
+    res.cookie("undertree-jwt", token, { httpOnly: true, domain: "localhost" });
+    // For Production:
+    // res.cookie("undertree-jwt", token, { httpOnly: true, secure: true });
+
+
+    res.redirect("http://localhost:3000?token=" + token);
+}
+
+async function getUser(req: Request, res: Response): Promise<void> {
+    const token = req.cookies["undertree-jwt"];
+    console.log("Token: " + token);
+
+    if (!token) {
+        res.sendStatus(401);
+        res.send({ ok: false, user: null });
+    }
+    try{
+      const decode = jwt.verify(token, JWT_SECRET);
+
+      res.send(decode["username"]);
+    } catch (err) {
+      console.log(err);
+      res.sendStatus(403);
+      res.send({ ok: false, user: null });
+    }
+
 }
 
 export { router }

@@ -1,12 +1,22 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
+import axios from 'axios';
 
-function signIn() {
+async function signIn() {
   console.log('signing in');
   
   const urlParams = new URLSearchParams(window.location.search);
-  let username = urlParams.get('user');
-  console.log(username);
+  let username = "";
+  let token = urlParams.get('token');
+
+  await axios.get("http://localhost:8000/api/auth/getUser", {
+    withCredentials: true,
+    }).then((res) => {
+      console.log("Username: " + res.data);
+      username = res.data
+    }).catch((error) => {
+      console.error(`Error getting user from GitHub`);
+    });
 
   localStorage.setItem('username', username);
 }
