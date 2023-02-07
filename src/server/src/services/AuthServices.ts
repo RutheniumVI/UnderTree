@@ -104,7 +104,7 @@ async function getGitHubCode(req: Request, res: Response): Promise<void> {
         throw new Error("No user found");
     }
 
-    res.redirect("http://localhost:3000/login?user=" + gitHubUser.login);
+    res.redirect("http://localhost:3000?user=" + gitHubUser.login);
 }
 
 export { router }

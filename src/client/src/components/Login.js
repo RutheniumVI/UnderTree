@@ -1,6 +1,5 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import axios from 'axios';
 
 function signIn() {
   console.log('signing in');

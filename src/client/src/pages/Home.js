@@ -3,6 +3,7 @@ import Editor from '../components/Editor';
 import LiveUsers from '../components/LiveUsers';
 import Chat from './Chat';
 import Compiler from '../components/Compiler';
+import Login from '../components/Login';
 
 function Home() {
   return (
@@ -14,6 +15,7 @@ function Home() {
             <LiveUsers/>
             <Editor/>
             <Chat/>
+            <Login/>
           </div>
           <div class="col">
             <Compiler/>
