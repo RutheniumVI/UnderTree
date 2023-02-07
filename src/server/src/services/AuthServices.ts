@@ -5,6 +5,11 @@ import axios from "axios";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser";
+import { GitHubUser } from '../data/AuthData.js';
+
+import { DBClient } from '../utils/MongoDBUtil.js';
+import { AuthDB } from '../database_interface/AuthDB.js';
+
 
 dotenv.config();
 
@@ -16,52 +21,6 @@ let CLIENT_ID = process.env.GITHUB_CI;
 let CLIENT_SECRET = process.env.GITHUB_CS;
 let JWT_SECRET = process.env.JWT_SECRET;
 
-export interface GitHubUser {
-    login: string;
-    id: number;
-    node_id: string;
-    avatar_url: string;
-    gravatar_id: string;
-    url: string;
-    html_url: string;
-    followers_url: string;
-    following_url: string;
-    gists_url: string;
-    starred_url: string;
-    subscriptions_url: string;
-    organizations_url: string;
-    repos_url: string;
-    events_url: string;
-    received_events_url: string;
-    type: string;
-    site_admin: boolean;
-    name: string;
-    company: null;
-    blog: string;
-    location: string;
-    email: null;
-    hireable: null;
-    bio: null;
-    twitter_username: null;
-    public_repos: number;
-    public_gists: number;
-    followers: number;
-    following: number;
-    created_at: Date;
-    updated_at: Date;
-    private_gists: number;
-    total_private_repos: number;
-    owned_private_repos: number;
-    disk_usage: number;
-    collaborators: number;
-    two_factor_authentication: boolean;
-    plan: {
-        name: string;
-        space: number;
-        collaborators: number;
-        private_repos: number;
-    };
-  }
 
 async function getGitHubUser({ code }: { code: string }): Promise<GitHubUser> {
     const githubToken = await axios
@@ -76,14 +35,21 @@ async function getGitHubUser({ code }: { code: string }): Promise<GitHubUser> {
   
     const decoded = querystring.parse(githubToken);
     const accessToken = decoded.access_token;
-    console.log(accessToken);
+    // console.log(accessToken);
 
     let user = await axios
       .get("https://api.github.com/user", {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       .then((res) => {
-        return res.data;
+
+        return { 
+          login: res.data.login, 
+          // id: res.data.id, 
+          name: res.data.name, 
+          email: res.data.email, 
+          access_token: accessToken 
+        };
         // res.data
         })
       .catch((error) => {
@@ -114,13 +80,54 @@ async function getGitHubCode(req: Request, res: Response): Promise<void> {
     // For Production:
     // res.cookie("undertree-jwt", token, { httpOnly: true, secure: true });
 
+    // await AuthDB.addUser(gitHubUser, token);
+
+    let response = await DBClient.collectionExists("users");
+    if (!response) {
+      await DBClient.createCollection("users");
+      await DBClient.getCollection("users").createIndex({ username: 1 }, { unique: true });
+    }
+
+    await DBClient.getCollection("users").insertOne({
+        username: gitHubUser.login,
+        jwt: token,
+        access_token: gitHubUser.access_token,
+        name: gitHubUser.name,
+        email: gitHubUser.email,
+        // id: gitHubUser.id,
+    });
+
+    await DBClient.getCollection("users").findOne({ username: gitHubUser.login }, (err, result) => {
+      if (err) throw err;
+      console.log(result);
+    });
+
+
+    // const delResult = await DBClient.getCollection("users").deleteMany({ username: gitHubUser.login });
+    // if (delResult.deletedCount > 0) { 
+    //   console.log("Deleted user: " + gitHubUser.login);
+    // } else {
+    //   console.log("No user to delete");
+    // }
+    // await DBClient.getCollection("users").drop((err, delOK) => {
+    //   if (err) throw err;
+    //   if (delOK) console.log("Collection deleted");
+    // });
+
+    // const docCount = await DBClient.getCollection("users").countDocuments({ username: gitHubUser.login });
+    // console.log("docCount: " + docCount);
+
+    // await AuthDB.deleteUser(gitHubUser.login);
+
+    // let result = await AuthDB.getUser(gitHubUser.login);
+    // console.log("DB Result: " + result);
 
     res.redirect("http://localhost:3000?token=" + token);
 }
 
 async function getUser(req: Request, res: Response): Promise<void> {
     const token = req.cookies["undertree-jwt"];
-    console.log("Token: " + token);
+    // console.log("Token: " + token);
 
     if (!token) {
         res.sendStatus(401);
@@ -128,14 +135,12 @@ async function getUser(req: Request, res: Response): Promise<void> {
     }
     try{
       const decode = jwt.verify(token, JWT_SECRET);
-
       res.send(decode["username"]);
     } catch (err) {
       console.log(err);
       res.sendStatus(403);
       res.send({ ok: false, user: null });
     }
-
 }
 
 export { router }
