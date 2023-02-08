@@ -4,6 +4,7 @@ import LiveUsers from '../components/LiveUsers';
 import Chat from './Chat';
 import Compiler from '../components/Compiler';
 import Login from '../components/Login';
+import Logout from '../components/Logout';
 
 function Home() {
   return (
@@ -16,6 +17,7 @@ function Home() {
             <Editor/>
             <Chat/>
             <Login/>
+            <Logout/>
           </div>
           <div class="col">
             <Compiler/>
