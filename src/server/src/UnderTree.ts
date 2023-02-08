@@ -5,11 +5,13 @@ import http from 'http'
 import { FileUtil } from './utils/FileUtil.js';
 import { DBClient } from './utils/MongoDBUtil.js';
 import {router as projectRoutes} from './services/ProjectServices.js';
+import { router as authRoutes } from './services/AuthServices.js';
 import {router as fileRoutes} from './services/FileServices.js';
 
 const app = express();
 app.use(cors({
-    origin: "*"
+    origin: "http://localhost:3000",
+    credentials: true,
 }))
 const server = http.createServer(app);
 
@@ -26,5 +28,6 @@ async function main(){
 
     app.use(express.json());
     app.use("/api/projects", projectRoutes);
+    app.use("/api/auth", authRoutes);
     app.use("/api/file", fileRoutes);
 }
