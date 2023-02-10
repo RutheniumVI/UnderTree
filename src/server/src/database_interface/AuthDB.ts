@@ -1,5 +1,5 @@
 import { DBClient } from '../utils/MongoDBUtil.js';
-import { GitHubUser } from '../data/AuthData.js';
+import { GitHubUser, MongoUser } from '../data/AuthData.js';
 
 async function addUser(user: GitHubUser, token: string): Promise<void> {
 
@@ -19,15 +19,15 @@ async function addUser(user: GitHubUser, token: string): Promise<void> {
       email: user.email,
     });
   } catch (err) {
-    // console.error(err);
-    console.log("User already exists");
+    await DBClient.getCollection("users").updateOne({ username: user.login }, { $set: { jwt: token } });
+    console.log("Updated user: ", user.login);
     // throw Error("User is already logged in");
   }
 }
 
-function getUser(username: string): Promise<GitHubUser> {
+function getUserWithToken(token: string): Promise<MongoUser> {
   return new Promise((resolve, reject) => {
-    DBClient.getCollection("users").findOne({ username: username }, (err, result) => {
+    DBClient.getCollection("users").findOne({ jwt: token }, (err, result) => {
       if (err) {
         console.log("Error: ", err);
         return reject(null);
@@ -37,20 +37,33 @@ function getUser(username: string): Promise<GitHubUser> {
   });
 }
 
-async function deleteUser(username: string): Promise<void> {
-    const delResult = await DBClient.getCollection("users").deleteMany({ username: username });
+function updateUserWithToken(oldToken: string, newToken: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    DBClient.getCollection("users").updateOne({ jwt: oldToken }, { $set: { jwt: newToken } }, (err, result) => {
+      if (err) {
+        console.log("Error: ", err);
+        return reject(null);
+      }
+      return resolve(result);
+    });
+  });
+}
+
+async function deleteUserWithToken(token: string): Promise<void> {
+    const delResult = await DBClient.getCollection("users").deleteMany({ jwt: token });
     if (delResult.deletedCount > 0) { 
-      console.log("Deleted user: " + username);
+      console.log("Deleted User: " + token);
     } else {
-      console.log("No user to delete");
+      console.log("No user matching token to delete");
     }
 
 }
 
 const AuthDB = {
   addUser,
-  getUser,
-  deleteUser,
+  getUserWithToken,
+  updateUserWithToken,
+  deleteUserWithToken,
 }
 
 export { AuthDB }

@@ -20,6 +20,32 @@ let CLIENT_ID = process.env.GITHUB_CI;
 let CLIENT_SECRET = process.env.GITHUB_CS;
 let JWT_SECRET = process.env.JWT_SECRET;
 
+async function validateUserAuth(token: string): Promise<Object> {
+  let newToken = "";
+  try{
+    let user = await AuthDB.getUserWithToken(token);
+    if (user == null) {
+      return { validated: false, token: newToken };
+    }
+    if (user.jwt == null || user.jwt == "" || user.jwt != token) {
+      return { validated: false, token: newToken };
+    }
+
+    jwt.verify(token, JWT_SECRET, async (err, decoded) => {
+      if (err) {
+        if (err.name === "TokenExpiredError") {
+          console.log("Token expired");
+          newToken = jwt.sign({ username: user.username }, JWT_SECRET, { expiresIn: "1h" });
+          await AuthDB.updateUserWithToken(token, newToken);
+        }
+      }
+    });
+
+    return { validated: true, token: newToken };
+  } catch (err) {
+    return { validated: false, token: newToken };
+  }
+}
 
 async function getGitHubUser({ code }: { code: string }): Promise<GitHubUser> {
     const githubToken = await axios
@@ -68,7 +94,7 @@ async function getGitHubCode(req: Request, res: Response): Promise<void> {
         throw new Error("No user found");
     }
 
-    const token = jwt.sign({ username: gitHubUser.login }, JWT_SECRET)
+    const token = jwt.sign({ username: gitHubUser.login }, JWT_SECRET, { expiresIn: "1h" });
     res.cookie("undertree-jwt", token, { httpOnly: true, domain: "localhost" });
 
     // For Production:
@@ -82,11 +108,9 @@ async function getGitHubCode(req: Request, res: Response): Promise<void> {
       // res.status(401).send({ ok: false, message: "User already is logged in" });
     }
 
-    let result = await AuthDB.getUser(gitHubUser.login);
-    console.log("DB Result: ", result);
-
-    // await AuthDB.deleteUser(gitHubUser.login);
-
+    let result = await AuthDB.getUserWithToken(token);
+    console.log("User logged in: ", result);
+    
     res.redirect("http://localhost:3000");
 }
 
@@ -94,15 +118,25 @@ async function getUsername(req: Request, res: Response): Promise<void> {
     const token = req.cookies["undertree-jwt"];
 
     if (!token) {
-      console.log("Token not found");
+      console.log("Token not found when trying to get username");
         // res.sendStatus(401);
         // res.send({ ok: false, user: null });
     } else {
       try{
-        const decoded = jwt.verify(token, JWT_SECRET);
+        let authResult = await validateUserAuth(token);
+        let decoded;
+
+        if (authResult["token"] != "") {
+          res.cookie("undertree-jwt", authResult["token"], { httpOnly: true, domain: "localhost" });
+          decoded = jwt.verify(authResult["token"], JWT_SECRET);
+        } else {
+          decoded = jwt.verify(token, JWT_SECRET);
+        }
+        
         res.send(decoded["username"]);
       } catch (err) {
-        console.log("Token not valid");
+        console.log(err)
+        console.log("Token not valid when trying to get username");
         // res.sendStatus(403);
         // res.send({ ok: false, user: null });
       }
@@ -116,8 +150,8 @@ async function logout(req: Request, res: Response): Promise<void> {
       // res.sendStatus(401).send({ ok: false, user: null });
   } else {
     try{
-      const decoded = jwt.verify(token, JWT_SECRET);
-      await AuthDB.deleteUser(decoded["username"]);
+      // const decoded = jwt.verify(token, JWT_SECRET);
+      await AuthDB.deleteUserWithToken(token);
       res.clearCookie("undertree-jwt");
       res.sendStatus(200);
     } catch (err) {
