@@ -13,7 +13,7 @@ dotenv.config();
 
 router.use(cookieParser());
 router.route("/github").get(getGitHubCode);
-router.route("/getUser").get(getUser);
+router.route("/getUsername").get(getUsername);
 router.route("/logout").get(logout);
 
 let CLIENT_ID = process.env.GITHUB_CI;
@@ -87,10 +87,10 @@ async function getGitHubCode(req: Request, res: Response): Promise<void> {
 
     // await AuthDB.deleteUser(gitHubUser.login);
 
-    res.redirect("http://localhost:3000?token=" + token);
+    res.redirect("http://localhost:3000");
 }
 
-async function getUser(req: Request, res: Response): Promise<void> {
+async function getUsername(req: Request, res: Response): Promise<void> {
     const token = req.cookies["undertree-jwt"];
 
     if (!token) {
