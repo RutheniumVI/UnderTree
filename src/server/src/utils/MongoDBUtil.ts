@@ -14,13 +14,23 @@ async function connect() {
     await client.command({ ping: 1 });
 }
 
+function createCollection(name: collections) {
+    return client.createCollection(name);
+}
+
 function getCollection(name: collections){
     return client.collection(name);
 }
 
+function collectionExists(name: collections) {
+    return client.listCollections({ name: name }).hasNext();
+}
+
 const DBClient = {
     connect,
-    getCollection
+    createCollection,
+    getCollection,
+    collectionExists
 }
 
 export { DBClient }

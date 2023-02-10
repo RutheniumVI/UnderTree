@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { ProjectDB } from '../database_interace/ProjectDB.js';
+import { ProjectDB } from '../database_interface/ProjectDB.js';
 import { ProjectData } from '../data/ProjectData.js';
 
 const router = express.Router();

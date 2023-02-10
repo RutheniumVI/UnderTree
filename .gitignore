@@ -291,3 +291,4 @@ mongodb-data/
 # Node modules
 node_modules/
 dist/
+data/
