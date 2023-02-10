@@ -3,20 +3,21 @@ import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 async function signIn() {  
-  const urlParams = new URLSearchParams(window.location.search);
-  let username = "";
-  let token = urlParams.get('token');
+  // const urlParams = new URLSearchParams(window.location.search);
+  let username = localStorage.getItem("username");
 
-  await axios.get("http://localhost:8000/api/auth/getUser", {
-    withCredentials: true,
-    }).then((res) => {
-      console.log("Username: ", res.data);
-      username = res.data
-      localStorage.setItem('username', username);
-      // window.location.reload();
-    }).catch((error) => {
-      console.error(`Error getting user from GitHub`);
-    });
+  if (username === null) {
+    await axios.get("http://localhost:8000/api/auth/getUsername", {
+      withCredentials: true,
+      }).then((res) => {
+        console.log("Username: ", res.data);
+        username = res.data
+        localStorage.setItem('username', username);
+        // window.location.reload();
+      }).catch((error) => {
+        console.error(`Error getting user from GitHub`);
+      });
+  }
 }
 
 function Login() {

@@ -45,3 +45,11 @@ export interface GitHubUser {
   // };
   access_token: string;
 }
+
+export interface MongoUser {
+  username: string,
+  jwt: string,
+  access_token: string,
+  name: string,
+  email: string;
+}
