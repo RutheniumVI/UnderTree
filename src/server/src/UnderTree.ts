@@ -4,9 +4,10 @@ import http from 'http'
 
 import { FileUtil } from './utils/FileUtil.js';
 import { DBClient } from './utils/MongoDBUtil.js';
-import {router as projectRoutes} from './services/ProjectServices.js';
+import { router as projectRoutes } from './services/ProjectServices.js';
 import { router as authRoutes } from './services/AuthServices.js';
-import {router as fileRoutes} from './services/FileServices.js';
+import { router as fileRoutes } from './services/FileServices.js';
+import { router as githubRoutes } from './services/GitHubServices.js';
 
 const app = express();
 app.use(cors({
@@ -30,4 +31,5 @@ async function main(){
     app.use("/api/projects", projectRoutes);
     app.use("/api/auth", authRoutes);
     app.use("/api/file", fileRoutes);
+    app.use("/api/github", githubRoutes);
 }

@@ -127,6 +127,11 @@ async function logout(req: Request, res: Response): Promise<void> {
     }
   }
 
+  async function getAccessCode(username: string): Promise<string> {
+    let result = await AuthDB.getUser(username);
+    return result.access_token;
+  }
+
   // res.end();
   // res.redirect('http://localhost:3000');
 }
