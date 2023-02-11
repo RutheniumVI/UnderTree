@@ -10,7 +10,7 @@ import axios from "axios";
 dotenv.config();
 
 router.use(cookieParser());
-router.route("/createProject").get(createProject);
+router.route("/createProject").post(createProject);
 
 let JWT_SECRET = process.env.JWT_SECRET;
 
@@ -68,59 +68,53 @@ async function createProject(req, res): Promise<void> {
       // res.sendStatus(401);
       // res.send({ ok: false, user: null });
   } 
+  try{
+    let authResult = await AuthServices.validateUserAuth(token);
+    if (authResult["validated"] == false) {
+      console.log("Error creating project. User is not logged in");
+      res.sendStatus(401);
+      return;
+    } 
 
-    try{
-      let authResult = await AuthServices.validateUserAuth(token);
-      if (authResult["validated"] == false) {
-        console.log("Error creating project. User is not logged in");
-        res.sendStatus(401);
-        return;
-      } 
-  
-      console.log("User is logged in");
-      console.log("Creating project", authResult);
-      if (authResult["token"] != "") {
-        token = authResult["token"];
-        res.cookie("undertree-jwt", authResult["token"], { httpOnly: true, domain: "localhost" });
-      }        
+    console.log("User is logged in");
+    console.log("Creating project", authResult);
+    if (authResult["token"] != "") {
+      token = authResult["token"];
+      res.cookie("undertree-jwt", authResult["token"], { httpOnly: true, domain: "localhost" });
+    }        
 
-      let userProp = await AuthServices.getUserPropertyWithToken(token, "access_token");
-      let accessToken = userProp["access_token"];
+    let userProp = await AuthServices.getUserPropertyWithToken(token, "access_token");
+    let accessToken = userProp["access_token"];
 
-      let name = "Hello-World";
-      let desc = "This is a repository created by the user in the application UnderTree";
-      let homepage = "https://undertree.tech";
-      let repoPrivate = false;
+    let name = req.body.name;
+    let desc = req.body.description;
+    let homepage = req.body.homepage;
+    let repoPrivate = req.body.repoPrivate;
 
-      axios.post("https://api.github.com/user/repos", { 
-          "name": name, 
-          "description": desc,
-          "homepage": homepage,
-          "private": repoPrivate,
-          "auto_init":true,
-        }, { 
-        headers: { 
-          Authorization: `Bearer ${accessToken}`, 
-          Accept: "application/vnd.github+json" 
-        }
-      }).then((res) => {
-        console.log(res.data);
-        console.log("Successfully created project");
-      }).catch((error) => {
-        console.error(error);
-        console.error(`Error creating project`);
-      });
-
-      // await deleteProject(token, name);
-
-      // await getUserReposWithToken(token);
-
-    } catch (err) {
-      console.log("Token not valid");
-      // res.sendStatus(403);
-      // res.send({ ok: false, user: null });
-    }
-  
+    axios.post("https://api.github.com/user/repos", { 
+        "name": name, 
+        "description": desc,
+        "homepage": homepage,
+        "private": repoPrivate,
+        "auto_init":true,
+      }, { 
+      headers: { 
+        Authorization: `Bearer ${accessToken}`, 
+        Accept: "application/vnd.github+json" 
+      }
+    }).then((res) => {
+      console.log(res.data);
+      console.log("Successfully created project");
+    }).catch((error) => {
+      console.error(error);
+      console.error(`Error creating project`);
+    });
+  } catch (err) {
+    console.log("Token not valid");
+    // res.sendStatus(403);
+    // res.send({ ok: false, user: null });
+  }
+  return;
 }
 
 async function deleteProject(token:string, name: string): Promise<void> {

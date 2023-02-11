@@ -2,14 +2,19 @@ import React from 'react';
 import axios from 'axios';
 
 async function handleCreateProject() {
-  console.log("Creating Project");
-  await axios.get("http://localhost:8000/api/github/createProject", {
+  console.log("Creating Project");      
+  await axios.post("http://localhost:8000/api/github/createProject", {
+    name: "UnderTree-Test",
+    description: "This is a repository created by the user in the application UnderTree",
+    homepage: "https://undertree.tech",
+    repoPrivate: false,
+  }, {
     withCredentials: true,
-    }).then((res) => {
-      console.log(res.data)
-    }).catch((error) => {
-      console.error(`Error creating project`);
-    });
+  }).then((res) => {
+    console.log(res.data)
+  }).catch((error) => {
+    console.error(`Error creating project`);
+  });
 }
 
 function CreateProject() {
