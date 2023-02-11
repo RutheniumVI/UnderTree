@@ -1,9 +1,13 @@
-import express, { Request, Response } from 'express';
+import express, { Request, RequestHandler, Response } from 'express';
 
+import { AuthServices } from './AuthServices.js';
+import { AuthUtil } from '../utils/AuthUtil.js';
 import { ProjectDB } from '../database_interface/ProjectDB.js';
 import { ProjectData } from '../data/ProjectData.js';
 
 const router = express.Router();
+
+router.use(AuthUtil.authorizeJWT);
 
 router.route("/addProject").post(addProject);
 router.route("/getProjects").get(getProjects);
@@ -11,7 +15,6 @@ router.route("/editProject").post(editProject);
 router.route("/deleteProject").post(deleteProject);
 
 async function addProject(req: Request, res: Response): Promise<void> {
-
     const data: ProjectData = req.body as ProjectData;
 
     try{
@@ -23,7 +26,9 @@ async function addProject(req: Request, res: Response): Promise<void> {
 }
 
 async function getProjects(req: Request, res: Response): Promise<void>  {
-    const projects: ProjectData[] = await ProjectDB.getProjects("fahmed8383");
+    const token = res.locals.token
+    let username = await AuthServices.getUserPropertyWithToken(token, "username");
+    const projects: ProjectData[] = await ProjectDB.getProjects(username);
     res.status(200).json(projects);
 }
 

@@ -9,7 +9,8 @@ import '../Styles/Projects.css'
 function Projects() {
 
     useEffect(() => {
-        axios.get("http://localhost:8000/api/projects/getProjects")
+        axios.get("http://localhost:8000/api/projects/getProjects", {withCredentials: true}
+        )
         .then((res) => {
             setProjects(res.data);
         })
