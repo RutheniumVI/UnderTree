@@ -4,12 +4,14 @@ import cookieParser from "cookie-parser";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { AuthDB } from '../database_interface/AuthDB.js';
+import { AuthUtil } from '../utils/AuthUtil.js';
 import { AuthServices } from './AuthServices.js';
 import axios from "axios";
 
 dotenv.config();
 
 router.use(cookieParser());
+router.use(AuthUtil.authorizeJWT);
 router.route("/createProject").post(createProject);
 
 let JWT_SECRET = process.env.JWT_SECRET;
@@ -60,58 +62,31 @@ async function getUserReposWithToken(token: string): Promise<Array<Object>> {
 
 async function createProject(req, res): Promise<void> {
   let token = req.cookies["undertree-jwt"];
+  let accessToken = await AuthServices.getUserPropertyWithToken(token, "access_token");
 
-  if (!token) {
-    console.log("Token not found");
-    return;
-      // res.sendStatus(401);
-      // res.send({ ok: false, user: null });
-  } 
-  try{
-    let authResult = await AuthServices.validateUserAuth(token);
-    if (authResult["validated"] == false) {
-      console.log("Error creating project. User is not logged in");
-      res.sendStatus(401);
-      return;
-    } 
+  let name = req.body.name;
+  let desc = req.body.description;
+  let homepage = req.body.homepage;
+  let repoPrivate = req.body.repoPrivate;
 
-    console.log("User is logged in");
-    console.log("Creating project", authResult);
-    if (authResult["token"] != "") {
-      token = authResult["token"];
-      res.cookie("undertree-jwt", authResult["token"], { httpOnly: true, domain: "localhost" });
-    }        
-
-    let accessToken = await AuthServices.getUserPropertyWithToken(token, "access_token");
-
-    let name = req.body.name;
-    let desc = req.body.description;
-    let homepage = req.body.homepage;
-    let repoPrivate = req.body.repoPrivate;
-
-    axios.post("https://api.github.com/user/repos", { 
-        "name": name, 
-        "description": desc,
-        "homepage": homepage,
-        "private": repoPrivate,
-        "auto_init":true,
-      }, { 
-      headers: { 
-        Authorization: `Bearer ${accessToken}`, 
-        Accept: "application/vnd.github+json" 
-      }
-    }).then((res) => {
-      console.log(res.data);
-      console.log("Successfully created project");
-    }).catch((error) => {
-      console.error(error);
-      console.error(`Error creating project`);
-    });
-  } catch (err) {
-    console.log("Token not valid");
-    // res.sendStatus(403);
-    // res.send({ ok: false, user: null });
-  }
+  axios.post("https://api.github.com/user/repos", { 
+      "name": name, 
+      "description": desc,
+      "homepage": homepage,
+      "private": repoPrivate,
+      "auto_init":true,
+    }, { 
+    headers: { 
+      Authorization: `Bearer ${accessToken}`, 
+      Accept: "application/vnd.github+json" 
+    }
+  }).then((res) => {
+    console.log(res.data);
+    console.log("Successfully created project");
+  }).catch((error) => {
+    console.error(error);
+    console.error(`Error creating project`);
+  });
   return;
 }
 
