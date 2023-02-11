@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+
+.projectsPage {
+    font-family: 'Open Sans', sans-serif;
+    margin-top: 15px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.searchBar {
+    max-width: 1000px;
+    background-color: #D9D9D9;
+}
+
+.searchBar:focus {
+    background-color: #D9D9D9;
+}
+
+.projectsGrid {
+    width: 100%;
+    max-width: 99%;
+}
+
+.mainDivider {
+    margin: 0;
+    margin-top: 1px;
+    border: 1px solid black;
+}
+
+.projectLabels {
+    font-size: 25px;
+}
+
+.projectInfo {
+    font-size: 18px;
+    margin-top: 5px;
+}
+
+
+.projectIcons {
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.projectDivider {
+    margin: 0;
+    color: #BCBCBC;
+    opacity: 100%;
+}
+
+.collaboratorsList {
+    border-radius: 50px;
+    margin: 0px 2px;
+}

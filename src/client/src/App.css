@@ -1,5 +1,10 @@
 .App {
-  text-align: center;
+  text-align: left;
+}
+
+.errorMessage {
+  margin-top: 10px;
+  color: red;
 }
 
 .App-logo {

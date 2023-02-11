@@ -4,7 +4,7 @@ import querystring from "querystring";
 import axios from "axios";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
-import { GitHubUser } from '../data/AuthData.js';
+import { GitHubUser, MongoUser } from '../data/AuthData.js';
 import { AuthDB } from '../database_interface/AuthDB.js';
 
 
@@ -45,17 +45,13 @@ async function validateUserAuth(token: string): Promise<Object> {
   }
 }
 
-async function getUserPropertyWithToken(token: string, property: string): Promise<Object> {
+async function getUserPropertyWithToken(token: string, property: keyof MongoUser): Promise<any> {
   let user = await AuthDB.getUserWithToken(token);
   if (user == null || user[property] == null) {
     console.log("User Property not found with token");
-    let errObj = {}
-    errObj[property] = null;
-    return errObj;
+    return null;
   }
-  let userProperty = {};
-  userProperty[property] = user[property];
-  return userProperty;
+  return user[property];
 }
 
 async function getGitHubUser({ code }: { code: string }): Promise<GitHubUser> {
