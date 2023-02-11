@@ -177,19 +177,6 @@ async function logout(req: Request, res: Response): Promise<void> {
   // res.redirect('http://localhost:3000');
 }
 
-// async function getAccessCode(username: string): Promise<string> {
-//   let result = await AuthDB.getUserWithToken(username);
-//   return result.access_token;
-// }
-
-async function getUserProperty(username: string, property: string): Promise<string> {
-  let user = await AuthDB.getUserWithToken(username);
-  // if (property )
-  console.log(user);
-
-  return user[property];
-}
-  
 const AuthServices = {
   validateUserAuth, getUserPropertyWithToken
 }
