@@ -4,14 +4,12 @@ import querystring from "querystring";
 import axios from "axios";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
-import cookieParser from "cookie-parser";
-import { GitHubUser, MongoUser } from '../data/AuthData.js';
+import { GitHubUser } from '../data/AuthData.js';
 import { AuthDB } from '../database_interface/AuthDB.js';
 
 
 dotenv.config();
 
-router.use(cookieParser());
 router.route("/github").get(getGitHubCode);
 router.route("/getUsername").get(getUsername);
 router.route("/logout").get(logout);
@@ -47,6 +45,19 @@ async function validateUserAuth(token: string): Promise<Object> {
   }
 }
 
+async function getUserPropertyWithToken(token: string, property: string): Promise<Object> {
+  let user = await AuthDB.getUserWithToken(token);
+  if (user == null || user[property] == null) {
+    console.log("User Property not found with token");
+    let errObj = {}
+    errObj[property] = null;
+    return errObj;
+  }
+  let userProperty = {};
+  userProperty[property] = user[property];
+  return userProperty;
+}
+
 async function getGitHubUser({ code }: { code: string }): Promise<GitHubUser> {
     const githubToken = await axios
       .post(
@@ -70,7 +81,8 @@ async function getGitHubUser({ code }: { code: string }): Promise<GitHubUser> {
           login: res.data.login, 
           name: res.data.name, 
           email: res.data.email, 
-          access_token: accessToken 
+          access_token: accessToken, 
+          avatar_url: res.data.avatar_url
         };
         })
       .catch((error) => {
@@ -127,6 +139,7 @@ async function getUsername(req: Request, res: Response): Promise<void> {
         let decoded;
 
         if (authResult["token"] != "") {
+          console.log("Renewing Cookie");
           res.cookie("undertree-jwt", authResult["token"], { httpOnly: true, domain: "localhost" });
           decoded = jwt.verify(authResult["token"], JWT_SECRET);
         } else {
@@ -177,6 +190,8 @@ async function getUserProperty(username: string, property: string): Promise<stri
   return user[property];
 }
   
-const AuthServices = { validateUserAuth, getUserProperty };
+const AuthServices = {
+  validateUserAuth, getUserPropertyWithToken
+}
 
-export { router, AuthServices };
+export { router, AuthServices }

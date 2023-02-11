@@ -1,6 +1,7 @@
-import cors from 'cors'
-import express from 'express'
-import http from 'http'
+import cors from 'cors';
+import express from 'express';
+import http from 'http';
+import cookieParser from "cookie-parser";
 
 import { FileUtil } from './utils/FileUtil.js';
 import { DBClient } from './utils/MongoDBUtil.js';
@@ -14,6 +15,7 @@ app.use(cors({
     origin: "http://localhost:3000",
     credentials: true,
 }))
+app.use(cookieParser());
 const server = http.createServer(app);
 
 await main();
