@@ -47,3 +47,8 @@
     color: #BCBCBC;
     opacity: 100%;
 }
+
+.collaboratorsList {
+    border-radius: 50px;
+    margin: 0px 2px;
+}

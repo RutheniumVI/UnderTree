@@ -12,7 +12,7 @@ function Navbar() {
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul className="navbar-nav ms-auto mb-2">
                     <li className="nav-item">
-                    <a className="nav-link active mx-2" href="/project">Projects</a>
+                    <a className="nav-link active mx-2" href="/projects">Projects</a>
                     </li>
                     <li className="nav-item mx-2">
                     <a className="nav-link" href="#">Help</a>
