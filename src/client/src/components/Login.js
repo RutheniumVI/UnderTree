@@ -31,7 +31,7 @@ function Login() {
   return (
     <div> 
       <h2>Login</h2>
-      <a href="https://github.com/login/oauth/authorize?scope=user&client_id=79279cb46a338e30112e">
+      <a href="https://github.com/login/oauth/authorize?scope=user%20repo%20admin:org%20delete_repo&client_id=79279cb46a338e30112e">
         <button>
           Login with GitHub
         </button>

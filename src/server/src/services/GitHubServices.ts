@@ -10,7 +10,7 @@ import axios from "axios";
 dotenv.config();
 
 router.use(cookieParser());
-router.route("/create-project").get(createProject);
+router.route("/createProject").get(createProject);
 
 let JWT_SECRET = process.env.JWT_SECRET;
 
@@ -19,16 +19,12 @@ async function getUserReposWithToken(token: string): Promise<Array<Object>> {
   let repos = [];
   let userProp = await AuthServices.getUserPropertyWithToken(token, "access_token");
   let accessToken = userProp["access_token"];
-  console.log("User access token: ", accessToken);
-
-  // /user/repos
 
   await axios.get("https://api.github.com/user/repos", {
     headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" },
     params: { affiliation: "owner,collaborator" },
   })
   .then((res) => {
-    // console.log(res.data);
     unfilteredRepos = res.data;
   })
   .catch((error) => {
@@ -39,12 +35,27 @@ async function getUserReposWithToken(token: string): Promise<Array<Object>> {
 
   for (let i = 0; i < unfilteredRepos.length; i++) {
     let currRepo = unfilteredRepos[i];
+    let name  = currRepo["name"];
+    let owner = currRepo["owner"]["login"];
     let collabs = [];
-    // await axios.get(`https://api.github.com/repos/${currRepo["owner"]["login"]}/${currRepo["name"]}/contributors`, {
-
-
-    let repoDetails = { name: currRepo["name"], owner: currRepo["owner"]["login"] };
+    
+    await axios.get(`https://api.github.com/repos/${owner}/${name}/collaborators`, {
+      headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
+    }).then((res) => {
+      for (let j = 0; j < res.data.length; j++) {
+        if (res.data[j]["login"] == owner) {
+          continue;
+        }
+        collabs.push(res.data[j]["login"]);
+      } 
+    }).catch((error) => {
+      console.error(error);
+      console.error(`Error getting user from GitHub`);
+    });
+    let repoDetails = { name: currRepo["name"], owner: currRepo["owner"]["login"], collaborators: collabs };
+    repos.push(repoDetails);
   }
+  console.log("Repos: ", repos);
   return repos;
 }
 
@@ -73,7 +84,36 @@ async function createProject(req, res): Promise<void> {
         res.cookie("undertree-jwt", authResult["token"], { httpOnly: true, domain: "localhost" });
       }        
 
-      await getUserReposWithToken(token);
+      let userProp = await AuthServices.getUserPropertyWithToken(token, "access_token");
+      let accessToken = userProp["access_token"];
+
+      let name = "Hello-World";
+      let desc = "This is a repository created by the user in the application UnderTree";
+      let homepage = "https://undertree.tech";
+      let repoPrivate = false;
+
+      axios.post("https://api.github.com/user/repos", { 
+          "name": name, 
+          "description": desc,
+          "homepage": homepage,
+          "private": repoPrivate,
+          "auto_init":true,
+        }, { 
+        headers: { 
+          Authorization: `Bearer ${accessToken}`, 
+          Accept: "application/vnd.github+json" 
+        }
+      }).then((res) => {
+        console.log(res.data);
+        console.log("Successfully created project");
+      }).catch((error) => {
+        console.error(error);
+        console.error(`Error creating project`);
+      });
+
+      // await deleteProject(token, name);
+
+      // await getUserReposWithToken(token);
 
     } catch (err) {
       console.log("Token not valid");
@@ -83,4 +123,27 @@ async function createProject(req, res): Promise<void> {
   
 }
 
-export { router };
+async function deleteProject(token:string, name: string): Promise<void> {
+  let userProp = await AuthServices.getUserPropertyWithToken(token, "access_token");
+  let accessToken = userProp["access_token"];
+
+  userProp = await AuthServices.getUserPropertyWithToken(token, "username");
+  let owner = userProp["username"];
+
+  axios.delete(`https://api.github.com/repos/${owner}/${name}`, {
+    headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
+  }).then((res) => {
+    console.log(res.data);
+    console.log("Successfully deleted project");
+  }).catch((error) => {
+    console.error(error);
+    console.error(`Error deleting project`);
+  });
+}
+
+const GitHubServices = {
+  getUserReposWithToken,
+  deleteProject,
+}
+
+export { router, GitHubServices };

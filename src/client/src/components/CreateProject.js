@@ -3,7 +3,7 @@ import axios from 'axios';
 
 async function handleCreateProject() {
   console.log("Creating Project");
-  await axios.get("http://localhost:8000/api/github/create-project", {
+  await axios.get("http://localhost:8000/api/github/createProject", {
     withCredentials: true,
     }).then((res) => {
       console.log(res.data)

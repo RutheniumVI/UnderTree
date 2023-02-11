@@ -61,8 +61,12 @@ async function getUserPropertyWithToken(token: string, property: string): Promis
 async function getGitHubUser({ code }: { code: string }): Promise<GitHubUser> {
     const githubToken = await axios
       .post(
-        `https://github.com/login/oauth/access_token?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&code=${code}`
-      )
+        `https://github.com/login/oauth/access_token?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&code=${code}`, { 
+          headers: { 
+            "X-OAuth-Scopes": "user, repo, admin:org, delete_repo", 
+            "X-Accepted-OAuth-Scopes": "user"
+          } 
+      })
       .then((res) => res.data)
   
       .catch((error) => {
