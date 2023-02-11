@@ -17,8 +17,7 @@ let JWT_SECRET = process.env.JWT_SECRET;
 async function getUserReposWithToken(token: string): Promise<Array<Object>> {
   let unfilteredRepos = [];
   let repos = [];
-  let userProp = await AuthServices.getUserPropertyWithToken(token, "access_token");
-  let accessToken = userProp["access_token"];
+  let accessToken = await AuthServices.getUserPropertyWithToken(token, "access_token");
 
   await axios.get("https://api.github.com/user/repos", {
     headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" },
@@ -83,8 +82,7 @@ async function createProject(req, res): Promise<void> {
       res.cookie("undertree-jwt", authResult["token"], { httpOnly: true, domain: "localhost" });
     }        
 
-    let userProp = await AuthServices.getUserPropertyWithToken(token, "access_token");
-    let accessToken = userProp["access_token"];
+    let accessToken = await AuthServices.getUserPropertyWithToken(token, "access_token");
 
     let name = req.body.name;
     let desc = req.body.description;
@@ -118,11 +116,8 @@ async function createProject(req, res): Promise<void> {
 }
 
 async function deleteProject(token:string, name: string): Promise<void> {
-  let userProp = await AuthServices.getUserPropertyWithToken(token, "access_token");
-  let accessToken = userProp["access_token"];
-
-  userProp = await AuthServices.getUserPropertyWithToken(token, "username");
-  let owner = userProp["username"];
+  let accessToken = await AuthServices.getUserPropertyWithToken(token, "access_token");
+  let owner = await AuthServices.getUserPropertyWithToken(token, "username");
 
   axios.delete(`https://api.github.com/repos/${owner}/${name}`, {
     headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
