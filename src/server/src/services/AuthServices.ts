@@ -5,7 +5,7 @@ import axios from "axios";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser";
-import { GitHubUser } from '../data/AuthData.js';
+import { GitHubUser, MongoUser } from '../data/AuthData.js';
 import { AuthDB } from '../database_interface/AuthDB.js';
 
 
@@ -160,15 +160,23 @@ async function logout(req: Request, res: Response): Promise<void> {
       // res.sendStatus(403).send({ ok: false, user: null });
     }
   }
-
-  async function getAccessCode(username: string): Promise<string> {
-    let result = await AuthDB.getUser(username);
-    return result.access_token;
-  }
-
   // res.end();
   // res.redirect('http://localhost:3000');
 }
-  
 
-export { router }
+// async function getAccessCode(username: string): Promise<string> {
+//   let result = await AuthDB.getUserWithToken(username);
+//   return result.access_token;
+// }
+
+async function getUserProperty(username: string, property: string): Promise<string> {
+  let user = await AuthDB.getUserWithToken(username);
+  // if (property )
+  console.log(user);
+
+  return user[property];
+}
+  
+const AuthServices = { validateUserAuth, getUserProperty };
+
+export { router, AuthServices };
