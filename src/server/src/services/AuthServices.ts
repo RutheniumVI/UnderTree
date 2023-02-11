@@ -4,14 +4,12 @@ import querystring from "querystring";
 import axios from "axios";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
-import cookieParser from "cookie-parser";
 import { GitHubUser } from '../data/AuthData.js';
 import { AuthDB } from '../database_interface/AuthDB.js';
 
 
 dotenv.config();
 
-router.use(cookieParser());
 router.route("/github").get(getGitHubCode);
 router.route("/getUsername").get(getUsername);
 router.route("/logout").get(logout);
@@ -70,7 +68,7 @@ async function getGitHubUser({ code }: { code: string }): Promise<GitHubUser> {
           login: res.data.login, 
           name: res.data.name, 
           email: res.data.email, 
-          access_token: accessToken 
+          access_token: accessToken, 
         };
         })
       .catch((error) => {
@@ -165,5 +163,8 @@ async function logout(req: Request, res: Response): Promise<void> {
   // res.redirect('http://localhost:3000');
 }
   
+const AuthServices = {
+  validateUserAuth,
+}
 
-export { router }
+export { router, AuthServices }
