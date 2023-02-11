@@ -17,6 +17,7 @@ async function addUser(user: GitHubUser, token: string): Promise<void> {
       access_token: user.access_token,
       name: user.name,
       email: user.email,
+      avatar_url: user.avatar_url,
     });
   } catch (err) {
     await DBClient.getCollection("users").updateOne({ username: user.login }, { $set: { jwt: token } });
