@@ -13,7 +13,7 @@ async function authorizeJWT(req: Request, res: Response, next){
         if (authResults["token"] != "") {
             console.log("Renewing cookie");
             token = authResults["token"];
-            res.cookie("undertree-jwt", token, { httpOnly: true, domain: "localhost" });
+            res.cookie("undertree-jwt", token, { httpOnly: true });
         }
         res.locals.token = token;
         next();

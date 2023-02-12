@@ -6,7 +6,7 @@ async function handleCreateProject() {
   await axios.post("http://localhost:8000/api/github/createProject", {
     name: "UnderTree-Test",
     description: "This is a repository created by the user in the application UnderTree",
-    homepage: "https://undertree.tech",
+    homepage: "https://undertree.ca",
     repoPrivate: false,
   }, {
     withCredentials: true,
