@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 const router = express.Router();
 import cookieParser from "cookie-parser";
 import jwt from "jsonwebtoken";
@@ -12,6 +12,9 @@ dotenv.config();
 
 router.use(cookieParser());
 router.use(AuthUtil.authorizeJWT);
+
+router.route("/repositoryExists").get(repositoryExists);
+router.route("/userExists").get(userExists);
 router.route("/createProject").post(createProject);
 
 let JWT_SECRET = process.env.JWT_SECRET;
@@ -103,6 +106,33 @@ async function deleteProject(token:string, name: string): Promise<void> {
     console.error(error);
     console.error(`Error deleting project`);
   });
+}
+
+async function repositoryExists(req: Request, res: Response): Promise<void> {
+	const accessToken = await AuthServices.getUserPropertyWithToken(res.locals.token, "access_token");
+	const owner = req.query.owner;
+	const name = req.query.name;
+	try{
+		await axios.get(`https://api.github.com/repos/${owner}/${name}`, {
+			headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" },
+		})
+		res.json(true);
+	} catch {
+		res.json(false);
+	}
+}
+
+async function userExists(req: Request, res: Response): Promise<void> {
+	const accessToken = await AuthServices.getUserPropertyWithToken(res.locals.token, "access_token");
+	const name = req.query.name;
+	try{
+		await axios.get(`https://api.github.com/users/${name}`, {
+			headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" },
+		})
+		res.json(true);
+	} catch {
+		res.json(false);
+	}
 }
 
 const GitHubServices = {
