@@ -6,6 +6,7 @@ import Compiler from '../components/Compiler';
 import Login from '../components/Login';
 import Logout from '../components/Logout';
 import CreateProject from '../components/CreateProject';
+import Commit from '../components/Commit';
 
 function Home() {
   return (
@@ -20,6 +21,7 @@ function Home() {
             <Login/>
             <Logout/>
             <CreateProject/>
+            <Commit/>
           </div>
           <div class="col">
             <Compiler/>
