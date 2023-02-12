@@ -3,9 +3,9 @@ const router = express.Router();
 import cookieParser from "cookie-parser";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { AuthDB } from '../database_interface/AuthDB.js';
 import { AuthUtil } from '../utils/AuthUtil.js';
 import { AuthServices } from './AuthServices.js';
+import { GitHubUtil } from '../utils/GitHubUtil.js';
 import axios from "axios";
 
 dotenv.config();
@@ -14,6 +14,8 @@ router.use(cookieParser());
 router.use(AuthUtil.authorizeJWT);
 router.route("/createProject").post(createProject);
 router.route("/commitFile").post(commitFile);
+router.route("/addCollaborator").post(addCollaborator);
+router.route("/removeCollaborator").post(removeCollaborator);
 
 let JWT_SECRET = process.env.JWT_SECRET;
 
@@ -107,7 +109,6 @@ async function deleteProject(token: string, name: string): Promise<void> {
 }
 
 async function commitFile(req: Request, res: Response): Promise<void> {
-  // token: string, repo: string, filepath: string
   let token = req.cookies["undertree-jwt"];
   let repo = req.body.repo;
   let filepath = req.body.filepath;
@@ -248,6 +249,23 @@ async function commitFile(req: Request, res: Response): Promise<void> {
     console.error(`Error updating main branch with new commit`);
   });
 }
+
+async function addCollaborator(req: Request, res: Response): Promise<void> {
+  let token = req.cookies["undertree-jwt"];
+  let repo = req.body.repo;
+  let userToAdd = req.body.userToAdd;
+
+  await GitHubUtil.addCollabToRepo(token, repo, userToAdd);
+}
+
+async function removeCollaborator(req: Request, res: Response): Promise<void> {
+  let token = req.cookies["undertree-jwt"];
+  let repo = req.body.repo;
+  let userToRemove = req.body.userToRemove;
+
+  await GitHubUtil.removeCollabFromRepo(token, repo, userToRemove);
+}
+
 
 const GitHubServices = {
   getUserReposWithToken,
