@@ -107,7 +107,7 @@ async function getGitHubCode(req: Request, res: Response): Promise<void> {
     }
 
     const token = jwt.sign({ username: gitHubUser.login }, JWT_SECRET, { expiresIn: "1h" });
-    res.cookie("undertree-jwt", token, { httpOnly: true, domain: "localhost" });
+    res.cookie("undertree-jwt", token, { httpOnly: true });
 
     // For Production:
     // res.cookie("undertree-jwt", token, { httpOnly: true, secure: true });
@@ -140,7 +140,7 @@ async function getUsername(req: Request, res: Response): Promise<void> {
 
         if (authResult["token"] != "") {
           console.log("Renewing Cookie");
-          res.cookie("undertree-jwt", authResult["token"], { httpOnly: true, domain: "localhost" });
+          res.cookie("undertree-jwt", authResult["token"], { httpOnly: true });
           decoded = jwt.verify(authResult["token"], JWT_SECRET);
         } else {
           decoded = jwt.verify(token, JWT_SECRET);
