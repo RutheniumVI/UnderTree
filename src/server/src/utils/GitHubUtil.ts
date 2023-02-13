@@ -122,6 +122,28 @@ async function getFilesFromPath(path: string, owner: string, repo: string, acces
   return files;
 }
 
+async function getContentFromBlob(token: string, owner: string, repo: string, file: Object): Promise<Object> {
+  let accessToken = await AuthServices.getUserPropertyWithToken(token, "access_token");
+  let fileContent = {};
+  let file_sha = file["sha"];
+  // let owner = project.owner;
+  // let repo = project.projectName;
+
+  await axios.get(`https://api.github.com/repos/${owner}/${repo}/git/blobs/${file_sha}`, {
+    headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
+  }).then((res) => {
+    fileContent = {
+      content: res.data["content"],
+      encoding: res.data["encoding"]
+    }
+  }).catch((error) => {
+    console.error(error);
+    console.error(`Error getting file from GitHub`);
+  });
+
+  return fileContent;
+}
+
 async function addCollabsToRepo(project: ProjectData, accessToken: string, usersToAdd: string[]): Promise<string> {
   let promises = [];
 
@@ -162,6 +184,7 @@ const GitHubUtil = {
   getListOfRepos,
   getRepoInfo,
   getRepoContent,
+  getContentFromBlob,
   addCollabsToRepo, 
   removeCollabsFromRepo
 }

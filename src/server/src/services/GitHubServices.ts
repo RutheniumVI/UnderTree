@@ -297,8 +297,28 @@ async function importRepo(req: Request, res: Response): Promise<void> {
   let repo = req.body.repo;
 
   console.log("Importing repo: ", repo);
+  // let owner = "";
+  // let repos = await GitHubUtil.getListOfRepos(token);
+  // for (let i = 0; i < repos.length; i++) {
+  //   if (repos[i]["name"] === repo) {
+  //     owner = repos[i]["owner"];
+  //     break;
+  //   }
+  // }
 
-  await GitHubUtil.getRepoContent(token, repo)
+  // let project = {
+  //   projectName: repo,
+  //   owner: "RutheniumVI",
+  //   collaborators: [],
+  //   isPrivate: false,
+  //   creationDate: "",
+  // }
+
+  // let files = await GitHubUtil.getRepoContent(token, repo);
+  // console.log(files[0]);
+
+  // let content = await GitHubUtil.getContentFromBlob(token, project.owner, project.projectName, files[0]);
+  // console.log(content);
 }
 
 const GitHubServices = {
