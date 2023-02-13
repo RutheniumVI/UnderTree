@@ -18,11 +18,7 @@ app.use(cors({
 app.use(cookieParser());
 const server = http.createServer(app);
 
-await main();
-
-server.listen(8000, () => {
-    console.log('listening on *8000');
-});
+main();
 
 async function main(){
     await DBClient.connect();
@@ -34,4 +30,8 @@ async function main(){
     app.use("/api/auth", authRoutes);
     app.use("/api/file", fileRoutes);
     app.use("/api/github", githubRoutes);
+
+    server.listen(8000, () => {
+        console.log('listening on *8000');
+    });
 }
