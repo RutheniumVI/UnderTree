@@ -4,7 +4,7 @@ import { ProjectData } from "../data/ProjectData.js";
 
 const collectionName = "files";
 
-async function initializeProjectFiles(project: ProjectData): Promise<string> {
+async function initializeProjectFiles(project: ProjectData, username: string): Promise<string> {
 	const collection = DBClient.getCollection(collectionName);
 	const existingProject = await collection.findOne({"projectName": project.projectName, "owner": project.owner});
 
@@ -13,7 +13,7 @@ async function initializeProjectFiles(project: ProjectData): Promise<string> {
 	}
 	try{
         const filePath = project.owner+"/"+project.projectName+"/main.tex";
-        const mainFile: File = {fileName: "main.tex", fileType: "tex", filePath: filePath, documentID: filePath}
+        const mainFile: File = {fileName: "main.tex", fileType: "tex", filePath: filePath, contributors: [username], documentID: filePath}
         const fileData: FileData = {projectName: project.projectName, owner: project.owner, files: [mainFile]}
 		await collection.insertOne(fileData);
 	}

@@ -27,7 +27,7 @@ async function addProject(req: Request, res: Response): Promise<void> {
 		await GitHubServices.createProject(data, accessToken);
 		await GitHubUtil.addCollabsToRepo(data, accessToken, data.collaborators);
 		await ProjectDB.addProject(data);
-		await FileDB.initializeProjectFiles(data);
+		await FileDB.initializeProjectFiles(data, res.locals.username);
 		FileUtil.createDirectory(data.owner+"/"+data.projectName);
 		res.status(200).json("Succesfully added project");
 	} catch (err) {
@@ -56,7 +56,7 @@ async function editProject(req: Request, res: Response): Promise<void>  {
 			await GitHubUtil.addCollabsToRepo(data, accessToken, addedCollabs);
 		}
 		if(removedCollabs !== undefined){
-			await GitHubUtil.addCollabsToRepo(data, accessToken, removedCollabs);
+			await GitHubUtil.removeCollabsFromRepo(data, accessToken, removedCollabs);
 		}
 		const result = await ProjectDB.editProject(data);
 		res.status(200).json(result);
