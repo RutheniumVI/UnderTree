@@ -30,9 +30,13 @@ function Compiler(){
     }
 
     async function compileLatex(){
-        const response = await axios.post("http://localhost:8000/api/file/compilePDF", {text: latexText});
+        const response = await axios.post("http://localhost:8000/api/file/compilePDF", 
+            {text: latexText, projectName: projectName, owner: owner},
+            {withCredentials: true}
+        );
         if(response.data === "Successfully compiled PDF"){
             getPDF();
+            setErr("");
         } else {
             console.log(err);
             setErr(response.data);
