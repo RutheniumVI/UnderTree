@@ -60,7 +60,7 @@ async function getUserReposWithToken(token: string): Promise<Array<Object>> {
     //   console.error(`Error getting user from GitHub`);
     // });
     
-    let repoDetails = await GitHubUtil.getRepoInfo(token, repo, owner);
+    let repoDetails = await GitHubUtil.getRepoInfo(token, repo);
     repos.push(repoDetails);
   }
   // console.log("Repos: ", repos);
@@ -132,8 +132,17 @@ async function commitFile(req: Request, res: Response): Promise<void> {
   let repo = req.body.repo;
   let filepath = req.body.filepath;
 
-  let accessToken = await AuthServices.getUserPropertyWithToken(token, "access_token");
-  let owner = await AuthServices.getUserPropertyWithToken(token, "username");
+  let accessToken = await AuthServices.getUserPropertyWithToken(token, "access_token");  
+  let user = await AuthServices.getUserPropertyWithToken(token, "username");
+
+  let repoInfo = await GitHubUtil.getRepoInfo(token, repo);
+  let owner = repoInfo["owner"];
+
+  console.log("User: " + user + " Owner: " + owner);
+  if (user != owner && !repoInfo["collaborators"].includes(user)) {
+    res.status(401).json("Unauthorized to commit to this repository");
+    return;
+  }
 
   let latestCommitSHA = "";
   let latestCommitURL = "";

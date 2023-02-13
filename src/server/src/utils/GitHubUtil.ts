@@ -30,8 +30,21 @@ async function getListOfRepos(token: string): Promise<Array<Object>> {
   return repos;
 }
 
-async function getRepoInfo(token: string, repo: string, owner: string): Promise<Object> {
+async function getRepoInfo(token: string, repo: string): Promise<Object> {
   let accessToken = await AuthServices.getUserPropertyWithToken(token, "access_token");
+
+  let owner = ""
+  let userRepos = await getListOfRepos(token);
+  for (let i = 0; i < userRepos.length; i++) {
+    if (userRepos[i]["name"] == repo) {
+      owner = userRepos[i]["owner"];
+      break;
+    }
+  }
+  if (owner == "") {
+    console.error(`Error: User doesn't have access to ${repo}`);
+    return null;
+  }
 
   let collabs = [];
     
