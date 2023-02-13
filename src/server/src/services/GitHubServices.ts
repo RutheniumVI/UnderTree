@@ -180,23 +180,33 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
   let userBlobSHA = "";
   let userBlobURL = "";
 
-  // Post the new file to GitHub blobs
-  await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/blobs`, {
-    "content": fileTest.content,
-    "encoding": "utf-8"
-  }, { 
-    headers: { 
-      Authorization: `Bearer ${accessToken}`, 
-      Accept: "application/vnd.github+json" 
-    }
-  }).then((res) => {
-    console.log("Blob Data: ", res.data);
-    userBlobSHA = res.data["sha"];
-    userBlobURL = res.data["url"];
-  }).catch((error) => {
-    console.error(error);
-    console.error(`Error posting blob to GitHub`);
-  });
+  for(let i = 0; i < files.length; i++) {
+    let currFile = files[i];
+
+    // Post the new file to GitHub blobs
+    await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/blobs`, {
+      "content": currFile.content,
+      "encoding": "utf-8"
+    }, { 
+      headers: { 
+        Authorization: `Bearer ${accessToken}`, 
+        Accept: "application/vnd.github+json" 
+      }
+    }).then((res) => {
+      console.log("Blob Data: ", res.data);
+      fileBlobs.push({ 
+        "path": currFile.filepath,
+        "mode": "100644",
+        "type": "blob", 
+        "sha": res.data["sha"]
+      })
+      // userBlobSHA = res.data["sha"];
+      // userBlobURL = res.data["url"];
+    }).catch((error) => {
+      console.error(error);
+      console.error(`Error posting blob to GitHub`);
+    });
+  }
 
   // Get the latest tree in GitHub
   await axios.get(latestTreeURL, { 
@@ -218,14 +228,15 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
   // Create a new tree with the new blob data
   await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/trees`, {
     "base_tree": latestTreeSHA,
-    "tree": [
-      {
-        "path": fileTest.filepath,
-        "mode": "100644",
-        "type": "blob",
-        "sha": userBlobSHA
-      }
-    ]
+    "tree": fileBlobs
+    // "tree": [
+    //   {
+    //     "path": fileTest.filepath,
+    //     "mode": "100644",
+    //     "type": "blob",
+    //     "sha": userBlobSHA
+    //   }
+    // ]
   }, {
     headers: { 
       Authorization: `Bearer ${accessToken}`, 
