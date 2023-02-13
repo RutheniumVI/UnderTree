@@ -10,6 +10,7 @@ import { DBClient } from './utils/MongoDBUtil.js';
 import { router as projectRoutes } from './services/ProjectServices.js';
 import { router as authRoutes } from './services/AuthServices.js';
 import { router as fileRoutes } from './services/FileServices.js';
+import { router as githubRoutes } from './services/GitHubServices.js';
 
 import {WebSocketServer } from "ws";
 import * as Y from "yjs";
@@ -61,8 +62,6 @@ yUtils.setPersistence({
   }
 })
 
-await main();
-
 
 // server.on('upgrade', function upgrade(request, socket, head) {
 //     console.log(request);
@@ -71,6 +70,7 @@ await main();
 server.listen(8000, () => {
     console.log('listening on *8000');
 });
+main();
 
 async function main(){
     await DBClient.connect();
@@ -81,4 +81,9 @@ async function main(){
     app.use("/api/projects", projectRoutes);
     app.use("/api/auth", authRoutes);
     app.use("/api/file", fileRoutes);
+    app.use("/api/github", githubRoutes);
+
+    server.listen(8000, () => {
+        console.log('listening on *8000');
+    });
 }

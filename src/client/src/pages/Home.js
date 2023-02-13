@@ -7,6 +7,10 @@ import Login from '../components/Login';
 import Logout from '../components/Logout';
 import Split from 'react-split'
 import '../Styles/Home.css'
+import CreateProject from '../components/CreateProject';
+import Commit from '../components/Commit';
+import Col from 'react-bootstrap/esm/Col';
+import Collab from '../components/Collab';
 
 function Home() {
   const [currentText, setCurrentText] = useState("");
@@ -36,6 +40,9 @@ function Home() {
             <Chat/>
             <Login/>
             <Logout/>
+            <CreateProject/>
+            <Commit/>
+            <Collab/>
           </div>
           <div class="col">
             <Compiler/>
