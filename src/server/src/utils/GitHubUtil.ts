@@ -67,6 +67,61 @@ async function getRepoInfo(token: string, repo: string): Promise<Object> {
   return repoInfo;
 }
 
+async function getRepoContent(token: string, repo: string): Promise<Array<Object>> {
+  let accessToken = await AuthServices.getUserPropertyWithToken(token, "access_token");
+  let owner = ""
+  let userRepos = await getListOfRepos(token);
+  for (let i = 0; i < userRepos.length; i++) {
+    if (userRepos[i]["name"] == repo) {
+      owner = userRepos[i]["owner"];
+      break;
+    }
+  }
+  if (owner == "") {
+    console.error(`Error: User doesn't have access to ${repo}`);
+    return null;
+  }
+  
+  let files = await getFilesFromPath("", owner, repo, accessToken);
+  return files;
+}
+
+async function getFilesFromPath(path: string, owner: string, repo: string, accessToken: string): Promise<Array<Object>> {
+  let files = []
+  let dirs = []
+  await axios.get(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+    headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
+  }).then((res) => {
+    for (let i = 0; i < res.data.length; i++) {
+      let filename = res.data[i]["name"];
+      let currFile = {}
+      if (res.data[i]["type"] == "dir") {
+        dirs.push(res.data[i]);
+        continue;
+      }
+      let ext = filename.split('.').pop();
+      if (ext == "tex" || ext == "jpg" || ext == "jpeg" || ext == "png") {
+        currFile = { 
+          name: res.data[i]["name"],
+          path: res.data[i]["path"], 
+          sha: res.data[i]["sha"], 
+          url: res.data[i]["url"] 
+        };
+        files.push(currFile);
+      }
+    }
+  }).catch((error) => {
+    console.error(error);
+    console.error(`Error getting file from GitHub`);
+  });
+
+  for(let i = 0; i < dirs.length; i++) {
+    let subFiles = await getFilesFromPath(dirs[i]["path"], owner, repo, accessToken);
+    files = files.concat(subFiles);
+  }
+  return files;
+}
+
 async function addCollabsToRepo(project: ProjectData, accessToken: string, usersToAdd: string[]): Promise<string> {
   let promises = [];
 
@@ -106,6 +161,7 @@ async function removeCollabsFromRepo(project: ProjectData, accessToken: string, 
 const GitHubUtil = {
   getListOfRepos,
   getRepoInfo,
+  getRepoContent,
   addCollabsToRepo, 
   removeCollabsFromRepo
 }

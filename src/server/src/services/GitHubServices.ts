@@ -18,8 +18,7 @@ router.use(AuthUtil.authorizeJWT);
 router.route("/repositoryExists").get(repositoryExists);
 router.route("/userExists").get(userExists);
 router.route("/commitFiles").post(commitFiles);
-
-let JWT_SECRET = process.env.JWT_SECRET;
+router.route("/importRepo").post(importRepo);
 
 async function getUserReposWithToken(token: string): Promise<Array<Object>> {
   let unfilteredRepos = [];
@@ -252,12 +251,7 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
 
   // make logic to check if userCommitSHA exists in the project data, 
   // if so, use that as the parent instead of the latest commit SHA
-  let currProject = await ProjectDB.getProject(repo, owner);
-
   let commitParent = latestCommitSHA;
-  if (currProject.commit.current.sha) {
-    commitParent = currProject.commit.current.sha;
-  }
 
   // Create a new commit with the new tree data
   await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/commits`, {
@@ -280,11 +274,6 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
     console.error(`Error creating new commit with tree data`);
   });
 
-  currProject.commit.current.sha = userCommitSHA;
-  currProject.commit.current.url = userCommitURL;
-  currProject.commit.remote.sha = latestCommitSHA;
-  currProject.commit.remote.url = latestCommitURL;
-
   // PUSH: Update the main branch with the new commit
   await axios.patch(`https://api.github.com/repos/${owner}/${repo}/git/refs/heads/main`, {
     "sha": userCommitSHA,
@@ -301,8 +290,15 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
     console.error(`Error updating main branch with new commit`);
   });
 
-  currProject.commit.current.sha = null;
-  currProject.commit.current.url = null;
+}
+
+async function importRepo(req: Request, res: Response): Promise<void> {
+  let token = req.cookies["undertree-jwt"];
+  let repo = req.body.repo;
+
+  console.log("Importing repo: ", repo);
+
+  await GitHubUtil.getRepoContent(token, repo)
 }
 
 const GitHubServices = {

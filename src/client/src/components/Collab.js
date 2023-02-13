@@ -3,9 +3,9 @@ import axios from 'axios';
 
 async function handleAddCollab() {
   console.log("Adding user");      
-  await axios.post("http://localhost:8000/api/github/addCollaborator", {
-    repo: "UnderTree-Test",
-    userToAdd: "fahmed8383",
+  await axios.post("http://localhost:8000/api/github/importRepo", {
+    repo: "UnderTree",
+    // userToAdd: "fahmed8383",
   }, {
     withCredentials: true,
   }).then((res) => {
@@ -32,9 +32,9 @@ async function handleRemoveCollab() {
 function Collab() {
   return (
     <div> 
-      <h2>Add Collaborator</h2>
+      <h2>Import Repo</h2>
       <button onClick={() => handleAddCollab()}>
-        Add Faiq
+        Import
       </button>
       <h2>Remove Collaborator</h2>
       <button onClick={() => handleRemoveCollab()}>
