@@ -56,7 +56,7 @@ async function editProject(req: Request, res: Response): Promise<void>  {
 			await GitHubUtil.addCollabsToRepo(data, accessToken, addedCollabs);
 		}
 		if(removedCollabs !== undefined){
-			await GitHubUtil.addCollabsToRepo(data, accessToken, removedCollabs);
+			await GitHubUtil.removeCollabsFromRepo(data, accessToken, removedCollabs);
 		}
 		const result = await ProjectDB.editProject(data);
 		res.status(200).json(result);
