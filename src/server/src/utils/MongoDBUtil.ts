@@ -3,7 +3,7 @@ import { MongoClient } from "mongodb";
 
 dotenv.config();
 
-type collections = "projects" | "users"
+type collections = "projects" | "users" | "files"
 
 var client;
 

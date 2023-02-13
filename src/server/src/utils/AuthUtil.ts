@@ -19,18 +19,22 @@ async function authorizeJWT(req: Request, res: Response, next){
 
 		const username = await AuthServices.getUserPropertyWithToken(token, "username");
 		res.locals.token = token;
-		res.locals.username = username;
+		res.locals.accessToken = await AuthServices.getUserPropertyWithToken(token, "access_token")
+		res.locals.username = await AuthServices.getUserPropertyWithToken(token, "username");
 		next();
 	}
 }
 
 async function authorizeProjectAccess(req: Request, res: Response, next){
-	const project = req.body.data.projectName;
-	if(project === undefined){
-		res.status(401).json("Project name field missing, for project authorization query");
+	const project = req.body.projectName;
+	const owner = req.body.owner;
+	const username = res.locals.username
+
+	if(project === undefined || owner === undefined){
+		res.status(401).json("Project information missing, for project authorization query");
 	}
 
-	if(!ProjectDB.projectWithUserExists(project, res.locals.username)){
+	if(username !== owner && !ProjectDB.projectWithUserExists(project, owner, username)){
 		res.status(401).json("User not authorized to access the following project");
 	} else {
 		next();
