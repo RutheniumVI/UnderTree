@@ -3,6 +3,7 @@ import io from 'socket.io-client';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import '../Styles/NewChat.css';
+import {v4 as uuidv4} from 'uuid';
 
 
 const socket = io.connect("http://localhost:8001");
@@ -11,7 +12,9 @@ function NewChat() {
 
     const [userName, setUsername] = useState("");
     const [room, setRoom] = useState("");
-    const [currentMessage, setCurrentMessage] = useState("");
+    const [newMessage, setNewMessage] = useState("");
+    const [messages, setMessages] = useState([]);
+
 
     const joinRoom = () => {
         if (userName !== "" && room !==""){
@@ -21,12 +24,13 @@ function NewChat() {
     };
 
     const sendMessage = async() => {
-        if (currentMessage !== ""){
+        if (newMessage !== ""){
             const messageContent = {
                 room: room,
                 username: userName,
-                message: currentMessage,
-                time: new Date(Date.now()).getHours() + ":" + new Date(Date.now()).getMinutes(),
+                message: newMessage,
+                time: new Date,
+                id: uuidv4(),
             }
 
             await socket.emit("send_message", messageContent);
@@ -34,8 +38,11 @@ function NewChat() {
     }
 
     useEffect(() => {
+        console.log(socket)
         socket.on("receive_message", (data) =>{ 
-        console.log(data)})
+            console.log("received" + data)
+            setMessages((list) => [...list, data]);
+        })
     }, [socket]);
 
   return (
@@ -60,14 +67,18 @@ function NewChat() {
             <div className='header'>
                 <h3>chat</h3>
             </div>
-            <div className='body'></div>
+            <div className='body'>
+                {messages.map((messageData) => {
+                    return <h1 key={messageData.id}>{messageData.message}</h1>
+                })}
+            </div>
             <div className='footer'>
                 <input
                 id="message"
                 type="text"
                 placeholder="enter message"
                 onChange={(event)=>{
-                    setCurrentMessage(event.target.value);
+                    setNewMessage(event.target.value);
                 }}/>
                 <button id="send-button" onClick={sendMessage}>send</button>
             </div>

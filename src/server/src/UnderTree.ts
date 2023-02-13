@@ -44,7 +44,7 @@ io.on("connection", (socket)=> {
 
   socket.on("send_message", (data) => {
     console.log(data);
-    socket.to(data.room).emit("receive_message", data);
+    io.to(data.room).emit("receive_message", data);
   })
 
   socket.on("disconnect", ()=> {
