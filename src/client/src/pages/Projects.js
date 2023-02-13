@@ -13,6 +13,12 @@ function Projects() {
         .then((res) => {
             setProjects(res.data);
         })
+        .catch((err) => {
+            if(err.response.status == 401){
+                localStorage.removeItem("username");
+                window.location.href="/"
+            }
+        })
     }, []);
 
     const [projects, setProjects] = useState([]);
