@@ -18,7 +18,7 @@ function Compiler(){
     function getPDF(){
         fetch("http://localhost:8000/api/file/getPDF?file=output", {
             method: "GET",
-            withCredentials: true
+            credentials: 'include'
         })
         .then(async (res) => {
             const blob = await res.blob()
