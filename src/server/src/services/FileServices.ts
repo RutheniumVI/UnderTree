@@ -1,9 +1,14 @@
 import express from 'express';
+
+import { AuthUtil } from '../utils/AuthUtil.js';
 import { FileUtil } from '../utils/FileUtil.js'
 import { PersistenceUtil } from '../utils/PersistenceUtil.js'
 
-
 const router = express.Router();
+
+router.use(AuthUtil.authorizeJWT);
+// Uncomment when projectName and owner can be passed in with get request
+// router.use(AuthUtil.authorizeProjectAccess);
 
 router.route("/compilePDF").post(compilePDF);
 router.route("/getPDF").get(getPDF);

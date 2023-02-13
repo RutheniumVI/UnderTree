@@ -3,22 +3,12 @@ import { ProjectData } from "../data/ProjectData.js";
 
 const collectionName = "projects";
 
-async function projectWithUserExists(projectName: string, userName: string): Promise<boolean> {
+async function projectWithUserExists(projectName: string, owner: string, userName: string): Promise<boolean> {
 	const collection = DBClient.getCollection(collectionName);
 	const existingProject = await collection.findOne({
-		$and: [
-			{"projectName": projectName}, 
-			{ 
-				$or: [
-					{
-						"owner": userName
-					},
-					{
-						"collaborators": userName
-					},
-				]
-			}
-		]
+		"projectName": projectName, 
+		"owner": owner,
+		"collaborators": userName
 	});
 
 	if(existingProject !== null){
@@ -44,6 +34,17 @@ async function addProject(project: ProjectData): Promise<string> {
 	}
 
 	return "Succesfully added project";
+}
+
+async function getProject(projectName: string, owner: string): Promise<ProjectData> {
+	const collection = DBClient.getCollection(collectionName);
+	const existingProject = await collection.findOne({"projectName": projectName, "owner": owner});
+
+	if(existingProject === null){
+		throw "The following project has recently been deleted, please refresh the browser";
+	}
+
+	return existingProject as ProjectData;
 }
 
 async function getProjects(userName: string): Promise<ProjectData[]> {
@@ -108,6 +109,7 @@ async function deleteProject(project: ProjectData): Promise<string> {
 const ProjectDB = {
 	projectWithUserExists,
 	addProject,
+	getProject,
 	getProjects,
 	editProject,
 	deleteProject
