@@ -8,6 +8,7 @@ import { AuthServices } from './AuthServices.js';
 import { GitHubUtil } from '../utils/GitHubUtil.js';
 import axios from "axios";
 import { ProjectData } from '../data/ProjectData.js';
+import { ProjectDB } from '../database_interface/ProjectDB.js';
 
 dotenv.config();
 
@@ -16,51 +17,53 @@ router.use(AuthUtil.authorizeJWT);
 
 router.route("/repositoryExists").get(repositoryExists);
 router.route("/userExists").get(userExists);
-router.route("/commitFile").post(commitFile);
-
-let JWT_SECRET = process.env.JWT_SECRET;
+router.route("/commitFiles").post(commitFiles);
+router.route("/importRepo").post(importRepo);
 
 async function getUserReposWithToken(token: string): Promise<Array<Object>> {
   let unfilteredRepos = [];
   let repos = [];
-  let accessToken = await AuthServices.getUserPropertyWithToken(token, "access_token");
+  // let accessToken = await AuthServices.getUserPropertyWithToken(token, "access_token");
 
-  await axios.get("https://api.github.com/user/repos", {
-    headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" },
-    params: { affiliation: "owner,collaborator" },
-  })
-  .then((res) => {
-    unfilteredRepos = res.data;
-  })
-  .catch((error) => {
-    console.error(error);
-    console.error(`Error getting user from GitHub`);
-    return null;
-  });
+  // await axios.get("https://api.github.com/user/repos", {
+  //   headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" },
+  //   params: { affiliation: "owner,collaborator" },
+  // })
+  // .then((res) => {
+  //   unfilteredRepos = res.data;
+  // })
+  // .catch((error) => {
+  //   console.error(error);
+  //   console.error(`Error getting user from GitHub`);
+  //   return null;
+  // });
+
+  unfilteredRepos = await GitHubUtil.getListOfRepos(token);
 
   for (let i = 0; i < unfilteredRepos.length; i++) {
     let currRepo = unfilteredRepos[i];
-    let name  = currRepo["name"];
-    let owner = currRepo["owner"]["login"];
+    let repo  = currRepo["name"];
+    let owner = currRepo["owner"];
     let collabs = [];
     
-    await axios.get(`https://api.github.com/repos/${owner}/${name}/collaborators`, {
-      headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
-    }).then((res) => {
-      for (let j = 0; j < res.data.length; j++) {
-        if (res.data[j]["login"] == owner) {
-          continue;
-        }
-        collabs.push(res.data[j]["login"]);
-      } 
-    }).catch((error) => {
-      console.error(error);
-      console.error(`Error getting user from GitHub`);
-    });
-    let repoDetails = { name: currRepo["name"], owner: currRepo["owner"]["login"], collaborators: collabs };
+    // await axios.get(`https://api.github.com/repos/${owner}/${repo}/collaborators`, {
+    //   headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
+    // }).then((res) => {
+    //   for (let j = 0; j < res.data.length; j++) {
+    //     if (res.data[j]["login"] == owner) {
+    //       continue;
+    //     }
+    //     collabs.push(res.data[j]["login"]);
+    //   } 
+    // }).catch((error) => {
+    //   console.error(error);
+    //   console.error(`Error getting user from GitHub`);
+    // });
+    
+    let repoDetails = await GitHubUtil.getRepoInfo(token, repo);
     repos.push(repoDetails);
   }
-  console.log("Repos: ", repos);
+  // console.log("Repos: ", repos);
   return repos;
 }
 
@@ -86,15 +89,15 @@ async function deleteProject(token: string, name: string): Promise<void> {
   let accessToken = await AuthServices.getUserPropertyWithToken(token, "access_token");
   let owner = await AuthServices.getUserPropertyWithToken(token, "username");
 
-  axios.delete(`https://api.github.com/repos/${owner}/${name}`, {
-    headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
-  }).then((res) => {
-    console.log(res.data);
-    console.log("Successfully deleted project");
-  }).catch((error) => {
-    console.error(error);
-    console.error(`Error deleting project`);
-  });
+  // axios.delete(`https://api.github.com/repos/${owner}/${name}`, {
+  //   headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
+  // }).then((res) => {
+  //   console.log(res.data);
+  //   console.log("Successfully deleted project");
+  // }).catch((error) => {
+  //   console.error(error);
+  //   console.error(`Error deleting project`);
+  // });
 }
 
 async function repositoryExists(req: Request, res: Response): Promise<void> {
@@ -124,13 +127,23 @@ async function userExists(req: Request, res: Response): Promise<void> {
 	}
 }
 
-async function commitFile(req: Request, res: Response): Promise<void> {
+async function commitFiles(req: Request, res: Response): Promise<void> {
   let token = req.cookies["undertree-jwt"];
   let repo = req.body.repo;
-  let filepath = req.body.filepath;
+  let files = req.body.files;
+  let fileBlobs = [];
 
-  let accessToken = await AuthServices.getUserPropertyWithToken(token, "access_token");
-  let owner = await AuthServices.getUserPropertyWithToken(token, "username");
+  let accessToken = await AuthServices.getUserPropertyWithToken(token, "access_token");  
+  let user = await AuthServices.getUserPropertyWithToken(token, "username");
+
+  let repoInfo = await GitHubUtil.getRepoInfo(token, repo);
+  let owner = repoInfo["owner"];
+
+  console.log("User: " + user + " Owner: " + owner);
+  if (user != owner && !repoInfo["collaborators"].includes(user)) {
+    res.status(401).json("Unauthorized to commit to this repository");
+    return;
+  }
 
   let latestCommitSHA = "";
   let latestCommitURL = "";
@@ -163,26 +176,31 @@ async function commitFile(req: Request, res: Response): Promise<void> {
     console.error(`Error getting latest commit from GitHub`);
   });
 
-  let userBlobSHA = "";
-  let userBlobURL = "";
+  for(let i = 0; i < files.length; i++) {
+    let currFile = files[i];
 
-  // Post the new file to GitHub blobs
-  await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/blobs`, {
-    "content": "Hello World, this is UnderTree modifying a file!",
-    "encoding": "utf-8"
-  }, { 
-    headers: { 
-      Authorization: `Bearer ${accessToken}`, 
-      Accept: "application/vnd.github+json" 
-    }
-  }).then((res) => {
-    console.log("Blob Data: ", res.data);
-    userBlobSHA = res.data["sha"];
-    userBlobURL = res.data["url"];
-  }).catch((error) => {
-    console.error(error);
-    console.error(`Error posting blob to GitHub`);
-  });
+    // Post the new file to GitHub blobs
+    await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/blobs`, {
+      "content": currFile.content,
+      "encoding": "utf-8"
+    }, { 
+      headers: { 
+        Authorization: `Bearer ${accessToken}`, 
+        Accept: "application/vnd.github+json" 
+      }
+    }).then((res) => {
+      console.log("Blob Data: ", res.data);
+      fileBlobs.push({ 
+        "path": currFile.filepath,
+        "mode": "100644",
+        "type": "blob", 
+        "sha": res.data["sha"]
+      })
+    }).catch((error) => {
+      console.error(error);
+      console.error(`Error posting blob to GitHub`);
+    });
+  }
 
   // Get the latest tree in GitHub
   await axios.get(latestTreeURL, { 
@@ -204,14 +222,15 @@ async function commitFile(req: Request, res: Response): Promise<void> {
   // Create a new tree with the new blob data
   await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/trees`, {
     "base_tree": latestTreeSHA,
-    "tree": [
-      {
-        "path": filepath,
-        "mode": "100644",
-        "type": "blob",
-        "sha": userBlobSHA
-      }
-    ]
+    "tree": fileBlobs
+    // "tree": [
+    //   {
+    //     "path": fileTest.filepath,
+    //     "mode": "100644",
+    //     "type": "blob",
+    //     "sha": userBlobSHA
+    //   }
+    // ]
   }, {
     headers: { 
       Authorization: `Bearer ${accessToken}`, 
@@ -229,12 +248,17 @@ async function commitFile(req: Request, res: Response): Promise<void> {
   let userCommitSHA = "";
   let userCommitURL = "";
 
+
+  // make logic to check if userCommitSHA exists in the project data, 
+  // if so, use that as the parent instead of the latest commit SHA
+  let commitParent = latestCommitSHA;
+
   // Create a new commit with the new tree data
   await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/commits`, {
     "message": "Commit created by UnderTree!",
     "tree": userTreeSHA,
     "parents": [
-      latestCommitSHA
+      commitParent
     ]
   }, {
     headers: {
@@ -250,9 +274,10 @@ async function commitFile(req: Request, res: Response): Promise<void> {
     console.error(`Error creating new commit with tree data`);
   });
 
-  // Update the main branch with the new commit
+  // PUSH: Update the main branch with the new commit
   await axios.patch(`https://api.github.com/repos/${owner}/${repo}/git/refs/heads/main`, {
-    "sha": userCommitSHA
+    "sha": userCommitSHA,
+    "force": true
   }, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -264,6 +289,16 @@ async function commitFile(req: Request, res: Response): Promise<void> {
     console.error(error);
     console.error(`Error updating main branch with new commit`);
   });
+
+}
+
+async function importRepo(req: Request, res: Response): Promise<void> {
+  let token = req.cookies["undertree-jwt"];
+  let repo = req.body.repo;
+
+  console.log("Importing repo: ", repo);
+
+  await GitHubUtil.getRepoContent(token, repo)
 }
 
 const GitHubServices = {

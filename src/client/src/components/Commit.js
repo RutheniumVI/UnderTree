@@ -2,10 +2,12 @@ import React from 'react';
 import axios from 'axios';
 
 async function handleCommit() {
-  console.log("Creating Project");      
-  await axios.post("http://localhost:8000/api/github/commitFile", {
+  console.log("Committing Files");      
+  await axios.post("http://localhost:8000/api/github/commitFiles", {
     repo: "UnderTree-Test",
-    filepath: "README.md",
+    files: [{ filepath: "main.tex", content: "This is the content for the main tex file of the repo made by UnderTree" }, 
+            { filepath: "README.md", content: "This is the content for the README.md file of the repo made by UnderTree" },
+            { filepath: "test/test.tex", content: "This is the content for the test.tex file of the repo made by UnderTree" }]
   }, {
     withCredentials: true,
   }).then((res) => {
@@ -18,7 +20,7 @@ async function handleCommit() {
 function Commit() {
   return (
     <div> 
-      <h2>Commit File</h2>
+      <h2>Commit Files</h2>
       <button onClick={() => handleCommit()}>
         Create Commit
       </button>
