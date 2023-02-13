@@ -2,6 +2,8 @@ import React from 'react'
 import io from 'socket.io-client';
 import { useState } from 'react';
 import { useEffect } from 'react';
+import '../Styles/NewChat.css';
+
 
 const socket = io.connect("http://localhost:8001");
 
@@ -61,12 +63,13 @@ function NewChat() {
             <div className='body'></div>
             <div className='footer'>
                 <input
+                id="message"
                 type="text"
                 placeholder="enter message"
                 onChange={(event)=>{
                     setCurrentMessage(event.target.value);
                 }}/>
-                <button onClick={sendMessage}>send</button>
+                <button id="send-button" onClick={sendMessage}>send</button>
             </div>
         </div>
     </div>
