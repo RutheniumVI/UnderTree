@@ -1,7 +1,8 @@
 interface FileData {
     projectName: string,
     owner: string,
-    files: File[]
+    files: File[],
+    deletedFiles: string[]
 }
 
 interface File {

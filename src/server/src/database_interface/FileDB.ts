@@ -14,7 +14,7 @@ async function initializeProjectFiles(project: ProjectData, username: string): P
 	try{
         const filePath = project.owner+"/"+project.projectName+"/main.tex";
         const mainFile: File = {fileName: "main.tex", fileType: "tex", filePath: filePath, contributors: [username], documentID: filePath}
-        const fileData: FileData = {projectName: project.projectName, owner: project.owner, files: [mainFile]}
+        const fileData: FileData = {projectName: project.projectName, owner: project.owner, files: [mainFile], deletedFiles: []};
 		await collection.insertOne(fileData);
 	}
 	catch (err) {
