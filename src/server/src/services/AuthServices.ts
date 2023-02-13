@@ -23,9 +23,11 @@ async function validateUserAuth(token: string): Promise<Object> {
   try{
     let user = await AuthDB.getUserWithToken(token);
     if (user == null) {
+      console.log("User is not retrievable with this token: ", token);
       return { validated: false, token: newToken };
     }
     if (user.jwt == null || user.jwt == "" || user.jwt != token) {
+      console.log("User's jwt token doesn't match token: ", token, user.jwt);
       return { validated: false, token: newToken };
     }
 
@@ -34,7 +36,9 @@ async function validateUserAuth(token: string): Promise<Object> {
         if (err.name === "TokenExpiredError") {
           console.log("Token expired");
           newToken = jwt.sign({ username: user.username }, JWT_SECRET, { expiresIn: "1h" });
-          await AuthDB.updateUserWithToken(token, newToken);
+          await AuthDB.updateUserWithToken(token, newToken);    
+          console.log("Renewing token: ", token, newToken);
+
         }
       }
     });

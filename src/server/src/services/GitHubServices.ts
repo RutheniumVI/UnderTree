@@ -22,44 +22,47 @@ let JWT_SECRET = process.env.JWT_SECRET;
 async function getUserReposWithToken(token: string): Promise<Array<Object>> {
   let unfilteredRepos = [];
   let repos = [];
-  let accessToken = await AuthServices.getUserPropertyWithToken(token, "access_token");
+  // let accessToken = await AuthServices.getUserPropertyWithToken(token, "access_token");
 
-  await axios.get("https://api.github.com/user/repos", {
-    headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" },
-    params: { affiliation: "owner,collaborator" },
-  })
-  .then((res) => {
-    unfilteredRepos = res.data;
-  })
-  .catch((error) => {
-    console.error(error);
-    console.error(`Error getting user from GitHub`);
-    return null;
-  });
+  // await axios.get("https://api.github.com/user/repos", {
+  //   headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" },
+  //   params: { affiliation: "owner,collaborator" },
+  // })
+  // .then((res) => {
+  //   unfilteredRepos = res.data;
+  // })
+  // .catch((error) => {
+  //   console.error(error);
+  //   console.error(`Error getting user from GitHub`);
+  //   return null;
+  // });
+
+  unfilteredRepos = await GitHubUtil.getListOfRepos(token);
 
   for (let i = 0; i < unfilteredRepos.length; i++) {
     let currRepo = unfilteredRepos[i];
-    let name  = currRepo["name"];
-    let owner = currRepo["owner"]["login"];
+    let repo  = currRepo["name"];
+    let owner = currRepo["owner"];
     let collabs = [];
     
-    await axios.get(`https://api.github.com/repos/${owner}/${name}/collaborators`, {
-      headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
-    }).then((res) => {
-      for (let j = 0; j < res.data.length; j++) {
-        if (res.data[j]["login"] == owner) {
-          continue;
-        }
-        collabs.push(res.data[j]["login"]);
-      } 
-    }).catch((error) => {
-      console.error(error);
-      console.error(`Error getting user from GitHub`);
-    });
-    let repoDetails = { name: currRepo["name"], owner: currRepo["owner"]["login"], collaborators: collabs };
+    // await axios.get(`https://api.github.com/repos/${owner}/${repo}/collaborators`, {
+    //   headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
+    // }).then((res) => {
+    //   for (let j = 0; j < res.data.length; j++) {
+    //     if (res.data[j]["login"] == owner) {
+    //       continue;
+    //     }
+    //     collabs.push(res.data[j]["login"]);
+    //   } 
+    // }).catch((error) => {
+    //   console.error(error);
+    //   console.error(`Error getting user from GitHub`);
+    // });
+    
+    let repoDetails = await GitHubUtil.getRepoInfo(token, repo, owner);
     repos.push(repoDetails);
   }
-  console.log("Repos: ", repos);
+  // console.log("Repos: ", repos);
   return repos;
 }
 
@@ -255,7 +258,7 @@ async function addCollaborator(req: Request, res: Response): Promise<void> {
   let repo = req.body.repo;
   let userToAdd = req.body.userToAdd;
 
-  await GitHubUtil.addCollabToRepo(token, repo, userToAdd);
+  await GitHubUtil.addCollabToRepo(token, repo, userToAdd); 
 }
 
 async function removeCollaborator(req: Request, res: Response): Promise<void> {
