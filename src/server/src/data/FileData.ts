@@ -8,6 +8,7 @@ interface File {
     fileName: string,
     fileType: "tex"|"image",
     filePath: string,
+    contributors: string[],
     documentID: string,
 }
 
