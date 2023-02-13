@@ -26,6 +26,10 @@
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.0",
     "mongodb": "^4.13.0",
-    "querystring": "^0.2.1"
+    "querystring": "^0.2.1",
+    "ws": "^8.12.0",
+    "y-mongodb-provider": "^0.1.6",
+    "y-websocket": "^1.4.5",
+    "yjs": "^13.5.45"
   }
 }

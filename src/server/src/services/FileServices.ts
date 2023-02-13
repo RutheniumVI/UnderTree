@@ -1,10 +1,13 @@
 import express from 'express';
 import { FileUtil } from '../utils/FileUtil.js'
+import { PersistenceUtil } from '../utils/PersistenceUtil.js'
 
-const router = express.Router();1
+
+const router = express.Router();
 
 router.route("/compilePDF").post(compilePDF);
 router.route("/getPDF").get(getPDF);
+router.route("/fileEdited").post(getPDF);
 
 async function compilePDF(req, res){
     try {
@@ -21,6 +24,10 @@ async function getPDF(req, res) {
     const fileData = FileUtil.getFileData(req.query.file+".pdf");
     res.contentType("application/pdf");
     res.send(fileData);
+}
+
+async function fileEdited(req, res) {
+    
 }
 
 export { router };

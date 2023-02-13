@@ -12,25 +12,53 @@ import ReactQuill, { Quill } from 'react-quill';
 import QuillCursors from 'quill-cursors';
 import 'react-quill/dist/quill.snow.css';
 import '../Styles/Editor.css'
+import "highlight.js/styles/github.css";
+import hljs from 'highlight.js'
+// import 'highlight.js/styles/default.css'
 
 Quill.register('modules/cursors', QuillCursors);
 
+hljs.configure({
+    languages: ['tex', 'python', 'rust'],
+})
 
 const modules = {
+    syntax: {
+        highlight: text => hljs.highlightAuto(text).value,
+    },
     cursors: true,
 }
 
-function Editor() {
+const formats = [
+    "header",
+    "font",
+    "size",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "indent",
+    "link",
+    "image",
+    "video",
+    "code-block"
+];
+
+function Editor({documentID, setCurrentText}) {
     const username = localStorage.getItem("username");
     const [value, setValue] = useState('');
+    const [modified, setModified] = useState(false);
     let edtRef = null;
 
 
     // Connect to socket when editor page is opened
     useEffect(() => {
         console.log(edtRef)
-        const ydoc = new Y.Doc();
-        const provider = new WebsocketProvider('wss://demos.yjs.dev', 'test1', ydoc);
+        const ydoc = new Y.Doc();   
+        const provider = new WebsocketProvider('ws://localhost:8000', documentID, ydoc, {params: {jwt: "123"}});
         const ytext = ydoc.getText('quill');
 
         const awareness = provider.awareness; 
@@ -41,9 +69,19 @@ function Editor() {
           name: username,
           color: color,
         });
+
         new QuillBinding(ytext, edtRef.getEditor(), awareness);
     }, [])
 
+    function onEditorChanged(content, delta, source, editor){
+        setValue(content);
+        setCurrentText(editor.getText(content));
+        console.log(editor)
+        if(!modified){
+            console.log("I made first change");
+            setModified(true);
+        }
+    }
 
     return ( 
         <div id='container'>
@@ -52,8 +90,10 @@ function Editor() {
                 theme="snow"
                 className="editor"
                 modules={modules}
+                formats={formats}
                 value={value} 
-                onChange={setValue} />
+                onChange={onEditorChanged}
+                 />
         </div>
     )
 }

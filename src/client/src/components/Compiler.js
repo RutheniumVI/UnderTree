@@ -4,14 +4,15 @@ import { useState } from 'react';
 
 import '../Styles/Compiler.css'
 
-function Compiler(){
+function Compiler({latexText}){
 
-    const [latexText, setLatexText] = useState("");
+    // const [latexText, setLatexText] = useState("");
     const [renderPDF, setRenderTime] = useState("");
     const [err, setErr] = useState("");
 
     async function compileLatex(){
         const response = await axios.post("http://localhost:8000/api/file/compilePDF", {text: latexText});
+
         if(response.data === "Successfully compiled PDF"){
             setRenderTime(new Date());
         } else {
