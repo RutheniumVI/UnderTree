@@ -42,6 +42,10 @@ io.on("connection", (socket)=> {
     socket.join(data)
   })
 
+  socket.on("send_message", (data) => {
+    console.log(data);
+  })
+
   socket.on("disconnect", ()=> {
     console.log("User Disconnected", socket.id);
   });
