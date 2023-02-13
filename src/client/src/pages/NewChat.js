@@ -1,6 +1,7 @@
 import React from 'react'
 import io from 'socket.io-client';
 import { useState } from 'react';
+import { useEffect } from 'react';
 
 const socket = io.connect("http://localhost:8001");
 
@@ -29,6 +30,11 @@ function NewChat() {
             await socket.emit("send_message", messageContent);
         }
     }
+
+    useEffect(() => {
+        socket.on("receive_message", (data) =>{ 
+        console.log(data)})
+    }, [socket]);
 
   return (
     <div>
