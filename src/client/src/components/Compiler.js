@@ -1,10 +1,13 @@
 import React from 'react';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
 import '../Styles/Compiler.css'
 
 function Compiler(){
+
+    const { owner, projectName } = useParams();
 
     const [latexText, setLatexText] = useState("");
     const [err, setErr] = useState("");
@@ -16,7 +19,7 @@ function Compiler(){
     }, []);
 
     function getPDF(){
-        fetch("http://localhost:8000/api/file/getPDF?file=output", {
+        fetch("http://localhost:8000/api/file/getPDF?file=output&owner="+owner+"&projectName="+projectName, {
             method: "GET",
             credentials: 'include'
         })
