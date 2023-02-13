@@ -26,9 +26,17 @@ async function authorizeJWT(req: Request, res: Response, next){
 }
 
 async function authorizeProjectAccess(req: Request, res: Response, next){
-	const project = req.body.projectName;
-	const owner = req.body.owner;
+	let project = undefined;
+	let owner = undefined;
 	const username = res.locals.username
+
+	if(req.method === "GET"){
+		project = req.query.projectName;
+		owner = req.query.owner;
+	} else if (req.method === "POST") {
+		project = req.body.projectName;
+		owner = req.body.owner;
+	}
 
 	if(project === undefined || owner === undefined){
 		res.status(401).json("Project information missing, for project authorization query");
