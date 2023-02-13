@@ -8,6 +8,7 @@ import { AuthServices } from './AuthServices.js';
 import { GitHubUtil } from '../utils/GitHubUtil.js';
 import axios from "axios";
 import { ProjectData } from '../data/ProjectData.js';
+import { ProjectDB } from '../database_interface/ProjectDB.js';
 
 dotenv.config();
 
@@ -131,7 +132,6 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
   let token = req.cookies["undertree-jwt"];
   let repo = req.body.repo;
   let files = req.body.files;
-  let fileTest = files[0];
   let fileBlobs = [];
 
   let accessToken = await AuthServices.getUserPropertyWithToken(token, "access_token");  
@@ -177,9 +177,6 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
     console.error(`Error getting latest commit from GitHub`);
   });
 
-  let userBlobSHA = "";
-  let userBlobURL = "";
-
   for(let i = 0; i < files.length; i++) {
     let currFile = files[i];
 
@@ -200,8 +197,6 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
         "type": "blob", 
         "sha": res.data["sha"]
       })
-      // userBlobSHA = res.data["sha"];
-      // userBlobURL = res.data["url"];
     }).catch((error) => {
       console.error(error);
       console.error(`Error posting blob to GitHub`);
@@ -254,12 +249,22 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
   let userCommitSHA = "";
   let userCommitURL = "";
 
+
+  // make logic to check if userCommitSHA exists in the project data, 
+  // if so, use that as the parent instead of the latest commit SHA
+  let currProject = await ProjectDB.getProject(repo, owner);
+
+  let commitParent = latestCommitSHA;
+  if (currProject.commit.current.sha) {
+    commitParent = currProject.commit.current.sha;
+  }
+
   // Create a new commit with the new tree data
   await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/commits`, {
     "message": "Commit created by UnderTree!",
     "tree": userTreeSHA,
     "parents": [
-      latestCommitSHA
+      commitParent
     ]
   }, {
     headers: {
@@ -275,7 +280,12 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
     console.error(`Error creating new commit with tree data`);
   });
 
-  // Update the main branch with the new commit
+  currProject.commit.current.sha = userCommitSHA;
+  currProject.commit.current.url = userCommitURL;
+  currProject.commit.remote.sha = latestCommitSHA;
+  currProject.commit.remote.url = latestCommitURL;
+
+  // PUSH: Update the main branch with the new commit
   await axios.patch(`https://api.github.com/repos/${owner}/${repo}/git/refs/heads/main`, {
     "sha": userCommitSHA,
     "force": true
@@ -290,6 +300,9 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
     console.error(error);
     console.error(`Error updating main branch with new commit`);
   });
+
+  currProject.commit.current.sha = null;
+  currProject.commit.current.url = null;
 }
 
 const GitHubServices = {
