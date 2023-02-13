@@ -94,6 +94,31 @@ async function editProject(project: ProjectData): Promise<string> {
 	return "Succesfully edited project";
 }
 
+async function editProjectCommit(project: ProjectData): Promise<string> {
+	const collection = DBClient.getCollection(collectionName);
+	const existingProject = await collection.findOne({"projectName": project.projectName, "owner": project.owner});
+
+	if(existingProject === null){
+		throw "The following project does not exist";
+	}
+
+	try{
+		await collection.updateOne(
+			{"projectName": project.projectName, "owner": project.owner},
+			{
+				$set: {
+					"commit": project.commit
+				}
+			} 
+		);
+	} catch (err) {
+		console.log(err);
+		throw "Failed to edit project commit";
+	}
+
+	return "Succesfully edited project commit";
+}
+
 async function deleteProject(project: ProjectData): Promise<string> {
 	const collection = DBClient.getCollection(collectionName);
 
@@ -112,6 +137,7 @@ const ProjectDB = {
 	getProject,
 	getProjects,
 	editProject,
+	editProjectCommit,
 	deleteProject
 };
 

@@ -1,11 +1,19 @@
 import React from 'react';
+import { useLayoutEffect } from 'react';
 
 function Home() {
-return (
-    <div>
-        This is home page
-    </div>
-);
+
+    useLayoutEffect(() => {
+        if(localStorage.getItem("username") !== null){
+            window.location.href = "/projects"
+        }
+    }, []);
+
+    return (
+        <div>
+            This is home page
+        </div>
+    );
 }
   
 export default Home
