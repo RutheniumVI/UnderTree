@@ -1,8 +1,9 @@
 interface ProjectData {
-    name: string,
+    projectName: string,
     owner: string,
     collaborators: string[],
+    isPrivate: boolean,
     creationDate: string
 }
 
-export { ProjectData }
+export { ProjectData };
