@@ -7,15 +7,16 @@ import { AuthUtil } from '../utils/AuthUtil.js';
 import { AuthServices } from './AuthServices.js';
 import { GitHubUtil } from '../utils/GitHubUtil.js';
 import axios from "axios";
+import { ProjectData } from '../data/ProjectData.js';
 
 dotenv.config();
 
 router.use(cookieParser());
 router.use(AuthUtil.authorizeJWT);
-router.route("/createProject").post(createProject);
+
+router.route("/repositoryExists").get(repositoryExists);
+router.route("/userExists").get(userExists);
 router.route("/commitFile").post(commitFile);
-router.route("/addCollaborator").post(addCollaborator);
-router.route("/removeCollaborator").post(removeCollaborator);
 
 let JWT_SECRET = process.env.JWT_SECRET;
 
@@ -66,34 +67,22 @@ async function getUserReposWithToken(token: string): Promise<Array<Object>> {
   return repos;
 }
 
-async function createProject(req: Request, res: Response): Promise<void> {
-  let token = req.cookies["undertree-jwt"];
-  let accessToken = await AuthServices.getUserPropertyWithToken(token, "access_token");
-
-  let name = req.body.name;
-  let desc = req.body.description;
-  let homepage = req.body.homepage;
-  let repoPrivate = req.body.repoPrivate;
-
-  axios.post("https://api.github.com/user/repos", { 
-      "name": name, 
-      "description": desc,
-      "homepage": homepage,
-      "private": repoPrivate,
-      "auto_init":true,
-    }, { 
-    headers: { 
-      Authorization: `Bearer ${accessToken}`, 
-      Accept: "application/vnd.github+json" 
-    }
-  }).then((res) => {
-    console.log(res.data);
-    console.log("Successfully created project");
-  }).catch((error) => {
-    console.error(error);
-    console.error(`Error creating project`);
-  });
-  return;
+async function createProject(project: ProjectData, accessToken: string): Promise<string> {
+  try{
+    await axios.post("https://api.github.com/user/repos", { 
+        "name": project.projectName, 
+        "private": project.isPrivate,
+        "auto_init":true,
+      }, { 
+      headers: { 
+        Authorization: `Bearer ${accessToken}`, 
+        Accept: "application/vnd.github+json" 
+      }
+    });
+  } catch (err) {
+    throw err;
+  }
+  return "Successfully created repo"
 }
 
 async function deleteProject(token: string, name: string): Promise<void> {
@@ -109,6 +98,33 @@ async function deleteProject(token: string, name: string): Promise<void> {
     console.error(error);
     console.error(`Error deleting project`);
   });
+}
+
+async function repositoryExists(req: Request, res: Response): Promise<void> {
+	const accessToken = await AuthServices.getUserPropertyWithToken(res.locals.token, "access_token");
+	const owner = req.query.owner;
+	const name = req.query.name;
+	try{
+		await axios.get(`https://api.github.com/repos/${owner}/${name}`, {
+			headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" },
+		})
+		res.json(true);
+	} catch {
+		res.json(false);
+	}
+}
+
+async function userExists(req: Request, res: Response): Promise<void> {
+	const accessToken = await AuthServices.getUserPropertyWithToken(res.locals.token, "access_token");
+	const name = req.query.name;
+	try{
+		await axios.get(`https://api.github.com/users/${name}`, {
+			headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" },
+		})
+		res.json(true);
+	} catch {
+		res.json(false);
+	}
 }
 
 async function commitFile(req: Request, res: Response): Promise<void> {
@@ -253,25 +269,9 @@ async function commitFile(req: Request, res: Response): Promise<void> {
   });
 }
 
-async function addCollaborator(req: Request, res: Response): Promise<void> {
-  let token = req.cookies["undertree-jwt"];
-  let repo = req.body.repo;
-  let userToAdd = req.body.userToAdd;
-
-  await GitHubUtil.addCollabToRepo(token, repo, userToAdd); 
-}
-
-async function removeCollaborator(req: Request, res: Response): Promise<void> {
-  let token = req.cookies["undertree-jwt"];
-  let repo = req.body.repo;
-  let userToRemove = req.body.userToRemove;
-
-  await GitHubUtil.removeCollabFromRepo(token, repo, userToRemove);
-}
-
-
 const GitHubServices = {
   getUserReposWithToken,
+  createProject,
   deleteProject,
 }
 

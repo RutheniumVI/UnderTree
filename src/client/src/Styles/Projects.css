@@ -36,6 +36,13 @@
     margin-top: 5px;
 }
 
+.projectName {
+    color: #3e70bb;
+}
+
+.projectName:hover {
+    cursor: pointer;
+}
 
 .projectIcons {
     font-size: 22px;

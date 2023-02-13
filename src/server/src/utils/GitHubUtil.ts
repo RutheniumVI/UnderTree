@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { ProjectData } from '../data/ProjectData.js';
 import { AuthServices } from '../services/AuthServices.js';
 
 async function getListOfRepos(token: string): Promise<Array<Object>> {
@@ -53,41 +54,47 @@ async function getRepoInfo(token: string, repo: string, owner: string): Promise<
   return repoInfo;
 }
 
-async function addCollabToRepo(token: string, repo: string, userToAdd: string): Promise<void> {
-  let owner = await AuthServices.getUserPropertyWithToken(token, "username");  
-  let accessToken = await AuthServices.getUserPropertyWithToken(token, "access_token");
+async function addCollabsToRepo(project: ProjectData, accessToken: string, usersToAdd: string[]): Promise<string> {
+  let promises = [];
 
-  await axios.put(`https://api.github.com/repos/${owner}/${repo}/collaborators/${userToAdd}`, {}, {
-    headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
-  }).then((res) => {
-    console.log(res.data);
-    console.log("Successfully added collaborator");
-  }).catch((error) => {
-    console.error(error);
-    console.error(`Error adding collaborator`);
-  });
+  usersToAdd.forEach((user) => {
+    promises.push(axios.put(`https://api.github.com/repos/${project.owner}/${project.projectName}/collaborators/${user}`, {}, {
+      headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
+    }));
+  })
+
+  try{
+    await Promise.all(promises);
+    return "Successfully added collaborators";
+  } catch (err) {
+    console.log(err);
+    throw "Unable to add collaborators"
+  }
 }
 
-async function removeCollabFromRepo(token: string, repo: string, userToRemove: string): Promise<void> {
-  let owner = await AuthServices.getUserPropertyWithToken(token, "username");
-  let accessToken = await AuthServices.getUserPropertyWithToken(token, "access_token");
+async function removeCollabsFromRepo(project: ProjectData, accessToken: string, usersToRemove: string[]): Promise<string> {
+  let promises = [];
 
-  await axios.delete(`https://api.github.com/repos/${owner}/${repo}/collaborators/${userToRemove}`, {
-    headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
-  }).then((res) => {
-    console.log(res.data);
-    console.log("Successfully removed collaborator");
-  }).catch((error) => {
-    console.error(error);
-    console.error(`Error removing collaborator`);
-  });
+  usersToRemove.forEach((user) => {
+    promises.push(axios.delete(`https://api.github.com/repos/${project.owner}/${project.projectName}/collaborators/${user}`, {
+      headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
+    }));
+  })
+
+  try{
+    await Promise.all(promises);
+    return "Successfully removed collaborators";
+  } catch (err) {
+    console.log(err);
+    throw "Unable to add collaborators"
+  }
 }
 
 const GitHubUtil = {
   getListOfRepos,
   getRepoInfo,
-  addCollabToRepo, 
-  removeCollabFromRepo
+  addCollabsToRepo, 
+  removeCollabsFromRepo
 }
 
 export { GitHubUtil }

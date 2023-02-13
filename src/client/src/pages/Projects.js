@@ -9,8 +9,7 @@ import '../Styles/Projects.css'
 function Projects() {
 
     useEffect(() => {
-        axios.get("http://localhost:8000/api/projects/getProjects", {withCredentials: true}
-        )
+        axios.get("http://localhost:8000/api/projects/getProjects", {withCredentials: true})
         .then((res) => {
             setProjects(res.data);
         })
@@ -19,16 +18,17 @@ function Projects() {
     const [projects, setProjects] = useState([]);
 
     const [currentProject, setCurrentProject] = useState({
-        "name": "",
+        "projectName": "",
         "owner": "",
         "collaborators": [],
+        "isPrivate": false,
         "creationDate": ""
     })
 
     const [collaboratorValue, setCollaboratorValue] = useState("")
 
     const [errors, setErrors] = useState({
-        "name":"",
+        "projectName":"",
         "collaborators": "",
         "addProject": "",
         "editProject": "",
@@ -41,14 +41,15 @@ function Projects() {
 
     function resetModalStates(){
         setCurrentProject({
-            "name": "",
+            "projectName": "",
             "owner": "",
             "collaborators": [],
+            "isPrivate": false,
             "creationDate": ""
         });
 
         setErrors({
-            "name":"",
+            "projectName":"",
             "collaborators": "",
             "addProject": "",
             "editProject": "",
@@ -60,12 +61,11 @@ function Projects() {
 
     function updateCurrentProject(e){
         const value = e.target.value;
-        setCurrentProject({...currentProject, name: value});
-        // also check if project exists on github already
+        setCurrentProject({...currentProject, projectName: value});
         if (value.split(" ").length != 1){
-            setErrors({...errors, name: "GitHub repository name can not have spaces in it"});
+            setErrors({...errors, projectName: "GitHub repository name can not have spaces in it"});
         } else {
-            setErrors({...errors, name: ""})
+            setErrors({...errors, projectName: ""})
         }
     }
 
@@ -75,20 +75,30 @@ function Projects() {
         if (value.split(" ").length != 1){
             setErrors({...errors, collaborators: "User name can not have spaces in it"});
         }
+        else if (value === localStorage.getItem("username")){
+            setErrors({...errors, collaborators: "Cannot add yourself as a collaborator"});
+        }
         else {
             setErrors({...errors, collaborators: ""});
         }
     }
 
     function addProjectCollaborator(){
-        // check if collaborator with the name exists on github
         if(collaboratorValue.length == 0){
             setErrors({...errors, collaborators: "User name can not be empty"});
         } else if (currentProject.collaborators.includes(collaboratorValue)){
             setErrors({...errors, collaborators: "User is already a collaborator in this repository"});
         } else if(errors.collaborators === ""){
-            setCollaboratorValue("");
-            setCurrentProject({...currentProject, collaborators: [...currentProject.collaborators, collaboratorValue]});
+            axios.get("http://localhost:8000/api/github/userExists",
+                {params: {name: collaboratorValue}, withCredentials: true}
+            ).then((res) => {
+                if(!res.data){
+                    setErrors({...errors, collaborators: "A user with the following name does not exist on GitHub"});
+                } else {
+                    setCollaboratorValue("");
+                    setCurrentProject({...currentProject, collaborators: [...currentProject.collaborators, collaboratorValue]});
+                }
+            })
         }
     }
 
@@ -105,33 +115,43 @@ function Projects() {
         setCurrentProject(projects[index]);
     }
 
-    function addProject(){
-        if(currentProject.name === ""){
-            setErrors({...errors, name: "GitHub repository name can not be empty"});
-        } else if(errors.name === "" && errors.collaborators === ""){
-            const newProjectData = {
-                name: currentProject.name, 
-                owner: localStorage.getItem("username"), 
-                collaborators: currentProject.collaborators, 
-                creationDate: new Date()
-            }
-
-            axios.post("http://localhost:8000/api/projects/addProject", newProjectData)
+    async function addProject(){
+        if(currentProject.projectName === ""){
+            setErrors({...errors, projectName: "GitHub repository name can not be empty"});
+        } else if(errors.projectName === "" && errors.collaborators === ""){
+            axios.get("http://localhost:8000/api/github/repositoryExists",
+                {params: {name: currentProject.projectName, owner: localStorage.getItem("username")}, withCredentials: true}
+            )
             .then((res) => {
-                setProjects([newProjectData, ...projects]);
-                document.getElementById('newProjectModalClose').click();
-            })
-            .catch((err) => {
-                if(err.response.status == 500){
-                    setErrors({...errors, addProject: err.response.data});
+                if(res.data){
+                    setErrors({...errors, projectName: "Project with the following name already exists on GitHub"});
+                } else {
+                    const newProjectData = {
+                        projectName: currentProject.projectName, 
+                        owner: localStorage.getItem("username"), 
+                        collaborators: currentProject.collaborators,
+                        isPrivate: currentProject.isPrivate,
+                        creationDate: new Date()
+                    }
+        
+                    axios.post("http://localhost:8000/api/projects/addProject", newProjectData, {withCredentials: true})
+                    .then((res) => {
+                        setProjects([newProjectData, ...projects]);
+                        document.getElementById('newProjectModalClose').click();
+                    })
+                    .catch((err) => {
+                        if(err.response.status == 500){
+                            setErrors({...errors, addProject: err.response.data});
+                        }
+                    });
                 }
-            });
+            })
         }
     }
 
     function editProject(){
         if(errors.collaborators === ""){
-            axios.post("http://localhost:8000/api/projects/editProject", currentProject)
+            axios.post("http://localhost:8000/api/projects/editProject", currentProject, {withCredentials: true})
             .then((res) => {
                 setProjects([...projects.slice(0, selectedProjectIndex), currentProject, ...projects.slice(selectedProjectIndex + 1)])
                 document.getElementById('editProjectModalClose').click();
@@ -146,7 +166,7 @@ function Projects() {
     }
 
     function deleteProject(){
-        axios.post("http://localhost:8000/api/projects/deleteProject", currentProject)
+        axios.post("http://localhost:8000/api/projects/deleteProject", currentProject, {withCredentials: true})
         .then((res) => {
             setProjects([...projects.slice(0, selectedProjectIndex), ...projects.slice(selectedProjectIndex + 1)])
             document.getElementById('deleteProjectModalClose').click();
@@ -182,13 +202,13 @@ function Projects() {
                 </div>
                 <hr className='mainDivider'/>
                 {projects.map((project, i) => {
-                    if(searchTerm === "" || project.name.toLowerCase().startsWith(searchTerm.toLowerCase())){
+                    if(searchTerm === "" || project.projectName.toLowerCase().startsWith(searchTerm.toLowerCase())){
                         return (
-                            <div key={project.name}>
+                            <div key={project.projectName}>
                                 <div className="row justify-content-start projectInfo">
-                                    <div className="col-5 text-start">
-                                        {project.name}
-                                    </div>
+                                    <a className="col-5 text-start projectName" href={'/project/'+project.owner+'/'+project.projectName}>
+                                        {project.projectName}
+                                    </a>
                                     <div className="col">
                                         {project.owner}
                                     </div>
@@ -215,8 +235,8 @@ function Projects() {
                     <div className="modal-body">
                         <div className="mb-3">
                             <label className="form-label">Project Name:</label>
-                            <input type="text" className="form-control" onChange={(e) => {updateCurrentProject(e)}} value={currentProject.name}/>
-                            <div className="errorMessage">{errors.name}</div>
+                            <input type="text" className="form-control" onChange={(e) => {updateCurrentProject(e)}} value={currentProject.projectName}/>
+                            <div className="errorMessage">{errors.projectName}</div>
                         </div>
                         <div className="mb-3">
                             <label className="form-label">Collaborators:</label>
@@ -235,6 +255,10 @@ function Projects() {
                                 <button key={collaborator} className='btn btn-outline-dark btn-sm collaboratorsList' onClick={(e) => {removeProjectCollaborator(collaborator)}}>{collaborator}</button>
                             )}
                         </div>
+                        <div className="mb-3 form-check">
+                            <input type="checkbox" className="form-check-input" checked={currentProject.isPrivate} onChange={(e) => {setCurrentProject({...currentProject, isPrivate: e.target.checked})}}/>
+                            <label className="form-check-label">Make Repository Private</label>
+                        </div>
                         <div className="errorMessage">{errors.addProject}</div>
                     </div>
                     <div className="modal-footer">
@@ -248,7 +272,7 @@ function Projects() {
                 <div className="modal-dialog modal-dialog-scrollable">
                     <div className="modal-content">
                     <div className="modal-header">
-                        <h1 className="modal-title fs-5" id="editProjectModalLabel">Edit {currentProject.name}</h1>
+                        <h1 className="modal-title fs-5" id="editProjectModalLabel">Edit {currentProject.projectName}</h1>
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" id='editProjectModalClose'></button>
                     </div>
                     <div className="modal-body">
@@ -282,7 +306,7 @@ function Projects() {
                 <div className="modal-dialog modal-dialog-scrollable">
                     <div className="modal-content">
                     <div className="modal-header">
-                        <h1 className="modal-title fs-5" id="deleteProjectModalLabel">Delete {currentProject.name}</h1>
+                        <h1 className="modal-title fs-5" id="deleteProjectModalLabel">Delete {currentProject.projectName}</h1>
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" id='deleteProjectModalClose'></button>
                     </div>
                     <div className="modal-body">
