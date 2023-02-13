@@ -1,7 +1,7 @@
 import React from 'react';
 import Editor from '../components/Editor';
 import LiveUsers from '../components/LiveUsers';
-import Chat from './Chat';
+import NewChat from './NewChat';
 import Compiler from '../components/Compiler';
 import Login from '../components/Login';
 import Logout from '../components/Logout';
@@ -14,12 +14,7 @@ function Home() {
       <div class="container w-100 mw-100">
         <div class="row justify-content-start">
           <div class="col">
-            <LiveUsers/>
-            <Editor/>
-            <Chat/>
-            <Login/>
-            <Logout/>
-            <CreateProject/>
+            <NewChat/>
           </div>
           <div class="col">
             <Compiler/>

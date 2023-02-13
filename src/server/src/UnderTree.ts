@@ -9,7 +9,7 @@ import { router as projectRoutes } from './services/ProjectServices.js';
 import { router as authRoutes } from './services/AuthServices.js';
 import { router as fileRoutes } from './services/FileServices.js';
 import { router as githubRoutes } from './services/GitHubServices.js';
-import { WebSocketServer } from 'ws';
+import { Server } from 'socket.io';
 
 const app = express();
 app.use(cors({
@@ -25,21 +25,27 @@ server.listen(8000, () => {
     console.log('listening on *8000');
 });
 
-const wss = new WebSocketServer({server:server});
+const chatapp = express();
+const chatserver = http.createServer(chatapp);
 
-wss.on('connection', function connection(ws) {
-    console.log('new client connection');
-    ws.send('this message was sent to new client from server');
+const io = new Server(chatserver, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+  }
+})
 
-    //recieving message from client
-    ws.on('message', function message(data) {
-      console.log('received: %s', data);
-      //replies to client
-      ws.send('received message from client:' + data);
-    });
-  
+io.on("connection", (socket)=> {
+  console.log(`User Connected: ${socket.id}`);
+
+  socket.on("disconnect", ()=> {
+    console.log("User Disconnected", socket.id);
   });
+});
 
+chatserver.listen(8001, ()=> {
+  console.log('listening on *8001');
+})
 
 async function main(){
     await DBClient.connect();

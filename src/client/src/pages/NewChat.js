@@ -1,25 +1,12 @@
 import React from 'react'
+import io from 'socket.io-client';
 
-const exampleSocket = new WebSocket("ws://localhost:8000");
+const socket = io.connect("http://localhost:8001");
 
 function NewChat() {
-
-    const sendMessage = (message) => {
-        exampleSocket.send("message")
-    };
-
-    exampleSocket.onopen = (event) => {
-        exampleSocket.send("Here's some text that the server is urgently awaiting!");
-      };
-
-    exampleSocket.onmessage = (event) => {
-      console.log(event.data);
-      }
   return (
-    <div>
-        <button onClick={sendMessage}></button>
-    </div>
+    <div>newChat</div>
   )
 }
 
-export default NewChat;
+export default NewChat
