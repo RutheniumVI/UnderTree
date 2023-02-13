@@ -16,7 +16,7 @@ router.use(AuthUtil.authorizeJWT);
 
 router.route("/repositoryExists").get(repositoryExists);
 router.route("/userExists").get(userExists);
-router.route("/commitFile").post(commitFile);
+router.route("/commitFiles").post(commitFiles);
 
 let JWT_SECRET = process.env.JWT_SECRET;
 
@@ -89,15 +89,15 @@ async function deleteProject(token: string, name: string): Promise<void> {
   let accessToken = await AuthServices.getUserPropertyWithToken(token, "access_token");
   let owner = await AuthServices.getUserPropertyWithToken(token, "username");
 
-  axios.delete(`https://api.github.com/repos/${owner}/${name}`, {
-    headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
-  }).then((res) => {
-    console.log(res.data);
-    console.log("Successfully deleted project");
-  }).catch((error) => {
-    console.error(error);
-    console.error(`Error deleting project`);
-  });
+  // axios.delete(`https://api.github.com/repos/${owner}/${name}`, {
+  //   headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
+  // }).then((res) => {
+  //   console.log(res.data);
+  //   console.log("Successfully deleted project");
+  // }).catch((error) => {
+  //   console.error(error);
+  //   console.error(`Error deleting project`);
+  // });
 }
 
 async function repositoryExists(req: Request, res: Response): Promise<void> {
@@ -127,10 +127,12 @@ async function userExists(req: Request, res: Response): Promise<void> {
 	}
 }
 
-async function commitFile(req: Request, res: Response): Promise<void> {
+async function commitFiles(req: Request, res: Response): Promise<void> {
   let token = req.cookies["undertree-jwt"];
   let repo = req.body.repo;
-  let filepath = req.body.filepath;
+  let files = req.body.files;
+  let fileTest = files[0];
+  let fileBlobs = [];
 
   let accessToken = await AuthServices.getUserPropertyWithToken(token, "access_token");  
   let user = await AuthServices.getUserPropertyWithToken(token, "username");
@@ -180,7 +182,7 @@ async function commitFile(req: Request, res: Response): Promise<void> {
 
   // Post the new file to GitHub blobs
   await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/blobs`, {
-    "content": "Hello World, this is UnderTree modifying a file!",
+    "content": fileTest.content,
     "encoding": "utf-8"
   }, { 
     headers: { 
@@ -218,7 +220,7 @@ async function commitFile(req: Request, res: Response): Promise<void> {
     "base_tree": latestTreeSHA,
     "tree": [
       {
-        "path": filepath,
+        "path": fileTest.filepath,
         "mode": "100644",
         "type": "blob",
         "sha": userBlobSHA
@@ -264,7 +266,8 @@ async function commitFile(req: Request, res: Response): Promise<void> {
 
   // Update the main branch with the new commit
   await axios.patch(`https://api.github.com/repos/${owner}/${repo}/git/refs/heads/main`, {
-    "sha": userCommitSHA
+    "sha": userCommitSHA,
+    "force": true
   }, {
     headers: {
       Authorization: `Bearer ${accessToken}`,

@@ -3,9 +3,10 @@ import axios from 'axios';
 
 async function handleCommit() {
   console.log("Creating Project");      
-  await axios.post("http://localhost:8000/api/github/commitFile", {
+  await axios.post("http://localhost:8000/api/github/commitFiles", {
     repo: "UnderTree-Test",
-    filepath: "README.md",
+    files: [{ filepath: "main.tex", content: "This is the main tex file of the repo made by UnderTree" }, 
+            { filepath: "README.md", content: "This is the README.md file of the repo made by UnderTree" }]
   }, {
     withCredentials: true,
   }).then((res) => {
