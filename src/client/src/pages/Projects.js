@@ -151,7 +151,7 @@ function Projects() {
 
     function editProject(){
         if(errors.collaborators === ""){
-            axios.post("http://localhost:8000/api/projects/editProject", currentProject)
+            axios.post("http://localhost:8000/api/projects/editProject", currentProject, {withCredentials: true})
             .then((res) => {
                 setProjects([...projects.slice(0, selectedProjectIndex), currentProject, ...projects.slice(selectedProjectIndex + 1)])
                 document.getElementById('editProjectModalClose').click();
@@ -166,7 +166,7 @@ function Projects() {
     }
 
     function deleteProject(){
-        axios.post("http://localhost:8000/api/projects/deleteProject", currentProject)
+        axios.post("http://localhost:8000/api/projects/deleteProject", currentProject, {withCredentials: true})
         .then((res) => {
             setProjects([...projects.slice(0, selectedProjectIndex), ...projects.slice(selectedProjectIndex + 1)])
             document.getElementById('deleteProjectModalClose').click();
@@ -206,9 +206,9 @@ function Projects() {
                         return (
                             <div key={project.projectName}>
                                 <div className="row justify-content-start projectInfo">
-                                    <div className="col-5 text-start">
+                                    <a className="col-5 text-start projectName" href={'/project/'+project.owner+'/'+project.projectName}>
                                         {project.projectName}
-                                    </div>
+                                    </a>
                                     <div className="col">
                                         {project.owner}
                                     </div>

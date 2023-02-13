@@ -1,7 +1,7 @@
 import { execSync } from 'child_process';
 import fs from 'fs';
 
-const dataDirectory = "../data";
+const dataDirectory = "../file_system";
 
 function setUpFileSystem(): void{
     if(!fs.existsSync(dataDirectory)){
@@ -18,6 +18,26 @@ function setUpFileSystem(): void{
         \n0000000277 00000 n\n0000000108 00000 n\n0000000145 00000 n\n0000000465 00000 n\
         \n0000000520 00000 n\ntrailer\n<</Size 7\n/Root 6 0 R\n/Info 1 0 R>>\nstartxref\
         \n567\n%%EOF");
+    }
+}
+
+function createDirectory(path: string): void {
+    let dirs = path.split("/");
+    let currPath = dataDirectory;
+
+    dirs.forEach((dir) => {
+        const checkPath = currPath+"/"+dir;
+        if(!fs.existsSync(checkPath)){
+            fs.mkdirSync(checkPath);
+        }
+        currPath = checkPath;
+    })
+}
+
+function deleteProjectDirectory(projectName: string, owner: string): void {
+    const path = dataDirectory+"/"+owner+"/"+projectName;
+    if(fs.existsSync(path)){
+        fs.rmSync(path, { recursive: true, force: true });
     }
 }
 
@@ -44,6 +64,8 @@ function getFileData(file: string){
 
 const FileUtil = {
     setUpFileSystem,
+    createDirectory,
+    deleteProjectDirectory,
     createPDFOutput,
     getFileData
 }
