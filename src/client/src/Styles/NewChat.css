@@ -6,6 +6,12 @@
     /*overflow-y: scroll;*/
 }
 
+.body{
+    overflow-y: scroll;
+    height: 500px;
+    width: 100%;
+}
+
 .footer{
     margin-top: 5%;
 }
@@ -14,3 +20,12 @@
     width: 20%;
     margin-left: 2%;
 }
+
+html {
+    overflow:   scroll;
+  }
+  
+  ::-webkit-scrollbar {
+      width: 0px;
+      background: transparent; /* make scrollbar transparent */
+  }

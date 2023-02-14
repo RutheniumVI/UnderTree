@@ -105,15 +105,18 @@ function NewChat() {
                        </div>
                 })}
             </div>
-            <div className='footer'>
-                <input
-                id="message"
-                type="text"
-                placeholder="enter message"
-                onChange={(event)=>{
-                    setNewMessage(event.target.value);
-                }}/>
-                <button type="button" className="btn btn-dark tiny-btn" id="send-button" onClick={sendMessage}>Send</button>
+            <div className='footer' style={{"padding-left":"10%", "padding-right":"10%"}}>
+                <div class="input-group mb-3">
+                    <input
+                    class="form-control"
+                    id="message"
+                    type="text"
+                    placeholder="enter message"
+                    onChange={(event)=>{
+                        setNewMessage(event.target.value);
+                    }}/>
+                    <button type="button" className="btn btn-dark tiny-btn" id="send-button" onClick={sendMessage}>Send</button>
+                </div>
             </div>
         </div>
     </div>
