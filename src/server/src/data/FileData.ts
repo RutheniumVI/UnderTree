@@ -10,7 +10,7 @@ interface File {
     fileType: "tex"|"image",
     filePath: string,
     contributors: string[],
-    documentID: string,
+    documentID?: string,
 }
 
 export { FileData, File };
