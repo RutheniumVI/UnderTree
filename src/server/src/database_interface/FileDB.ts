@@ -37,9 +37,32 @@ async function deleteProjectFiles(project: ProjectData): Promise<string> {
 	return "Succesfully deleted project file system";
 }
 
+async function editFileCollaborator(owner: string, projectName: string, fileName: string, userName: string){
+	const collection = DBClient.getCollection(collectionName);
+
+	const result = await collection.updateOne(
+		{
+			"projectName": projectName,
+			"owner": owner,
+			"files.fileName": fileName
+		},
+		{
+			$push: {'files.$.contributors': userName}
+		}
+	);
+
+	if(result.modifiedCount != 1){
+		throw "Failed updating collaborators";
+	}
+
+	return "Succesfully update contributors";
+
+}
+
 const FileDB = {
 	initializeProjectFiles,
-    deleteProjectFiles
+    deleteProjectFiles,
+	editFileCollaborator
 };
 
 export { FileDB };
