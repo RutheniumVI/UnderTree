@@ -24,9 +24,11 @@ function Chat() {
     }
 
     useEffect(() => {
-        let socket = new SockJS("http://localhost:8080/socket");
-        stompClient = over(socket);
-        stompClient.connect({}, onConnected, onError);
+        let socket = new WebSocket('ws://localhost:8000');
+        socket.addEventListener('open', (event) => {
+            console.log("opened")
+            socket.send('Hello Server!');
+        });
     }, [])
 
     const onConnected = () => {

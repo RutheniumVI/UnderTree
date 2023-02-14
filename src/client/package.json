@@ -11,6 +11,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.1.3",
     "bootstrap": "^5.2.2",
+    "highlight.js": "^11.7.0",
     "net": "^1.0.2",
     "quill": "^1.3.6",
     "quill-cursors": "^4.0.0",
@@ -20,6 +21,7 @@
     "react-dom": "^18.2.0",
     "react-quill": "^2.0.0",
     "react-scripts": "5.0.1",
+    "react-split": "^2.0.14",
     "sockjs-client": "^1.6.1",
     "stompjs": "^2.3.3",
     "web-vitals": "^2.1.4",
@@ -32,12 +34,6 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   },
   "browserslist": {
     "production": [
@@ -52,8 +48,6 @@
     ]
   },
   "devDependencies": {
-    "eslint": "^8.0.0",
-    "eslint-config-react-app": "^7.0.1",
     "react-router-dom": "^6.4.3"
   }
 }

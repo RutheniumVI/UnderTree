@@ -5,11 +5,12 @@ import { useParams } from 'react-router-dom';
 
 import '../Styles/Compiler.css'
 
-function Compiler(){
+function Compiler({latexText}){
 
+    const [renderPDF, setRenderTime] = useState("");
     const { owner, projectName } = useParams();
 
-    const [latexText, setLatexText] = useState("");
+    // const [latexText, setLatexText] = useState("");
     const [err, setErr] = useState("");
 
     const [pdf, setPdf] = useState("");
@@ -45,10 +46,8 @@ function Compiler(){
 
     return (
         <div className='compilerPage'>
-            {/* Place holder textarea, remove once integrated with editor instead */}
-            <textarea style={{width: "100%"}} onChange={(e) => {setLatexText(e.target.value)}}></textarea>
             <div className='compilerInfo'>
-                <button class="btn btn-dark" onClick={compileLatex}>Compile</button>
+                <button className="btn btn-dark" onClick={compileLatex}>Compile</button>
             </div>
             {err !== "" ? <pre className='errMessage'>{err}</pre> : <iframe className='pdfRenderer' src={pdf}/>}
         </div>
