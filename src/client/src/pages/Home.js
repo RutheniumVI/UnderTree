@@ -1,7 +1,5 @@
 import React from 'react';
 import { useLayoutEffect } from 'react';
-import Projects from './Projects';
-import Filebar from '../components/Filebar';
 import NewFileBarPage from '../pages/NewFileBarPage';
 
 
