@@ -1,5 +1,7 @@
 import React from 'react';
 import { useLayoutEffect } from 'react';
+import Projects from './Projects';
+import Filebar from '../components/Filebar';
 
 function Home() {
 
@@ -11,7 +13,7 @@ function Home() {
 
     return (
         <div>
-            This is home page
+            <Filebar></Filebar>
         </div>
     );
 }
