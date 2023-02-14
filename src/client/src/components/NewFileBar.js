@@ -20,9 +20,11 @@ function NewFileBar() {
     <ProSidebarProvider>
         <Sidebar>
             <Menu>
-                {foldersList.map((folder) => {
+                {foldersList.map((folder, x) => {
                     return <SubMenu label={folder.name}> 
-                        <MenuItem>placeholder</MenuItem>
+                        {foldersList[x].files?.map((file) => {
+                        return <MenuItem> {file.name} </MenuItem>
+                })}
                     </SubMenu>
                 })}
                 {filesList.map((file) => {
