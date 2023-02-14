@@ -1,22 +1,8 @@
-import { React, useState, useEffect } from 'react';
+import { React } from 'react';
 import { useLayoutEffect } from 'react';
-import Editor from '../components/Editor';
-import LiveUsers from '../components/LiveUsers';
-import Chat from './Chat';
-import Compiler from '../components/Compiler';
-import Login from '../components/Login';
-import Logout from '../components/Logout';
-import Split from 'react-split'
 import '../Styles/Home.css'
-import CreateProject from '../components/CreateProject';
-import Commit from '../components/Commit';
-import Col from 'react-bootstrap/esm/Col';
-import Collab from '../components/Collab';
 
 function Home() {
-  const [currentText, setCurrentText] = useState("");
-  const [documentId, setdocumentID] = useState("owner/project/file");
-
   useLayoutEffect(() => {
       if(localStorage.getItem("username") !== null){
           window.location.href = "/projects"
@@ -24,37 +10,14 @@ function Home() {
   }, []);
 
   return (
-    <div>
-      <Split
-          sizes={[14, 43, 43]} 
-          direction="horizontal" 
-          className="split"
-      >
-        <div className='sidebar'>
-
-        </div>
-        <Editor className="editor" documentID={documentId} setCurrentText={setCurrentText}/>
-      </Split>
-      {/* <div class="container w-100 mw-100">
-        <div class="row justify-content-start">
-          <div class="col sidebar">
-
-          </div>
-          <div class="col">
-            <LiveUsers/>
-            <Editor/>
-            <Chat/>
-            <Login/>
-            <Logout/>
-            <CreateProject/>
-            <Commit/>
-            <Collab/>
-          </div>
-          <div class="col">
-            <Compiler/>
-          </div>
-        </div>
-      </div> */}
+    <div className='backgroundImage d-flex align-items-center justify-content-center'>
+      <div className='mainContent'>
+        <h1>Collaborative Text Editor</h1>
+        <h2>With GitHub Source Control Integration</h2>
+        <a href="https://github.com/login/oauth/authorize?scope=user%20repo%20admin:org%20delete_repo&client_id=79279cb46a338e30112e">
+          <button className="btn btn-primary btn-lg">Get Started</button>
+        </a>
+      </div>
     </div>
   );
 }
