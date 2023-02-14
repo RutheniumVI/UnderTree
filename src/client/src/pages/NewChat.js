@@ -71,13 +71,13 @@ function NewChat() {
             <div className='body'>
                 {messages.map((messageData) => {
                     if (userName == messageData.username){
-                    return<div class="row" id="my-message">
+                    return<div class="row" id="my-message" key={messageData.id}>
                     <div class="col-3"/>
                     <div class="col">
-                        <p class="text-end">username</p>
+                        <p class="text-end">{messageData.username}</p>
                         <div class="card">
                             <div class="card-body">
-                                This is some text within a card body.
+                                {messageData.message}
                             </div>
                         </div>
                     </div>
@@ -87,17 +87,17 @@ function NewChat() {
                         </figure>
                     </div>
                 </div>}
-                           else return <div class="row" id="your-message">
+                           else return <div class="row" id="your-message" key={messageData.id}>
                            <div class="col-3 text-end">
                                <figure class="figure">
                                    <img src={require('./profile.PNG')} class="figure-img img-fluid rounded-circle text-end" alt="..."/>
                                </figure>
                            </div>
                            <div class="col">
-                               <p>username</p>
+                               <p>{messageData.username}</p>
                                <div class="card">
                                    <div class="card-body">
-                                       This is some text within a card body.
+                                       {messageData.message}
                                    </div>
                                </div>
                            </div>
