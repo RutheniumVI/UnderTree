@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { GitHubFile, GitHubFileContent, GitHubFiles } from '../data/GitHubData.js';
 import { ProjectData } from '../data/ProjectData.js';
 import { AuthServices } from '../services/AuthServices.js';
 
@@ -38,38 +39,43 @@ async function getRepoCollaborators(accessToken: string, project: ProjectData): 
   });
 
   project.collaborators = collabs;
+  project.creationDate = new Date();
 
   return project;
 }
 
-async function getRepoContent(accessToken: string, project: ProjectData): Promise<Array<Object>> {
-  
-  let files = await getFilesFromPath("", project, accessToken);
+async function getRepoContent(accessToken: string, project: ProjectData): Promise<GitHubFiles> {
+  let files: GitHubFiles = await getFilesFromPath("", project, accessToken);
   return files;
 }
 
-async function getFilesFromPath(path: string, project: ProjectData, accessToken: string): Promise<Array<Object>> {
-  let files = []
+async function getFilesFromPath(path: string, project: ProjectData, accessToken: string): Promise<GitHubFiles> {
+  let imageFiles: GitHubFile[] = []
+  let texFiles: GitHubFile[] = []
   let dirs = []
   await axios.get(`https://api.github.com/repos/${project.owner}/${project.projectName}/contents/${path}`, {
     headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
   }).then((res) => {
     for (let i = 0; i < res.data.length; i++) {
       let filename = res.data[i]["name"];
-      let currFile = {}
       if (res.data[i]["type"] == "dir") {
         dirs.push(res.data[i]);
         continue;
       }
-      let ext = filename.split('.').pop();
-      if (ext == "tex" || ext == "jpg" || ext == "jpeg" || ext == "png") {
-        currFile = { 
+      const ext = filename.split('.').pop();
+      if (ext === "tex" || ext === "jpg" || ext === "jpeg" || ext === "png") {
+        const currFile: GitHubFile = { 
           name: res.data[i]["name"],
           path: res.data[i]["path"], 
           sha: res.data[i]["sha"], 
           url: res.data[i]["url"] 
         };
-        files.push(currFile);
+
+        if(ext === "tex"){
+          texFiles.push(currFile);
+        } else {
+          imageFiles.push(currFile);
+        }
       }
     }
   }).catch((error) => {
@@ -78,26 +84,26 @@ async function getFilesFromPath(path: string, project: ProjectData, accessToken:
   });
 
   for(let i = 0; i < dirs.length; i++) {
-    let subFiles = await getFilesFromPath(dirs[i]["path"], project, accessToken);
-    files = files.concat(subFiles);
+    const subFiles = await getFilesFromPath(dirs[i]["path"], project, accessToken);
+    texFiles = texFiles.concat(subFiles.texFiles);
+    imageFiles = imageFiles.concat(subFiles.imageFiles);
   }
+
+  const files: GitHubFiles = {texFiles: texFiles, imageFiles: imageFiles}
   return files;
 }
 
-async function getContentFromBlob(token: string, owner: string, repo: string, file: Object): Promise<Object> {
-  let accessToken = await AuthServices.getUserPropertyWithToken(token, "access_token");
-  let fileContent = {};
-  let file_sha = file["sha"];
-  // let owner = project.owner;
-  // let repo = project.projectName;
+async function getContentFromBlob(accessToken: string, project: ProjectData, file: GitHubFile): Promise<GitHubFileContent> {
+  let fileContent: GitHubFileContent = {content: "", encoding: ""};
+  let file_sha = file.sha;
+  let owner = project.owner;
+  let repo = project.projectName;
 
   await axios.get(`https://api.github.com/repos/${owner}/${repo}/git/blobs/${file_sha}`, {
     headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
   }).then((res) => {
-    fileContent = {
-      content: res.data["content"],
-      encoding: res.data["encoding"]
-    }
+    fileContent.content = res.data["content"],
+    fileContent.encoding = res.data["encoding"]
   }).catch((error) => {
     console.error(error);
     throw "Error getting file from GitHub"

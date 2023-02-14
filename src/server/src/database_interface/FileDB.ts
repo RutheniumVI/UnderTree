@@ -4,7 +4,7 @@ import { ProjectData } from "../data/ProjectData.js";
 
 const collectionName = "files";
 
-async function initializeProjectFiles(project: ProjectData, username: string): Promise<string> {
+async function initializeProject(project: ProjectData): Promise<string> {
 	const collection = DBClient.getCollection(collectionName);
 	const existingProject = await collection.findOne({"projectName": project.projectName, "owner": project.owner});
 
@@ -12,9 +12,7 @@ async function initializeProjectFiles(project: ProjectData, username: string): P
 		throw "File system corresponding to the project already exists in the database";
 	}
 	try{
-        const filePath = project.owner+"/"+project.projectName+"/main.tex";
-        const mainFile: File = {fileName: "main.tex", fileType: "tex", filePath: filePath, contributors: [username], documentID: filePath}
-        const fileData: FileData = {projectName: project.projectName, owner: project.owner, files: [mainFile], deletedFiles: []};
+        const fileData: FileData = {projectName: project.projectName, owner: project.owner, files: [], deletedFiles: []};
 		await collection.insertOne(fileData);
 	}
 	catch (err) {
@@ -23,6 +21,28 @@ async function initializeProjectFiles(project: ProjectData, username: string): P
 	}
 
 	return "Succesfully added project file system";
+}
+
+async function addProjectFile(project: ProjectData, file: File): Promise<string> {
+	const collection = DBClient.getCollection(collectionName);
+	const existingProject = await collection.findOne({"projectName": project.projectName, "owner": project.owner});
+
+	if(existingProject === null){
+		throw "File system corresponding to the project does not exist in the database";
+	}
+	try{
+        await collection.updateOne({"projectName": project.projectName, "owner": project.owner},
+			{
+				$push: {files: file}
+			}
+		);
+	}
+	catch (err) {
+		console.log(err);
+		throw "Failed to add file to project";
+	}
+
+	return "Succesfully added file to project";
 }
 
 async function deleteProjectFiles(project: ProjectData): Promise<string> {
@@ -38,7 +58,8 @@ async function deleteProjectFiles(project: ProjectData): Promise<string> {
 }
 
 const FileDB = {
-	initializeProjectFiles,
+	initializeProject,
+	addProjectFile,
     deleteProjectFiles
 };
 
