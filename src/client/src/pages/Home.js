@@ -1,4 +1,5 @@
 import { React, useState, useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import Editor from '../components/Editor';
 import LiveUsers from '../components/LiveUsers';
 import Chat from './Chat';
@@ -15,6 +16,12 @@ import Collab from '../components/Collab';
 function Home() {
   const [currentText, setCurrentText] = useState("");
   const [documentId, setdocumentID] = useState("owner/project/file");
+
+  useLayoutEffect(() => {
+      if(localStorage.getItem("username") !== null){
+          window.location.href = "/projects"
+      }
+  }, []);
 
   return (
     <div>
@@ -52,5 +59,5 @@ function Home() {
     </div>
   );
 }
-
+  
 export default Home

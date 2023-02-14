@@ -2,6 +2,110 @@ import axios from 'axios';
 import { ProjectData } from '../data/ProjectData.js';
 import { AuthServices } from '../services/AuthServices.js';
 
+async function createProject(project: ProjectData, accessToken: string): Promise<string> {
+  try{
+    await axios.post("https://api.github.com/user/repos", { 
+        "name": project.projectName, 
+        "private": project.isPrivate,
+        "auto_init":true,
+      }, { 
+      headers: { 
+        Authorization: `Bearer ${accessToken}`, 
+        Accept: "application/vnd.github+json" 
+      }
+    });
+  } catch (err) {
+    throw err;
+  }
+  return "Successfully created repo"
+}
+
+async function getRepoCollaborators(accessToken: string, project: ProjectData): Promise<ProjectData> {
+  let collabs = [];
+
+  await axios.get(`https://api.github.com/repos/${project.owner}/${project.projectName}/collaborators`, {
+    headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
+  }).then((res) => {
+    for (let j = 0; j < res.data.length; j++) {
+      if (res.data[j]["login"] == project.owner) {
+        continue;
+      }
+      collabs.push(res.data[j]["login"]);
+    } 
+  }).catch((error) => {
+    console.error(error);
+    throw "Failed to get repository information";
+  });
+
+  project.collaborators = collabs;
+
+  return project;
+}
+
+async function getRepoContent(accessToken: string, project: ProjectData): Promise<Array<Object>> {
+  
+  let files = await getFilesFromPath("", project, accessToken);
+  return files;
+}
+
+async function getFilesFromPath(path: string, project: ProjectData, accessToken: string): Promise<Array<Object>> {
+  let files = []
+  let dirs = []
+  await axios.get(`https://api.github.com/repos/${project.owner}/${project.projectName}/contents/${path}`, {
+    headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
+  }).then((res) => {
+    for (let i = 0; i < res.data.length; i++) {
+      let filename = res.data[i]["name"];
+      let currFile = {}
+      if (res.data[i]["type"] == "dir") {
+        dirs.push(res.data[i]);
+        continue;
+      }
+      let ext = filename.split('.').pop();
+      if (ext == "tex" || ext == "jpg" || ext == "jpeg" || ext == "png") {
+        currFile = { 
+          name: res.data[i]["name"],
+          path: res.data[i]["path"], 
+          sha: res.data[i]["sha"], 
+          url: res.data[i]["url"] 
+        };
+        files.push(currFile);
+      }
+    }
+  }).catch((error) => {
+    console.error(error);
+    throw "Error getting file from GitHub";
+  });
+
+  for(let i = 0; i < dirs.length; i++) {
+    let subFiles = await getFilesFromPath(dirs[i]["path"], project, accessToken);
+    files = files.concat(subFiles);
+  }
+  return files;
+}
+
+async function getContentFromBlob(token: string, owner: string, repo: string, file: Object): Promise<Object> {
+  let accessToken = await AuthServices.getUserPropertyWithToken(token, "access_token");
+  let fileContent = {};
+  let file_sha = file["sha"];
+  // let owner = project.owner;
+  // let repo = project.projectName;
+
+  await axios.get(`https://api.github.com/repos/${owner}/${repo}/git/blobs/${file_sha}`, {
+    headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
+  }).then((res) => {
+    fileContent = {
+      content: res.data["content"],
+      encoding: res.data["encoding"]
+    }
+  }).catch((error) => {
+    console.error(error);
+    throw "Error getting file from GitHub"
+  });
+
+  return fileContent;
+}
+
 async function addCollabsToRepo(project: ProjectData, accessToken: string, usersToAdd: string[]): Promise<string> {
   let promises = [];
 
@@ -31,7 +135,7 @@ async function removeCollabsFromRepo(project: ProjectData, accessToken: string, 
 
   try{
     await Promise.all(promises);
-    return "Successfully added collaborators";
+    return "Successfully removed collaborators";
   } catch (err) {
     console.log(err);
     throw "Unable to add collaborators"
@@ -39,6 +143,10 @@ async function removeCollabsFromRepo(project: ProjectData, accessToken: string, 
 }
 
 const GitHubUtil = {
+  createProject,
+  getRepoCollaborators,
+  getRepoContent,
+  getContentFromBlob,
   addCollabsToRepo, 
   removeCollabsFromRepo
 }

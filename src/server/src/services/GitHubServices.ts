@@ -8,6 +8,7 @@ import { AuthServices } from './AuthServices.js';
 import { GitHubUtil } from '../utils/GitHubUtil.js';
 import axios from "axios";
 import { ProjectData } from '../data/ProjectData.js';
+import { ProjectDB } from '../database_interface/ProjectDB.js';
 
 dotenv.config();
 
@@ -16,86 +17,8 @@ router.use(AuthUtil.authorizeJWT);
 
 router.route("/repositoryExists").get(repositoryExists);
 router.route("/userExists").get(userExists);
-router.route("/commitFile").post(commitFile);
-
-let JWT_SECRET = process.env.JWT_SECRET;
-
-async function getUserReposWithToken(token: string): Promise<Array<Object>> {
-  let unfilteredRepos = [];
-  let repos = [];
-  let accessToken = await AuthServices.getUserPropertyWithToken(token, "access_token");
-
-  await axios.get("https://api.github.com/user/repos", {
-    headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" },
-    params: { affiliation: "owner,collaborator" },
-  })
-  .then((res) => {
-    unfilteredRepos = res.data;
-  })
-  .catch((error) => {
-    console.error(error);
-    console.error(`Error getting user from GitHub`);
-    return null;
-  });
-
-  for (let i = 0; i < unfilteredRepos.length; i++) {
-    let currRepo = unfilteredRepos[i];
-    let name  = currRepo["name"];
-    let owner = currRepo["owner"]["login"];
-    let collabs = [];
-    
-    await axios.get(`https://api.github.com/repos/${owner}/${name}/collaborators`, {
-      headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
-    }).then((res) => {
-      for (let j = 0; j < res.data.length; j++) {
-        if (res.data[j]["login"] == owner) {
-          continue;
-        }
-        collabs.push(res.data[j]["login"]);
-      } 
-    }).catch((error) => {
-      console.error(error);
-      console.error(`Error getting user from GitHub`);
-    });
-    let repoDetails = { name: currRepo["name"], owner: currRepo["owner"]["login"], collaborators: collabs };
-    repos.push(repoDetails);
-  }
-  console.log("Repos: ", repos);
-  return repos;
-}
-
-async function createProject(project: ProjectData, accessToken: string): Promise<string> {
-  try{
-    await axios.post("https://api.github.com/user/repos", { 
-        "name": project.projectName, 
-        "private": project.isPrivate,
-        "auto_init":true,
-      }, { 
-      headers: { 
-        Authorization: `Bearer ${accessToken}`, 
-        Accept: "application/vnd.github+json" 
-      }
-    });
-  } catch (err) {
-    throw err;
-  }
-  return "Successfully created repo"
-}
-
-async function deleteProject(token: string, name: string): Promise<void> {
-  let accessToken = await AuthServices.getUserPropertyWithToken(token, "access_token");
-  let owner = await AuthServices.getUserPropertyWithToken(token, "username");
-
-  axios.delete(`https://api.github.com/repos/${owner}/${name}`, {
-    headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
-  }).then((res) => {
-    console.log(res.data);
-    console.log("Successfully deleted project");
-  }).catch((error) => {
-    console.error(error);
-    console.error(`Error deleting project`);
-  });
-}
+router.route("/getUserReposList").get(getUserReposList);
+router.route("/commitFiles").post(commitFiles);
 
 async function repositoryExists(req: Request, res: Response): Promise<void> {
 	const accessToken = await AuthServices.getUserPropertyWithToken(res.locals.token, "access_token");
@@ -124,13 +47,44 @@ async function userExists(req: Request, res: Response): Promise<void> {
 	}
 }
 
-async function commitFile(req: Request, res: Response): Promise<void> {
-  let token = req.cookies["undertree-jwt"];
-  let repo = req.body.repo;
-  let filepath = req.body.filepath;
+async function getUserReposList(req: Request, res: Response): Promise<void>  {
+  const accessToken = res.locals.accessToken
 
-  let accessToken = await AuthServices.getUserPropertyWithToken(token, "access_token");
-  let owner = await AuthServices.getUserPropertyWithToken(token, "username");
+  let unfilteredRepos = [];
+  let repos = [];
+
+  try{
+    const reposRes = await axios.get("https://api.github.com/user/repos", {
+      headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" },
+      params: { affiliation: "owner,collaborator" },
+    })
+
+    unfilteredRepos = reposRes.data;
+
+    for (let i = 0; i < unfilteredRepos.length; i++) {
+      let currRepo = unfilteredRepos[i];
+      
+      let repoDetails: ProjectData = { projectName: currRepo["name"], owner: currRepo["owner"]["login"], isPrivate: currRepo["private"]};
+      repos.push(repoDetails);
+    }
+
+    res.status(200).json(repos)
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json("Failed to get list of user's repositories")
+  }
+}
+
+async function commitFiles(req: Request, res: Response): Promise<void> {
+  let project: ProjectData = req.body as ProjectData;
+  let files = req.body.files;
+  let fileBlobs = [];
+
+  let accessToken = res.locals.accessToken;
+
+  const owner = project.owner;
+  const repo = project.projectName;
 
   let latestCommitSHA = "";
   let latestCommitURL = "";
@@ -144,7 +98,7 @@ async function commitFile(req: Request, res: Response): Promise<void> {
       latestCommitURL = res.data["object"]["url"];
     }).catch((error) => {
       console.error(error);
-      console.error(`Error getting branch reference from GitHub`);
+      res.status(500).json("Error getting branch reference from GitHub");
     });
 
   let latestTreeSHA = "";
@@ -160,29 +114,34 @@ async function commitFile(req: Request, res: Response): Promise<void> {
     latestTreeURL = res.data["tree"]["url"];
   }).catch((error) => {
     console.error(error);
-    console.error(`Error getting latest commit from GitHub`);
+    res.status(500).json("Error getting latest commit from GitHub");
   });
 
-  let userBlobSHA = "";
-  let userBlobURL = "";
+  for(let i = 0; i < files.length; i++) {
+    let currFile = files[i];
 
-  // Post the new file to GitHub blobs
-  await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/blobs`, {
-    "content": "Hello World, this is UnderTree modifying a file!",
-    "encoding": "utf-8"
-  }, { 
-    headers: { 
-      Authorization: `Bearer ${accessToken}`, 
-      Accept: "application/vnd.github+json" 
-    }
-  }).then((res) => {
-    console.log("Blob Data: ", res.data);
-    userBlobSHA = res.data["sha"];
-    userBlobURL = res.data["url"];
-  }).catch((error) => {
-    console.error(error);
-    console.error(`Error posting blob to GitHub`);
-  });
+    // Post the new file to GitHub blobs
+    await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/blobs`, {
+      "content": currFile.content,
+      "encoding": "utf-8"
+    }, { 
+      headers: { 
+        Authorization: `Bearer ${accessToken}`, 
+        Accept: "application/vnd.github+json" 
+      }
+    }).then((res) => {
+      console.log("Blob Data: ", res.data);
+      fileBlobs.push({ 
+        "path": currFile.filepath,
+        "mode": "100644",
+        "type": "blob", 
+        "sha": res.data["sha"]
+      })
+    }).catch((error) => {
+      console.error(error);
+      res.status(500).json("Error posting blob to GitHub");
+    });
+  }
 
   // Get the latest tree in GitHub
   await axios.get(latestTreeURL, { 
@@ -195,7 +154,7 @@ async function commitFile(req: Request, res: Response): Promise<void> {
     // latestTreeSHA = res.data["sha"];
   }).catch((error) => {
     console.error(error);
-    console.error(`Error getting latest tree from GitHub`);
+    res.status(500).json("Error getting latest tree from GitHub");
   });
 
   let userTreeSHA = "";
@@ -204,14 +163,15 @@ async function commitFile(req: Request, res: Response): Promise<void> {
   // Create a new tree with the new blob data
   await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/trees`, {
     "base_tree": latestTreeSHA,
-    "tree": [
-      {
-        "path": filepath,
-        "mode": "100644",
-        "type": "blob",
-        "sha": userBlobSHA
-      }
-    ]
+    "tree": fileBlobs
+    // "tree": [
+    //   {
+    //     "path": fileTest.filepath,
+    //     "mode": "100644",
+    //     "type": "blob",
+    //     "sha": userBlobSHA
+    //   }
+    // ]
   }, {
     headers: { 
       Authorization: `Bearer ${accessToken}`, 
@@ -223,18 +183,23 @@ async function commitFile(req: Request, res: Response): Promise<void> {
     userTreeURL = res.data["url"];
   }).catch((error) => {
     console.error(error);
-    console.error(`Error creating new tree with blob data`);
+    res.status(500).json("Error creating new tree with blob data");
   });
 
   let userCommitSHA = "";
   let userCommitURL = "";
+
+
+  // make logic to check if userCommitSHA exists in the project data, 
+  // if so, use that as the parent instead of the latest commit SHA
+  let commitParent = latestCommitSHA;
 
   // Create a new commit with the new tree data
   await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/commits`, {
     "message": "Commit created by UnderTree!",
     "tree": userTreeSHA,
     "parents": [
-      latestCommitSHA
+      commitParent
     ]
   }, {
     headers: {
@@ -247,12 +212,13 @@ async function commitFile(req: Request, res: Response): Promise<void> {
     userCommitURL = res.data["url"];
   }).catch((error) => {
     console.error(error);
-    console.error(`Error creating new commit with tree data`);
+    res.status(500).json("Error creating new commit with tree data");
   });
 
-  // Update the main branch with the new commit
+  // PUSH: Update the main branch with the new commit
   await axios.patch(`https://api.github.com/repos/${owner}/${repo}/git/refs/heads/main`, {
-    "sha": userCommitSHA
+    "sha": userCommitSHA,
+    "force": true
   }, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -262,14 +228,9 @@ async function commitFile(req: Request, res: Response): Promise<void> {
     console.log("Updated Main Branch Data: ", res.data);
   }).catch((error) => {
     console.error(error);
-    console.error(`Error updating main branch with new commit`);
+    res.status(500).json("Error updating main branch with new commit");
   });
+
 }
 
-const GitHubServices = {
-  getUserReposWithToken,
-  createProject,
-  deleteProject,
-}
-
-export { router, GitHubServices };
+export { router };
