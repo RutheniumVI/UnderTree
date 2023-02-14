@@ -2,3 +2,8 @@
 .my-card{
     width:max-content;
 }
+
+.my-btn{
+    background-color: white;
+    border-color: white;
+}
