@@ -1,21 +1,18 @@
 import React from 'react';
 import axios from 'axios';
-import { useState, useEffect } from 'react';
+import { useState, useLayoutEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import '../Styles/Compiler.css'
 
 function Compiler({latexText}){
 
-    const [renderPDF, setRenderTime] = useState("");
     const { owner, projectName } = useParams();
-
-    // const [latexText, setLatexText] = useState("");
     const [err, setErr] = useState("");
 
     const [pdf, setPdf] = useState("");
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         getPDF()
     }, []);
 
@@ -25,8 +22,16 @@ function Compiler({latexText}){
             credentials: 'include'
         })
         .then(async (res) => {
-            const blob = await res.blob()
-            setPdf(URL.createObjectURL(blob))
+            if(res.status == 401){
+                localStorage.removeItem("username");
+                window.location.href="/"
+            } else {
+                const blob = await res.blob()
+                setPdf(URL.createObjectURL(blob))
+            }
+        })
+        .catch((err) => {
+            console.log(err);
         });
     }
 
