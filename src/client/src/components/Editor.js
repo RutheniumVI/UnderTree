@@ -68,6 +68,7 @@ function Editor({documentID, setCurrentText}) {
     const username = localStorage.getItem("username");
     const [value, setValue] = useState('');
     const [modified, setModified] = useState(false);
+
     let quillRef = null;
     let edtRef = null;
 
@@ -87,14 +88,34 @@ function Editor({documentID, setCurrentText}) {
           name: username,
           color: color,
         });
-
-
         new QuillBinding(ytext, edtRef.getEditor(), awareness);
+
     }, [])
+    
     useEffect(() => {
         if (typeof edtRef.getEditor !== 'function') return;
             quillRef = edtRef.getEditor();
     })
+
+    function addUserToModified(){
+        console.log("Adding user to modified");    
+
+        const fileDetails = documentID.split('/');
+        axios.post("http://localhost:8000/api/file/fileEdited", {
+            owner: fileDetails[0],
+            projectName: fileDetails[1],
+            fileName: fileDetails[2],
+            userName: username
+        }, {
+          withCredentials: true,
+        }).then((res) => {
+          console.log(res.data)
+        }).catch((error) => {
+          console.error(`Error Adding user to modified`);
+        });
+
+        setModified(true);
+    }
 
     function onEditorChanged(content, delta, source, editor){
         setValue(content);
@@ -102,18 +123,7 @@ function Editor({documentID, setCurrentText}) {
         setCurrentText(editor.getText(content));
 
         if(!modified && source === "user"){
-            console.log("Adding user to modified");    
-
-            axios.post("http://localhost:8000/api/file/fileEdited", {
-              username: username
-            }, {
-              withCredentials: true,
-            }).then((res) => {
-              console.log(res.data)
-            }).catch((error) => {
-              console.error(`Error Adding user to modified`);
-            });
-
+            addUserToModified();
             setModified(true);
         }
     }
