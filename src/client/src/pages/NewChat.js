@@ -70,17 +70,29 @@ function NewChat() {
             </div>
             <div className='body'>
                 {messages.map((messageData) => {
+                    if (userName == messageData.username){
                     return <div className='message-blurb' id={userName == messageData.username ? "me" : "others"} key={messageData.id}>
-                                    <div className='avatar'>
-                                        <img className='avatar-pic' src={require('./profile.PNG')}/>
-                                    </div>
                                 <div className='message-border'>
-                                    <p id="user">{messageData.username}</p>
+                                    <p id="user" style={{textAlign:"right"}}>{messageData.username}</p>
                                     <div className='message-text'>
                                         <p id="message-content">{messageData.message}</p>
                                     </div>
                                 </div>
+                                <div className='avatar'>
+                                    <img className='avatar-pic' src={require('./profile.PNG')}/>
+                                </div>
+                           </div>}
+                           else return <div className='message-blurb' id={userName == messageData.username ? "me" : "others"} key={messageData.id}>
+                           <div className='avatar'>
+                               <img className='avatar-pic' src={require('./profile.PNG')}/>
                            </div>
+                           <div className='message-border'>
+                               <p id="user">{messageData.username}</p>
+                               <div className='message-text'>
+                                   <p id="message-content">{messageData.message}</p>
+                               </div>
+                           </div>
+                      </div>
                 })}
             </div>
             <div className='footer'>
@@ -91,7 +103,7 @@ function NewChat() {
                 onChange={(event)=>{
                     setNewMessage(event.target.value);
                 }}/>
-                <button type="button" class="btn btn-dark tiny-btn" id="send-button" onClick={sendMessage}>Send</button>
+                <button type="button" className="btn btn-dark tiny-btn" id="send-button" onClick={sendMessage}>Send</button>
             </div>
         </div>
     </div>
