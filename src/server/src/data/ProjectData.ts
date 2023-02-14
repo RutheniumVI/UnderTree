@@ -3,7 +3,7 @@ interface ProjectData {
     owner: string,
     collaborators?: string[],
     isPrivate?: boolean,
-    creationDate?: string
+    creationDate?: Date
     commit?: Commit
 }
 

@@ -140,7 +140,6 @@ function Projects() {
                 }
                 return true;
             })
-            console.log(filteredProjects);
             setImportProjects(filteredProjects);
         })
         .catch((err) => {
@@ -167,6 +166,7 @@ function Projects() {
                 axios.get("http://localhost:8000/api/projects/getProjects", {withCredentials: true})
                 .then((res) => {
                     setProjects(res.data);
+                    document.getElementById('importProjectModalClose').click();
                 })
                 .catch((err) => {
                     if(err.response.status == 401){
@@ -174,7 +174,6 @@ function Projects() {
                         window.location.href="/"
                     }
                 })
-                document.getElementById('importProjectModalClose').click();
             })
             .catch((err) => {
                 if(err.response.status == 500){
@@ -209,6 +208,7 @@ function Projects() {
                         document.getElementById('newProjectModalClose').click();
                     })
                     .catch((err) => {
+                        console.log(err);
                         if(err.response.status == 500){
                             setErrors({...errors, addProject: err.response.data});
                         }
@@ -342,7 +342,7 @@ function Projects() {
                     <div className="modal-content">
                     <div className="modal-header">
                         <h1 className="modal-title fs-5" id="importProjectModalLabel">Import Project</h1>
-                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" id='newProjectModalClose'></button>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" id='importProjectModalClose'></button>
                     </div>
                     <div className="modal-body">
                         <div className='importProjectsList'>
