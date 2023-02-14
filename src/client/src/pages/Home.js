@@ -2,6 +2,8 @@ import React from 'react';
 import { useLayoutEffect } from 'react';
 import Projects from './Projects';
 import Filebar from '../components/Filebar';
+import NewFileBar from '../components/NewFileBar';
+
 
 function Home() {
 
@@ -13,7 +15,7 @@ function Home() {
 
     return (
         <div>
-            <Filebar></Filebar>
+            <NewFileBar></NewFileBar>
         </div>
     );
 }
