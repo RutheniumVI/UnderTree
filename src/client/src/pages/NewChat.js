@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import '../Styles/NewChat.css';
 import {v4 as uuidv4} from 'uuid';
+import './profile.PNG'
 
 
 const socket = io.connect("http://localhost:8001");
@@ -40,7 +41,7 @@ function NewChat() {
     useEffect(() => {
         console.log(socket)
         socket.on("receive_message", (data) =>{ 
-            console.log("received" + data)
+            //console.log("received" + data)
             setMessages((list) => [...list, data]);
         })
     }, [socket]);
@@ -65,11 +66,21 @@ function NewChat() {
         </div>
         <div className='chat'>
             <div className='header'>
-                <h3>chat</h3>
+                <h3></h3>
             </div>
             <div className='body'>
                 {messages.map((messageData) => {
-                    return <h1 key={messageData.id}>{messageData.message}</h1>
+                    return <div className='message-blurb' id={userName == messageData.username ? "me" : "others"} key={messageData.id}>
+                                    <div className='avatar'>
+                                        <img className='avatar-pic' src={require('./profile.PNG')}/>
+                                    </div>
+                                <div className='message-border'>
+                                    <p id="user">{messageData.username}</p>
+                                    <div className='message-text'>
+                                        <p id="message-content">{messageData.message}</p>
+                                    </div>
+                                </div>
+                           </div>
                 })}
             </div>
             <div className='footer'>
@@ -80,7 +91,7 @@ function NewChat() {
                 onChange={(event)=>{
                     setNewMessage(event.target.value);
                 }}/>
-                <button id="send-button" onClick={sendMessage}>send</button>
+                <button type="button" class="btn btn-dark tiny-btn" id="send-button" onClick={sendMessage}>Send</button>
             </div>
         </div>
     </div>

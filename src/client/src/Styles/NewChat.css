@@ -3,11 +3,11 @@
     height: 100%;
     max-width: 100%;
     overflow-y: scroll;
+    background-color: #F5F5F5;
     /*overflow-x: scroll;*/
 }
 
 .footer{
-    border: 1px solid white;
 }
 
 #message{
@@ -18,6 +18,68 @@
 
 #send-button{
     width: 20%;
-    border-radius: 15px;
     margin-left: 2%;
+}
+
+.message-blurb{
+    width: 75%;
+}
+
+.avatar{
+    display: inline-block;
+    width: 1cm;
+    border-radius: 50px;
+}
+
+#me .message-text{
+    border: 1px solid black;
+    border-radius: 15px;
+    padding-left: 5%;
+    background-color: white;
+    /*padding: 5%;*/
+}
+
+#others .message-text{
+    border: 1px solid black;
+    border-radius: 15px;
+    background-color: white;
+    padding-left: 5%;
+}
+
+.avatar-pic{
+    width: 1cm;
+    border-radius: 50px;
+    border: 1px solid black;
+}
+
+#me{
+    margin-left: auto; 
+    margin-right: 0;
+}
+
+#others{
+}
+
+.message-wrapper{
+    border: 1px solid purple;
+}
+
+.message-border{
+    display: inline-block;
+    width: 75%;
+}
+
+
+.tiny-btn {
+    width:20%;
+}
+
+#user{
+    margin-bottom: 0;
+}
+
+#message-content{
+    margin: 0;
+    background-color: white;
+    border-radius: 15px;
 }
