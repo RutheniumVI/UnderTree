@@ -6,6 +6,7 @@ import Compiler from '../components/Compiler';
 import Login from '../components/Login';
 import Logout from '../components/Logout';
 import CreateProject from '../components/CreateProject';
+import NewChatUI from '../components/NewChatUI';
 
 function Home() {
   return (
@@ -14,7 +15,7 @@ function Home() {
       <div class="container w-100 mw-100">
         <div class="row justify-content-start">
           <div class="col">
-            <NewChat/>
+            <NewChatUI/>
           </div>
           <div class="col">
             <Compiler/>
