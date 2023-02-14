@@ -22,7 +22,6 @@ function Projects() {
     }, []);
 
     const [projects, setProjects] = useState([]);
-
     const [currentProject, setCurrentProject] = useState({
         "projectName": "",
         "owner": "",
@@ -31,6 +30,9 @@ function Projects() {
         "creationDate": ""
     })
 
+    const [importProjects, setImportProjects] = useState([]);
+    const [selectedImportProjects, setSelectedImportProjects] = useState([]);
+
     const [collaboratorValue, setCollaboratorValue] = useState("")
 
     const [errors, setErrors] = useState({
@@ -38,7 +40,8 @@ function Projects() {
         "collaborators": "",
         "addProject": "",
         "editProject": "",
-        "deleteProject": ""
+        "deleteProject": "",
+        "importProjects": ""
     })
 
     const [searchTerm, setSearchTerm] = useState("");
@@ -54,12 +57,15 @@ function Projects() {
             "creationDate": ""
         });
 
+        setSelectedImportProjects([])
+
         setErrors({
             "projectName":"",
             "collaborators": "",
             "addProject": "",
             "editProject": "",
-            "deleteProject": ""
+            "deleteProject": "",
+            "importProjects": ""
         });
 
         setCollaboratorValue("");
@@ -119,6 +125,63 @@ function Projects() {
 
         setSelectedProjectIndex(index);
         setCurrentProject(projects[index]);
+    }
+
+    async function getImportProjects(){
+        resetModalStates();
+
+        await axios.get("http://localhost:8000/api/github/getUserReposList", {withCredentials: true})
+        .then((res) => {
+            const filteredProjects = res.data.filter((importProject) => {
+                for(let i = 0; i < projects.length; i++){
+                    if(projects[i].projectName === importProject.projectName && projects[i].owner === importProject.owner){
+                        return false;
+                    }
+                }
+                return true;
+            })
+            console.log(filteredProjects);
+            setImportProjects(filteredProjects);
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+    }
+
+    function clickImportProject(i){
+        if(selectedImportProjects.includes(i)){
+            setSelectedImportProjects(selectedImportProjects.filter((index) => {return index !== i}))
+        } else { 
+            setSelectedImportProjects([...selectedImportProjects, i]);
+        }
+    }
+
+    async function confirmImportedProjects(){
+        let currProjects = [];
+        selectedImportProjects.forEach((i) => {
+            currProjects.push(importProjects[i]);
+        })
+        if(currProjects.length != 0){
+            await axios.post("http://localhost:8000/api/projects/importProjects", currProjects, {withCredentials: true})
+            .then((res) => {
+                axios.get("http://localhost:8000/api/projects/getProjects", {withCredentials: true})
+                .then((res) => {
+                    setProjects(res.data);
+                })
+                .catch((err) => {
+                    if(err.response.status == 401){
+                        localStorage.removeItem("username");
+                        window.location.href="/"
+                    }
+                })
+                document.getElementById('importProjectModalClose').click();
+            })
+            .catch((err) => {
+                if(err.response.status == 500){
+                    setErrors({...errors, importProjects: err.response.data});
+                }
+            });
+        }
     }
 
     async function addProject(){
@@ -190,7 +253,7 @@ function Projects() {
                 <div className="row justify-content-start">
                     <div className="col">
                         <button type="button" className="btn btn-dark" onClick={resetModalStates} data-bs-toggle="modal" data-bs-target="#addProjectModal">New Project</button>
-                        <button type="button" className="btn btn-dark" data-bs-toggle="modal" data-bs-target="#importProjectModal" style={{marginLeft: "15px"}}>Import Project</button>
+                        <button type="button" className="btn btn-dark" onClick={getImportProjects} data-bs-toggle="modal" data-bs-target="#importProjectModal" style={{marginLeft: "15px"}}>Import Project</button>
                     </div>
                     <div className="col">
                         <input type="text" className="form-control float-end searchBar" placeholder='Search Projects ...' onChange={(e) => setSearchTerm(e.target.value)}></input>
@@ -270,6 +333,33 @@ function Projects() {
                     <div className="modal-footer">
                         <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button type="button" className="btn btn-dark" onClick={addProject}>Create Project</button>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            <div className="modal fade" id="importProjectModal" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="importProjectModalLabel" aria-hidden="true">
+                <div className="modal-dialog modal-dialog-scrollable">
+                    <div className="modal-content">
+                    <div className="modal-header">
+                        <h1 className="modal-title fs-5" id="importProjectModalLabel">Import Project</h1>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" id='newProjectModalClose'></button>
+                    </div>
+                    <div className="modal-body">
+                        <div className='importProjectsList'>
+                            {importProjects.map((project, i) => 
+                                <div key={i} className='row importProjectItem'>
+                                    <p className="col-10 text-start">{project.owner}:{project.projectName}</p>
+                                    <button className={(selectedImportProjects.includes(i) ? 'btn-dark' : 'btn-outline-dark') +' col btn text-center'} 
+                                        onClick={(e) => {clickImportProject(i)}}>
+                                            Select
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    <div className="modal-footer">
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" className="btn btn-outline-dark" onClick={confirmImportedProjects}>Confirm Imports</button>
                     </div>
                     </div>
                 </div>

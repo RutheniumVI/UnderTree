@@ -5,7 +5,6 @@ import { AuthUtil } from "../utils/AuthUtil.js";
 import { ProjectDB } from "../database_interface/ProjectDB.js";
 import { FileDB } from "../database_interface/FileDB.js";
 import { ProjectData } from "../data/ProjectData.js";
-import { GitHubServices } from "./GitHubServices.js";
 import { GitHubUtil } from "../utils/GitHubUtil.js";
 import { FileUtil } from "../utils/FileUtil.js";
 
@@ -18,13 +17,14 @@ router.route("/addProject").post(addProject);
 router.route("/getProjects").get(getProjects);
 router.route("/editProject").post(editProject);
 router.route("/deleteProject").post(deleteProject);
+router.route("/importProjects").post(importProjects);
 
 async function addProject(req: Request, res: Response): Promise<void> {
 	const data: ProjectData = req.body as ProjectData;
 	const accessToken = res.locals.accessToken;
 
 	try{
-		await GitHubServices.createProject(data, accessToken);
+		await GitHubUtil.createProject(data, accessToken);
 		await GitHubUtil.addCollabsToRepo(data, accessToken, data.collaborators);
 		await ProjectDB.addProject(data);
 		await FileDB.initializeProjectFiles(data, res.locals.username);
@@ -75,6 +75,21 @@ async function deleteProject(req: Request, res: Response): Promise<void>  {
 		res.status(200).json(result);
 	} catch (err) {
 		res.status(500).json(err);
+	}
+}
+
+async function importProjects(req: Request, res: Response): Promise<void>  {
+	let data: ProjectData[] = req.body as ProjectData[]
+	const accessToken = res.locals.accessToken;
+
+	try{
+		for(let i = 0; i < data.length; i++){
+			// const project = await GitHubUtil.getRepoCollaborators(accessToken, data[i]);
+			// await ProjectDB.addProject(project);
+			FileUtil.saveFile("/test/bob/test.tex", "hello world");
+		}
+	} catch (err) {
+		res.status(500).json("Failed to import all projects");
 	}
 }
 
