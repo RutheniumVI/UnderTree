@@ -7,3 +7,15 @@
     background-color: white;
     border-color: white;
 }
+
+.my-modal-header{
+    background-color: #BCBCBC;
+}
+
+.my-modal-footer{
+    background-color: #BCBCBC;
+}
+
+.my-modal-body{
+    background-color: #F5F5F5;
+}

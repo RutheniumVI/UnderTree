@@ -16,10 +16,10 @@ function NewFileBar() {
   return (
     <div className='card my-card'>
         <div className='card-header'>
-            <button type="button" className="btn btn-light btn-lg">
+            <button type="button" className="btn btn-light btn-lg" data-bs-toggle="modal" data-bs-target="#newFile">
                 <i className="bi bi-file-earmark-plus"></i>
             </button> 
-            <button type="button" className="btn btn-light btn-lg">
+            <button type="button" className="btn btn-light btn-lg" data-bs-toggle="modal" data-bs-target="#fileUpload">
                 <i className="bi bi-cloud-upload"></i>
             </button>  
             <button type="button" className="btn btn-light btn-lg">
@@ -37,7 +37,11 @@ function NewFileBar() {
                             <input className="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1"/>
                             <label className="form-check-label" for="inlineCheckbox1">{file.name}</label>
                         </div>
-                        <button type="button" className="btn btn-light my-btn"><i class="bi bi-three-dots-vertical"></i></button>    
+                        <button class="btn btn-light my-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots-vertical"></i></button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editFile">Edit File</a></li>
+                            <li><a class="dropdown-item" href="#"data-bs-toggle="modal" data-bs-target="#deleteFile">Delete File</a></li>
+                        </ul>    
                         </MenuItem>
                 })}
                     </SubMenu>

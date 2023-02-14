@@ -2,7 +2,7 @@ import React from 'react';
 import { useLayoutEffect } from 'react';
 import Projects from './Projects';
 import Filebar from '../components/Filebar';
-import NewFileBar from '../components/NewFileBar';
+import NewFileBarPage from '../pages/NewFileBarPage';
 
 
 function Home() {
@@ -15,7 +15,7 @@ function Home() {
 
     return (
         <div>
-            <NewFileBar></NewFileBar>
+            <NewFileBarPage></NewFileBarPage>
         </div>
     );
 }
