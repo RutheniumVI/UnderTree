@@ -34,7 +34,6 @@ function Home() {
 
         </div>
         <Editor className="editor" documentID={documentId} setCurrentText={setCurrentText}/>
-        <Compiler className="compiler" documentID={documentId} latexText={currentText}/>
       </Split>
       {/* <div class="container w-100 mw-100">
         <div class="row justify-content-start">
