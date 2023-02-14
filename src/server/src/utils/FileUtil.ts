@@ -22,7 +22,7 @@ function setUpFileSystem(): void{
 }
 
 function createDirectory(path: string): void {
-    let dirs = path.split("/");
+    const dirs = path.split("/");
     let currPath = dataDirectory;
 
     dirs.forEach((dir) => {
@@ -34,6 +34,14 @@ function createDirectory(path: string): void {
     })
 }
 
+function saveFile(path: string, content: string | Buffer): void {
+    if(!fs.existsSync(dataDirectory+"/"+path)){
+        const dirPath = path.split("/").slice(0, -1).join("/");
+        createDirectory(dirPath);
+        fs.writeFileSync(dataDirectory+"/"+path, content);
+    }
+}
+
 function deleteProjectDirectory(projectName: string, owner: string): void {
     const path = dataDirectory+"/"+owner+"/"+projectName;
     if(fs.existsSync(path)){
@@ -41,10 +49,10 @@ function deleteProjectDirectory(projectName: string, owner: string): void {
     }
 }
 
-function createPDFOutput(file: string, text: string): Promise<string> {
+function createPDFOutput(file: string, content: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
         try{
-            fs.writeFileSync(dataDirectory+"/"+file, text);
+            fs.writeFileSync(dataDirectory+"/"+file, content);
             
             execSync("cd "+dataDirectory+"&& pdflatex "+ dataDirectory+"/"+file);
             resolve("Success");
@@ -65,6 +73,7 @@ function getFileData(file: string){
 const FileUtil = {
     setUpFileSystem,
     createDirectory,
+    saveFile,
     deleteProjectDirectory,
     createPDFOutput,
     getFileData

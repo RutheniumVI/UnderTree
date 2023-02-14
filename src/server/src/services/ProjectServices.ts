@@ -5,9 +5,9 @@ import { AuthUtil } from "../utils/AuthUtil.js";
 import { ProjectDB } from "../database_interface/ProjectDB.js";
 import { FileDB } from "../database_interface/FileDB.js";
 import { ProjectData } from "../data/ProjectData.js";
-import { GitHubServices } from "./GitHubServices.js";
 import { GitHubUtil } from "../utils/GitHubUtil.js";
 import { FileUtil } from "../utils/FileUtil.js";
+import { File, FileData } from "../data/FileData.js";
 
 const router = express.Router();
 
@@ -18,17 +18,21 @@ router.route("/addProject").post(addProject);
 router.route("/getProjects").get(getProjects);
 router.route("/editProject").post(editProject);
 router.route("/deleteProject").post(deleteProject);
+router.route("/importProjects").post(importProjects);
 
 async function addProject(req: Request, res: Response): Promise<void> {
 	const data: ProjectData = req.body as ProjectData;
 	const accessToken = res.locals.accessToken;
 
 	try{
-		await GitHubServices.createProject(data, accessToken);
+		await GitHubUtil.createProject(data, accessToken);
 		await GitHubUtil.addCollabsToRepo(data, accessToken, data.collaborators);
 		await ProjectDB.addProject(data);
-		await FileDB.initializeProjectFiles(data, res.locals.username);
-		FileUtil.createDirectory(data.owner+"/"+data.projectName);
+		await FileDB.initializeProject(data);
+		const filePath = data.owner+"/"+data.projectName+"/main.tex";
+		const mainFile: File = {fileName: "main.tex", fileType: "tex", filePath: filePath, contributors: [res.locals.username], documentID: filePath}
+		await FileDB.addProjectFile(data, mainFile);
+		await FileUtil.createDirectory(data.owner+"/"+data.projectName);
 		res.status(200).json("Succesfully added project");
 	} catch (err) {
 		console.log(err);
@@ -75,6 +79,37 @@ async function deleteProject(req: Request, res: Response): Promise<void>  {
 		res.status(200).json(result);
 	} catch (err) {
 		res.status(500).json(err);
+	}
+}
+
+async function importProjects(req: Request, res: Response): Promise<void>  {
+	let data: ProjectData[] = req.body as ProjectData[]
+	const accessToken = res.locals.accessToken;
+
+	try{
+		for(let i = 0; i < data.length; i++){
+			const project = await GitHubUtil.getRepoCollaborators(accessToken, data[i]);
+			const files = await GitHubUtil.getRepoContent(accessToken, project);
+			await FileDB.initializeProject(project);
+			files.imageFiles.forEach(async (file) => {
+				const fileContent = await GitHubUtil.getContentFromBlob(accessToken, project, file);
+				const filePath = project.owner+"/"+project.projectName+"/"+file.path;
+				FileUtil.saveFile(filePath, Buffer.from(fileContent.content, fileContent.encoding as BufferEncoding));
+				const fileInfo: File = {fileName: file.name, fileType: "image", filePath: filePath, contributors: [project.owner, ...project.collaborators]}
+				FileDB.addProjectFile(project, fileInfo);
+			})
+			// Add your stuff here veerash
+			// files.texFiles.forEach(async (file) => {
+			// 	const fileContent = await GitHubUtil.getContentFromBlob(accessToken, project, file);
+			// 	const fileInfo: File = {fileName: file.name, fileType: "tex", filePath: file.path, contributors: project.collaborators, documentID: file.path};
+			// 	FileDB.addProjectFile(project, fileInfo);
+			// })
+			await ProjectDB.addProject(project);
+		}
+		res.status(200).json("Successfully imported project");
+	} catch (err) {
+		console.log(err);
+		res.status(500).json("Failed to import all projects");
 	}
 }
 
