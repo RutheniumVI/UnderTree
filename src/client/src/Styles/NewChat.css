@@ -2,7 +2,7 @@
     border: 1px solid black;
     height: 100%;
     max-width: 100%;
-    background-color: #F5F5F5;
+    /*background-color: #F5F5F5;*/
     /*overflow-y: scroll;*/
 }
 
@@ -10,84 +10,7 @@
     margin-top: 5%;
 }
 
-#message{
-    width: 70%;
-    border-radius: 15px;
-    margin-left: 5%;
-}
-
 #send-button{
     width: 20%;
     margin-left: 2%;
-}
-
-.message-blurb{
-    width: 75%;
-}
-
-.avatar{
-    display: inline-block;
-    width: 1cm;
-    border-radius: 50px;
-    margin-left: 1%;
-    margin-right: 1%;
-}
-
-#me .message-text{
-    border: 1px solid black;
-    border-top-left-radius:15px;
-    border-top-right-radius:0px;
-    border-bottom-right-radius:15px;
-    border-bottom-left-radius:15px;
-    padding-left: 5%;
-    background-color: white;
-    /*padding: 5%;*/
-}
-
-#others .message-text{
-    border: 1px solid black;
-    border-top-left-radius:0;
-    border-top-right-radius:15px;
-    border-bottom-right-radius:15px;
-    border-bottom-left-radius:15px;
-    background-color: white;
-    padding-left: 5%;
-}
-
-.avatar-pic{
-    width: 1cm;
-    border-radius: 50px;
-    border: 1px solid black;
-}
-
-#me{
-    margin-left: auto; 
-    margin-right: 0;
-}
-
-#others{
-}
-
-.message-wrapper{
-    border: 1px solid purple;
-}
-
-.message-border{
-    display: inline-block;
-    width: 75%;
-}
-
-
-.tiny-btn {
-    width:1%;
-}
-
-#user{
-    margin-bottom: 0;
-}
-
-#message-content{
-    margin: 0;
-    background-color: white;
-    border-radius: 15px;
 }

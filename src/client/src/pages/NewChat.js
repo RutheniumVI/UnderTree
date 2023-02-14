@@ -71,28 +71,38 @@ function NewChat() {
             <div className='body'>
                 {messages.map((messageData) => {
                     if (userName == messageData.username){
-                    return <div className='message-blurb' id={userName == messageData.username ? "me" : "others"} key={messageData.id}>
-                                <div className='message-border'>
-                                    <p id="user" style={{textAlign:"right"}}>{messageData.username}</p>
-                                    <div className='message-text'>
-                                        <p id="message-content">{messageData.message}</p>
-                                    </div>
-                                </div>
-                                <div className='avatar'>
-                                    <img className='avatar-pic' src={require('./profile.PNG')}/>
-                                </div>
-                           </div>}
-                           else return <div className='message-blurb' id={userName == messageData.username ? "me" : "others"} key={messageData.id}>
-                           <div className='avatar'>
-                               <img className='avatar-pic' src={require('./profile.PNG')}/>
+                    return<div class="row" id="my-message">
+                    <div class="col-3"/>
+                    <div class="col">
+                        <p class="text-end">username</p>
+                        <div class="card">
+                            <div class="card-body">
+                                This is some text within a card body.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                    <   figure class="figure">
+                            <img src={require('./profile.PNG')} class="figure-img img-fluid rounded-circle" alt="..."/>
+                        </figure>
+                    </div>
+                </div>}
+                           else return <div class="row" id="your-message">
+                           <div class="col-3 text-end">
+                               <figure class="figure">
+                                   <img src={require('./profile.PNG')} class="figure-img img-fluid rounded-circle text-end" alt="..."/>
+                               </figure>
                            </div>
-                           <div className='message-border'>
-                               <p id="user">{messageData.username}</p>
-                               <div className='message-text'>
-                                   <p id="message-content">{messageData.message}</p>
+                           <div class="col">
+                               <p>username</p>
+                               <div class="card">
+                                   <div class="card-body">
+                                       This is some text within a card body.
+                                   </div>
                                </div>
                            </div>
-                      </div>
+                           <div class="col-3"/>
+                       </div>
                 })}
             </div>
             <div className='footer'>
