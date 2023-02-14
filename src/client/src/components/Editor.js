@@ -2,6 +2,7 @@ import React from 'react';
 
 import { useEffect } from 'react';
 import { useState } from 'react';
+import axios from 'axios';
 import * as Y from "yjs";
 import { WebsocketProvider } from 'y-websocket'
 import { QuillBinding } from 'y-quill'
@@ -12,21 +13,37 @@ import ReactQuill, { Quill } from 'react-quill';
 import QuillCursors from 'quill-cursors';
 import 'react-quill/dist/quill.snow.css';
 import '../Styles/Editor.css'
-import "highlight.js/styles/github.css";
+import "highlight.js/styles/monokai-sublime.css";
 import hljs from 'highlight.js'
-// import 'highlight.js/styles/default.css'
 
 Quill.register('modules/cursors', QuillCursors);
 
 hljs.configure({
-    languages: ['tex', 'python', 'rust'],
+    languages: ['tex'],
+    cssSelector: 'div.ql-editor > p'
 })
 
+const bindings = {
+    'code exit': {
+        key: 'Enter',
+        collapsed: true,
+        format: ['code-block'],
+        prefix: /^$/,
+        suffix: /^\s*$/,
+        handler(range) {
+          return true;
+        },
+    }
+};
+
 const modules = {
-    syntax: {
-        highlight: text => hljs.highlightAuto(text).value,
-    },
     cursors: true,
+    keyboard: {
+        bindings: bindings
+    },
+    syntax: {
+        highlight: text => hljs.highlightAuto(text).value
+    }
 }
 
 const formats = [
@@ -51,12 +68,13 @@ function Editor({documentID, setCurrentText}) {
     const username = localStorage.getItem("username");
     const [value, setValue] = useState('');
     const [modified, setModified] = useState(false);
+    let quillRef = null;
     let edtRef = null;
 
 
     // Connect to socket when editor page is opened
     useEffect(() => {
-        console.log(edtRef)
+        quillRef = edtRef.getEditor();
         const ydoc = new Y.Doc();   
         const provider = new WebsocketProvider('ws://localhost:8000', documentID, ydoc, {params: {jwt: "123"}});
         const ytext = ydoc.getText('quill');
@@ -70,15 +88,32 @@ function Editor({documentID, setCurrentText}) {
           color: color,
         });
 
+
         new QuillBinding(ytext, edtRef.getEditor(), awareness);
     }, [])
+    useEffect(() => {
+        if (typeof edtRef.getEditor !== 'function') return;
+            quillRef = edtRef.getEditor();
+    })
 
     function onEditorChanged(content, delta, source, editor){
         setValue(content);
+        quillRef.formatLine(0, quillRef.getLength(), { 'code-block': true });
         setCurrentText(editor.getText(content));
-        console.log(editor)
-        if(!modified){
-            console.log("I made first change");
+
+        if(!modified && source === "user"){
+            console.log("Adding user to modified");    
+
+            axios.post("http://localhost:8000/api/file/fileEdited", {
+              username: username
+            }, {
+              withCredentials: true,
+            }).then((res) => {
+              console.log(res.data)
+            }).catch((error) => {
+              console.error(`Error Adding user to modified`);
+            });
+
             setModified(true);
         }
     }
@@ -87,7 +122,7 @@ function Editor({documentID, setCurrentText}) {
         <div id='container'>
             <ReactQuill 
                 ref={(el) => { edtRef = el; }}
-                theme="snow"
+                theme="bubble"
                 className="editor"
                 modules={modules}
                 formats={formats}

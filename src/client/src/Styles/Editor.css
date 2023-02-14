@@ -21,8 +21,8 @@
 }
 
 .ql-snow .ql-editor pre.ql-syntax {
-    background-color: grey;
-    height: 100%;
+    background-color:  rgb(251, 251, 251);
+    color: black;
 }
 /* 
 .ql-editor.ql-blank{

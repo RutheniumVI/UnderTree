@@ -46,10 +46,8 @@ function Compiler({latexText}){
 
     return (
         <div className='compilerPage'>
-            {/* Place holder textarea, remove once integrated with editor instead */}
-            <textarea style={{width: "100%"}} onChange={(e) => {setLatexText(e.target.value)}}></textarea>
             <div className='compilerInfo'>
-                <button class="btn btn-dark" onClick={compileLatex}>Compile</button>
+                <button className="btn btn-dark" onClick={compileLatex}>Compile</button>
             </div>
             {err !== "" ? <pre className='errMessage'>{err}</pre> : <iframe className='pdfRenderer' src={pdf}/>}
         </div>

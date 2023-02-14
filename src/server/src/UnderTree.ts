@@ -17,7 +17,6 @@ import * as Y from "yjs";
 import { PersistenceUtil } from "./utils/PersistenceUtil.js"
 import { MongodbPersistence } from "y-mongodb-provider";
 import yUtils from "y-websocket/bin/utils";
-import { Server } from 'socket.io';
 
 dotenv.config();
 
@@ -66,10 +65,6 @@ yUtils.setPersistence({
 // server.on('upgrade', function upgrade(request, socket, head) {
 //     console.log(request);
 // });
-
-server.listen(8000, () => {
-    console.log('listening on *8000');
-});
 main();
 
 async function main(){
