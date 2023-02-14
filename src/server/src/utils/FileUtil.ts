@@ -22,7 +22,7 @@ function setUpFileSystem(): void{
 }
 
 function createDirectory(path: string): void {
-    let dirs = path.split("/");
+    const dirs = path.split("/");
     let currPath = dataDirectory;
 
     dirs.forEach((dir) => {
@@ -32,6 +32,16 @@ function createDirectory(path: string): void {
         }
         currPath = checkPath;
     })
+}
+
+function saveFile(path: string, content: string): void {
+    if(fs.existsSync(path)){
+        const dirs = path.split("/");
+        const file = dirs[dirs.length-1];
+        createDirectory(dirs.splice(-1).join("/"));
+
+        fs.writeFileSync(path, content);
+    }
 }
 
 function deleteProjectDirectory(projectName: string, owner: string): void {
@@ -65,6 +75,7 @@ function getFileData(file: string){
 const FileUtil = {
     setUpFileSystem,
     createDirectory,
+    saveFile,
     deleteProjectDirectory,
     createPDFOutput,
     getFileData

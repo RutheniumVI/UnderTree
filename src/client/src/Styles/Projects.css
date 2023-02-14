@@ -59,3 +59,13 @@
     border-radius: 50px;
     margin: 0px 2px;
 }
+
+.importProjectsList {
+    max-height: 80vh;
+    overflow: scroll;
+    overflow-x: hidden;
+}
+
+.importProjectItem {
+    margin: 5px 10px;
+}
