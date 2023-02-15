@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/cookie-parser": "^1.4.3",
     "@types/express": "^4.17.17",
     "@types/jsonwebtoken": "^9.0.1",
     "@types/node": "^18.11.18",
@@ -32,6 +33,7 @@
     "ws": "^8.12.0",
     "y-mongodb-provider": "^0.1.6",
     "y-websocket": "^1.4.5",
-    "yjs": "^13.5.45"
+    "yjs": "^13.5.45",
+    "socket.io": "^4.5.1"
   }
 }
