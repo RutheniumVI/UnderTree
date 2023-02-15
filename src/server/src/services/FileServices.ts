@@ -82,8 +82,14 @@ async function getFiles(req, res){
     try {
         const files: File[]  = await FileDB.getFiles(projectD);
         console.log(files);
-        const fileNames: string[] = files.map((e)=> {return e.filePath})
-        res.send(fileNames);
+        const fileData = files.map((e)=> {
+            return {
+                filePath: e.filePath,
+                fileName: e.fileName,
+                fileType: e.fileType
+            }}
+        );
+        res.send(fileData);
     }
     catch (err) {
         console.log(err);
