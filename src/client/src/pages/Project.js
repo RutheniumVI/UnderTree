@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import Split from 'react-split'
+import FileMenu from '../components/FileMenu'
 import Editor from '../components/Editor';
 import Compiler from '../components/Compiler';
 
@@ -19,7 +20,7 @@ function Project() {
           className="split"
       >
         <div className='sidebar'>
-
+        <FileMenu></FileMenu>
         </div>
         <Editor className="editor" documentID={currentFile} setCurrentText={setCurrentText}/>
         <Compiler className="compiler" documentID={currentFile} latexText={currentText}/>
