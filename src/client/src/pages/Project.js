@@ -9,7 +9,7 @@ import DisplayImage from '../components/DisplayImage';
 import axios from 'axios';
 
 function Project() {
-  const [currentFile, setCurrentFile] = useState({fileName: "default", filePath: "owner/project/file.tex", fileType: "tex"});
+  const [currentFile, setCurrentFile] = useState({fileName: "default", filePath: "owner2/project/file.tex", fileType: "tex"});
   const [currentText, setCurrentText] = useState("");
 
   return (

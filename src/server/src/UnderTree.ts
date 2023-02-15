@@ -28,6 +28,7 @@ app.use(cors({
     credentials: true,
 }))
 app.use(cookieParser());
+
 const server = http.createServer(app);
 
 const wss = new WebSocketServer({ server });
@@ -76,6 +77,7 @@ async function main(){
 
     runChatServer();
     app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
     app.use("/api/projects", projectRoutes);
     app.use("/api/auth", authRoutes);
     app.use("/api/file", fileRoutes);
