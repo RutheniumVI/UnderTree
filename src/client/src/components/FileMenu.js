@@ -9,24 +9,69 @@ import '../Styles/FileMenu.css'
 function FileMenu() {
 
     const { owner, projectName } = useParams();
+    const tempfiles = ([
+        {
+            "filePath": "RutheniumVI/veetestrepo/main.tex",
+            "fileName": "main.tex",
+            "fileType": "tex"
+        },
+        {
+            "filePath": "RutheniumVI/veetestrepo/random.tex",
+            "fileName": "rando1.tex",
+            "fileType": "tex"
+        },
+        {
+            "filePath": "RutheniumVI/veetestrepo//sad.png",
+            "fileName": "sad.png",
+            "fileType": "png"
+        },
+        {
+            "filePath": "RutheniumVI/veetestrepo/pihubupload.png",
+            "fileName": "pihubupload.png",
+            "fileType": "png"
+        },
+        {
+            "filePath": "RutheniumVI/veetestrepo/test/v/amazon.jpg",
+            "fileName": "amazon.jpg",
+            "fileType": "jpg"
+        },
+        {
+            "filePath": "RutheniumVI/veetestrepo/test/v/sad.png",
+            "fileName": "sad.png",
+            "fileType": "png"
+        },
+        {
+            "filePath": "RutheniumVI/veetestrepo/test/v/amazon.jpg",
+            "fileName": "amazon.jpg",
+            "fileType": "jpg"
+        },
+        {
+            "filePath": "RutheniumVI/veetestrepo/test/v/sad.png",
+            "fileName": "sad.png",
+            "fileType": "png"
+        }
+    ])
 
     useEffect(() => {
-        axios.get("http://localhost:8000/api/file/getFiles?owner="+owner+"&projectName="+projectName, {withCredentials: true})
+        /*axios.get("http://localhost:8000/api/file/getFiles?owner="+owner+"&projectName="+projectName, {withCredentials: true})
         .then((res) => {
             getFileTreeFromFiles(res.data);
             setFiles(res.data);
         })
         .catch((err) => {
             console.log(err)
-        })
+        })*/
+        getFileTreeFromFiles(tempfiles);
+        setFiles(tempfiles);
     }, [])
 
     const [files, setFiles] = useState();
-
     const [fileTree, setFileTree] = useState({folders: [], files: []});
-    const [selectedFileObject, setSelectedFileObject] = useState()
-    const [selectedFilePath, setSelectedFilePath] = useState("")
-    const [inputtedFilePath, setInputtedFilePath] = useState("")
+    const [selectedFileObject, setSelectedFileObject] = useState();
+    const [inputtedFilePath, setInputtedFilePath] = useState("");
+    const [newFileName, setNewFileName] = useState("");
+    const [fileToDelete, setFileToDelete] = useState();
+
     function getFileTreeFromFiles(files){
         let tree = {folders: [], files: []};
         for(let i = 0; i < files.length; i++){
@@ -68,11 +113,7 @@ function FileMenu() {
                             <input className="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1"/>
                             <label className="form-check-label">{file.fileName}</label>
                         </div>
-                        <i className="bi bi-three-dots-vertical float-end pr fileDropDown" data-bs-toggle="dropdown" aria-expanded="false"></i>
-                        <ul className="dropdown-menu">
-                            <li><a className="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editFile">Edit File</a></li>
-                            <li><a className="dropdown-item" href="#"data-bs-toggle="modal" data-bs-target="#deleteFile">Delete File</a></li>
-                        </ul>    
+                        <i className="bi bi-trash float-end" href="#"data-bs-toggle="modal" data-bs-target="#deleteFile" aria-expanded="false" onClick={()=>{setFileToDelete(file.fileName)}}></i>  
                     </MenuItem>
                 ])}
             </SubMenu>
@@ -88,9 +129,27 @@ function FileMenu() {
     }
 
     function handleConfirmFileUploadClick(){
-        //setSelectedFileObject(document.getElementById('input').files[0])
         console.log(inputtedFilePath)
         console.log(selectedFileObject)
+        
+        //request = api call to addFile
+        //response = api call to getFilesList
+
+        setFiles(/*response*/)
+        
+    }
+
+    function handleConfirmNewFileClick(){
+        console.log(newFileName)
+
+        //request = api call to addFile
+        //response = api call to getFilesList
+
+        setFiles(/*response*/)
+    }
+
+    function handleConfirmDeleteClick(){
+        
     }
 
     return (
@@ -114,11 +173,7 @@ function FileMenu() {
                                 <input className="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1"/>
                                 <label className="form-check-label">{file.fileName}</label>
                             </div>
-                            <i className="bi bi-three-dots-vertical float-end pr fileDropDown" data-bs-toggle="dropdown" aria-expanded="false"></i>
-                            <ul className="dropdown-menu">
-                                <li><a className="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editFile">Edit File</a></li>
-                                <li><a className="dropdown-item" href="#"data-bs-toggle="modal" data-bs-target="#deleteFile">Delete File</a></li>
-                            </ul>    
+                            <i className="bi bi-trash float-end" href="#"data-bs-toggle="modal" data-bs-target="#deleteFile" aria-expanded="false"></i>
                         </MenuItem>
                     })}
                 </Menu>
@@ -161,14 +216,17 @@ function FileMenu() {
                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div className="modal-body my-modal-body">
-                <label className="form-label"> <h6>Project Name:</h6></label>
+                <label className="form-label"> <h6>File Name:</h6></label>
                     <div className="input-group">
-                    <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3"/>
+                    <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3"
+                    onChange={(event) => {
+                    setNewFileName(event.target.value);
+                    }}/>
                 </div>
                 </div>
                 <div className="modal-footer my-modal-footer">
                     <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" className="btn btn-dark">Confirm</button>
+                    <button type="button" className="btn btn-dark" onClick={handleConfirmNewFileClick}>Confirm</button>
                 </div>
             </div>
             </div>
@@ -197,22 +255,24 @@ function FileMenu() {
 
         <div className="modal fade" id="deleteFile" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="deleteFileLabel" aria-hidden="true">
             <div className="modal-dialog">
-            <div className="modal-content">
-                <div className="modal-header my-modal-header">
-                <h1 className="modal-title fs-5" id="deleteFileLabel">Delete File</h1>
-                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div className="modal-content">
+                    <div className="modal-header my-modal-header">
+                        <h1 className="modal-title fs-5" id="deleteFileLabel">Delete File</h1>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div className="modal-body my-modal-body">
+                        <p>Are you sure you want to delete this file?</p>
+                    </div>
+                    <div className="modal-footer my-modal-footer">
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" className="btn btn-dark">Confirm</button>
+                    </div>
                 </div>
-                <div className="modal-body my-modal-body">
-                <p>Are you sure you want to delete this file?</p>
-                </div>
-                </div>
-                <div className="modal-footer my-modal-footer">
-                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" className="btn btn-dark">Confirm</button>
-                </div>
-            </div>
             </div>
         </div>
+        
+
+    </div>
         
     )
 }
