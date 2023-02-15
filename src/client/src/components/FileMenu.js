@@ -63,7 +63,7 @@ function FileMenu({currentFile, setCurrentFile}) {
                     return renderFileMenu(folder);
                 })}
                 {tree.files.map((file) => [
-                    <MenuItem key={file.filePath} onClick={handleClick} rootStyles={{backgroundColor: '#DEDEDE'}}> 
+                    <MenuItem key={file.filePath} onClick={handleClick} rootStyles={currentFile.filePath === file.filePath ? {backgroundColor: '#d0d0d0'} : {backgroundColor: '#DEDEDE'}}> 
                         <div className="form-check form-check-inline">
                             <input className="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1"/>
                             <label className="form-check-label fileName" onClick={(e) => {setCurrentFile(file)}}>{file.fileName}</label>

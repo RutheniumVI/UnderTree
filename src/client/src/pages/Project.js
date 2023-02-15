@@ -16,7 +16,7 @@ function Project() {
   return (
     <div>
       <Split
-          sizes={[14, 43, 43]} 
+          sizes={currentFile.fileType === "tex" ? [14, 43, 43]: [14, 86]} 
           direction="horizontal" 
           className="split"
       >
@@ -25,9 +25,9 @@ function Project() {
           <Chat/>
         </div>
         <div className='imageContainer'>
-          {currentFile.fileType === "tex" ? <Editor className="editor" documentID={currentFile.filePath} setCurrentText={setCurrentText}/> : <DisplayImage className='image'/>}
+          {currentFile.fileType === "tex" ? <Editor className="editor" documentID={currentFile.filePath} setCurrentText={setCurrentText}/> : <DisplayImage file={currentFile}/>}
         </div>
-          <Compiler className="compiler" documentID={currentFile.filePath} latexText={currentText}/>
+          {currentFile.fileType === "tex" && <Compiler className="compiler" documentID={currentFile.filePath} latexText={currentText}/>}
       </Split>
     </div>
   );
