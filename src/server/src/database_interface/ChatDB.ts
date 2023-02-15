@@ -12,19 +12,25 @@ async function addMessage(message: Message): Promise<void> {
   try {
     await DBClient.getCollection("chat").insertOne(message);
   } catch (err) {
-    console.log("error saving message: ", message);
+    console.log("Error saving message: ", message);
     throw Error("Message could not be saved");
   }
 }
 
-async function getMessages(room: string): Promise<void> {
+async function getMessages(room: string): Promise<Array<Message>> {
+  console.log("getting messages: ", room);
+  let messages = [];
   try {
-    let messages = await DBClient.getCollection("chat")
+    messages = await DBClient.getCollection("chat").find({ room: room }, {projection:{_id:0}}).toArray();
+  } catch (err) {
+    throw Error("Messages could not be retrieved");
   }
+  return messages;
 }
 
 const ChatDB = {
   addMessage,
+  getMessages,
 }
 
 export { ChatDB }
