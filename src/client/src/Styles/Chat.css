@@ -1,38 +1,41 @@
-.messages-container{
-    padding-left: 2vh;
-    padding-right: 2vh;
-}
-p.person1 {
-    margin-left: auto; 
-    border-style: solid;
-    border-radius: 25px;
-    border-color: rgb(239, 239, 239);
-    background-color: rgb(239, 239, 239);
-    max-width: 30%;
-    text-align: left;
-    min-width: min-content;
-    padding-left: 2vh;}
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
 
- p.person2 { 
-    border-style: solid;
-    border-radius: 25px;
-    border-color: rgb(83, 234, 227);
-    background-color: rgb(83, 234, 227);
-    max-width: 30%;
-    text-align: left;
-    min-width: min-content;
-    padding-left: 2vh;}
-
-#newtext{
-    /*width: 75%;*/
-    margin-left:2%;
+.chat{
+    font-family: 'Open Sans', sans-serif;
+    padding-left: 10px;
+    margin-top: 10px;
+    width: 100% !important;
+    height: 40vh;
+    font-size: 13px;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
-#submit{
-    margin-left: auto;
+.profilePicture {
+    height: 30px;
 }
 
-.flex {
-    display: flex;
-    flex-direction: row;
- }
+.imageCol {
+    flex: 0 0 60px
+}
+
+.messageSent {
+    background-color: #01a0e1;
+    color: #dff3fa;
+    max-width: 150px;
+    padding: 10px;
+    border-radius: 10px 0px 10px 10px;
+}
+
+.messageReceived {
+    background-color: #f5f9fa;
+    color: black;
+    max-width: 300px;
+    padding: 10px;
+    border-radius: 0px 10px 10px 10px;
+}
+
+.messageInput {
+    font-size: 13px;
+}
+  

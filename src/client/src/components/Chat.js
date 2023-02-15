@@ -2,11 +2,11 @@ import React from "react";
 import io from "socket.io-client";
 import { useState } from "react";
 import { useEffect } from "react";
-import "../Styles/NewChat.css";
 import { v4 as uuidv4 } from "uuid";
-import "./profile.PNG";
 import axios from "axios";
 import { useParams } from 'react-router-dom';
+
+import "../Styles/Chat.css";
 
 const socket = io.connect("http://localhost:8001");
 
@@ -25,8 +25,8 @@ function NewChat() {
     console.log("Room Value: ", room);
 
     if (room != null) {
-      await axios.get("http://localhost:8000/api/chat/getMessages", {
-        params: { room: "a" },
+      await axios.get("http://localhost:8000/api/chat/getMessages?owner="+owner+"&projectName="+projectName, {
+        params: { room: room },
         withCredentials: true,
       })
       .then((res) => {
@@ -59,16 +59,7 @@ function NewChat() {
     return;
   };
 
-  const joinRoom = () => {
-    if (userName !== "" && room !== "") {
-      socket.emit("join_room", room); //room is sent as "data" in backend
-      console.log(
-        `User with socket ID ${socket.id} and username ${userName} joined the room`
-      );
-    }
-  };
-
-  const sendMessage = async () => {
+  async function sendMessage() {
     if (newMessage !== "") {
       const messageContent = {
         room: room,
@@ -84,7 +75,7 @@ function NewChat() {
       await axios
         .post(
           "http://localhost:8000/api/chat/sendMessage",
-          { message: messageContent },
+          { message: messageContent, projectName: projectName, owner: owner },
           {
             withCredentials: true,
           }
@@ -96,6 +87,7 @@ function NewChat() {
           console.log(err);
         });
     }
+    setNewMessage("");
   };
 
   async function setUpChat(){
@@ -113,90 +105,68 @@ function NewChat() {
   }, [socket]);
 
   return (
-    <div>
-      <div className="form">
-        <h3>Join a Chat</h3>
-        {/* <input
-          type="text"
-          placeholder="John.."
-          onChange={(event) => {
-            setUsername(event.target.value);
-          }}
-        />
-        <input
-          type="text"
-          placeholder="RoomID.."
-          onChange={(event) => {
-            setRoom(event.target.value);
-          }}
-        /> */}
-        <div>
-          <button onClick={joinRoom}>CLICK ME</button>
-        </div>
-      </div>
-      <div className="chat">
-        <div className="header">
-          <h3></h3>
-        </div>
-        <div className="body">
-          {messages.map((messageData) => {
-            if (userName == messageData.username) {
-              return (
-                <div class="row" id="my-message" key={messageData.id}>
-                  <div class="col-3" />
-                  <div class="col">
-                    <p class="text-end">{messageData.username}</p>
-                    <div class="card">
-                      <div class="card-body">{messageData.message}</div>
-                    </div>
+    <div className="chat">
+        {messages.map((messageData) => {
+          if (userName == messageData.username) {
+            return (
+              <div className="row" id="my-message" key={messageData.id}>
+                <div className="col">
+                  <p className="text-end">{messageData.username}</p>
+                  <div className="d-flex justify-content-end">
+                    <p className="text-end messageSent">{messageData.message}</p>
                   </div>
-                  <div class="col-3">
-                    <figure class="figure">
+                </div>
+                <div className="col imageCol">
+                  <figure className="figure">
+                    <img
+                      src={avatar}
+                      className="figure-img img-fluid rounded-circle profilePicture"
+                      alt="..."
+                    />
+                  </figure>
+                </div>
+              </div>
+            );
+          } else
+            return (
+              <div className="row" id="your-message" key={messageData.id}>
+                <div className="col imageCol">
+                  <figure className="figure">
                       <img
                         src={avatar}
-                        class="figure-img img-fluid rounded-circle"
+                        className="figure-img img-fluid rounded-circle profilePicture"
                         alt="..."
                       />
-                    </figure>
+                  </figure>
+                </div>
+                <div className="col">
+                  <p>{messageData.username}</p>
+                  <div className="d-flex justify-content-start">
+                    <p className="text-end messageReceived">{messageData.message}</p>
                   </div>
                 </div>
-              );
-            } else
-              return (
-                <div class="row" id="your-message" key={messageData.id}>
-                  <div class="col-3 text-end">
-                    <figure class="figure">
-                      <img
-                        src={messageData.avatar}
-                        class="figure-img img-fluid rounded-circle text-end"
-                        alt="..."
-                      />
-                    </figure>
-                  </div>
-                  <div class="col">
-                    <p>{messageData.username}</p>
-                    <div class="card">
-                      <div class="card-body">{messageData.message}</div>
-                    </div>
-                  </div>
-                  <div class="col-3" />
-                </div>
-              );
-          })}
-        </div>
+              </div>
+            );
+        })}
         <div
           className="footer"
-          style={{ "padding-left": "10%", "padding-right": "10%" }}
+          style={{ paddingLeft: "5%", paddingRight: "5%" }}
         >
-          <div class="input-group mb-3">
+          <div className="input-group mb-3">
             <input
-              class="form-control"
-              id="message"
+              className="form-control messageInput"
               type="text"
               placeholder="enter message"
+            //   onKeyDown={(e) => {
+            //     if(e.key === "Enter"){
+            //         console.log("hello");
+            //         sendMessage()
+            //     }
+            //   }}
               onChange={(event) => {
                 setNewMessage(event.target.value);
               }}
+              value={newMessage}
             />
             <button
               type="button"
@@ -206,7 +176,6 @@ function NewChat() {
             >
               Send
             </button>
-          </div>
         </div>
       </div>
     </div>
