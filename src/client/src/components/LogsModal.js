@@ -8,12 +8,12 @@ function Modal({ logs, setShowModal }) {
 	console.log("Modal Logs: ", logs);
 	return (
 
-		<div className="modal">
-			<div className="modal-content">
-				<div className="modal-header">
-					<h4 className="modal-title">Logs</h4>
+		<div className="log-modal">
+			<div className="log-modal-content">
+				<div className="log-modal-header">
+					<h4 className="log-modal-title">Logs</h4>
 				</div>
-				<div className="modal-body">
+				<div className="log-modal-body">
 					<ul>
 						{logs.map(({ sha, commit }) => (
 							<li key={sha} >
@@ -25,7 +25,7 @@ function Modal({ logs, setShowModal }) {
 						))}
 					</ul>
 				</div>
-				<div className="modal-footer">
+				<div className="log-modal-footer">
 					<button className="button" onClick={()=> {setShowModal(false)}}>
 						Close
 					</button>

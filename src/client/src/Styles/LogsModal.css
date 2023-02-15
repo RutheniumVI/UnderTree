@@ -1,4 +1,4 @@
-.modal {
+.log-modal {
 	position: fixed;
 	left: 0;
 	top: 0;
@@ -12,20 +12,20 @@
 	max-height: 95vh;
 }
 
-.modal-content {
+.log-modal-content {
   	background-color: #fff;
   	width: 500px;
 }
 
-.modal-header, .modal-footer {
+.log-modal-header, .log-modal-footer {
   	padding: 10px;
 }
 
-.modal-title {
+.log-modal-title {
   	margin: 0;
 }
 
-.modal-body {
+.log-modal-body {
 	padding: 10px;
 	/* padding-top: 50px; */
 	/* margin-bottom: 100px; */
