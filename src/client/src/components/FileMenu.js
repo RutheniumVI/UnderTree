@@ -24,7 +24,9 @@ function FileMenu() {
     const [files, setFiles] = useState();
 
     const [fileTree, setFileTree] = useState({folders: [], files: []});
-
+    const [selectedFileObject, setSelectedFileObject] = useState()
+    const [selectedFilePath, setSelectedFilePath] = useState("")
+    const [inputtedFilePath, setInputtedFilePath] = useState("")
     function getFileTreeFromFiles(files){
         let tree = {folders: [], files: []};
         for(let i = 0; i < files.length; i++){
@@ -85,6 +87,12 @@ function FileMenu() {
         // console.log("clicked")
     }
 
+    function handleConfirmFileUploadClick(){
+        //setSelectedFileObject(document.getElementById('input').files[0])
+        console.log(inputtedFilePath)
+        console.log(selectedFileObject)
+    }
+
     return (
         <div>
         <div className='my-card'>
@@ -126,14 +134,20 @@ function FileMenu() {
                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div className="modal-body my-modal-body">
-                <label className="form-label"> <h6>Project Name:</h6></label>
+                <label className="form-label"> <h6>File Name:</h6></label>
                     <div className="input-group">
-                    <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3"/>
-                </div>
+                        <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" 
+                        onChange={(event) => {
+                        setInputtedFilePath(event.target.value);
+                        }}/>      
+                    </div>
+                    <div className="input-group" style={{"margin-top" : "5%"}} >
+                    <input type="file" id="input" multiple onChange={(event)=> {setSelectedFileObject(document.getElementById('input').files[0])}}/>
+                    </div>
                 </div>
                 <div className="modal-footer my-modal-footer">
                     <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" className="btn btn-dark">Confirm</button>
+                    <button type="button" className="btn btn-dark" onClick={handleConfirmFileUploadClick}>Confirm</button>
                 </div>
             </div>
             </div>
