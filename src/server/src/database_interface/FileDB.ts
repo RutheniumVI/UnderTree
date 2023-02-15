@@ -67,7 +67,7 @@ async function editFileCollaborator(owner: string, projectName: string, fileName
 			"files.fileName": fileName
 		},
 		{
-			$push: {'files.$.contributors': userName}
+			$addToSet: {'files.$.contributors': userName}
 		}
 	);
 
@@ -79,11 +79,53 @@ async function editFileCollaborator(owner: string, projectName: string, fileName
 
 }
 
+async function renameFile(project: ProjectData, file: File, newFileName: string, userName: string): Promise<string> {
+	const collection = DBClient.getCollection(collectionName);
+
+	const result = await collection.updateOne(
+		{
+			"projectName": project.projectName,
+			"owner": project.owner,
+			"files.fileName": file.fileName
+		},
+		{
+			$set: {'files.$.fileName': newFileName},
+			$addToSet: {'files.$.contributors': userName}
+		}
+	);
+
+	if(result.modifiedCount != 1){
+		throw "Failed changing fileName";
+	}
+
+	return "Succesfully changed fileName";
+}
+
+async function getFiles(project: ProjectData): Promise<File[]> {
+	const collection = DBClient.getCollection(collectionName);
+
+	const result = await collection.findOne(
+		{
+			"projectName": project.projectName,
+			"owner": project.owner
+		},
+	);
+
+	if(!result){
+		throw "Failed fetching files";
+	}
+
+	return result.files as File[];
+}
+
+
 const FileDB = {
 	initializeProject,
 	addProjectFile,
     deleteProjectFiles,
-	editFileCollaborator
+	editFileCollaborator,
+	renameFile,
+	getFiles
 };
 
 export { FileDB };
