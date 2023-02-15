@@ -71,6 +71,8 @@ function FileMenu() {
     const [inputtedFilePath, setInputtedFilePath] = useState("");
     const [newFileName, setNewFileName] = useState("");
     const [fileToDelete, setFileToDelete] = useState();
+    const [fileToEdit, setFileToEdit] = useState();
+    const [newFileRename, setNewFileRename] = useState();
 
     function getFileTreeFromFiles(files){
         let tree = {folders: [], files: []};
@@ -113,7 +115,8 @@ function FileMenu() {
                             <input className="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1"/>
                             <label className="form-check-label">{file.fileName}</label>
                         </div>
-                        <i className="bi bi-trash float-end" href="#"data-bs-toggle="modal" data-bs-target="#deleteFile" aria-expanded="false" onClick={()=>{setFileToDelete(file.fileName)}}></i>  
+                        <i className="bi bi-trash float-end" href="#"data-bs-toggle="modal" data-bs-target="#deleteFile" aria-expanded="false" onClick={()=>{setFileToDelete(file.fileName)}}></i>
+                        <i className="bi bi-pencil-square float-end" href="#"data-bs-toggle="modal" data-bs-target="#editFile" aria-expanded="false" onClick={()=>{setFileToEdit(file.fileName)}}></i>  
                     </MenuItem>
                 ])}
             </SubMenu>
@@ -135,7 +138,8 @@ function FileMenu() {
         //request = api call to addFile
         //response = api call to getFilesList
 
-        setFiles(/*response*/)
+        //getFileTreeFromFiles(tempfiles);
+        //setFiles(tempfiles);
         
     }
 
@@ -145,11 +149,27 @@ function FileMenu() {
         //request = api call to addFile
         //response = api call to getFilesList
 
-        setFiles(/*response*/)
+        //getFileTreeFromFiles(tempfiles);
+        //setFiles(tempfiles);
     }
 
     function handleConfirmDeleteClick(){
-        
+        console.log(fileToDelete)
+
+        //api calls
+
+        //getFileTreeFromFiles(tempfiles);
+        //setFiles(tempfiles);
+    }
+
+    function handleEditFileConfirm(){
+        console.log(fileToEdit)
+        console.log(newFileRename)
+
+        //api calls
+
+        //getFileTreeFromFiles(tempfiles);
+        //setFiles(tempfiles);
     }
 
     return (
@@ -173,7 +193,8 @@ function FileMenu() {
                                 <input className="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1"/>
                                 <label className="form-check-label">{file.fileName}</label>
                             </div>
-                            <i className="bi bi-trash float-end" href="#"data-bs-toggle="modal" data-bs-target="#deleteFile" aria-expanded="false"></i>
+                            <i className="bi bi-trash float-end" href="#"data-bs-toggle="modal" data-bs-target="#deleteFile" aria-expanded="false" onClick={()=>{setFileToDelete(file.fileName)}}></i>
+                            <i className="bi bi-pencil-square float-end" href="#"data-bs-toggle="modal" data-bs-target="#editFile" aria-expanded="false" onClick={()=>{setFileToEdit(file.fileName)}}></i>
                         </MenuItem>
                     })}
                 </Menu>
@@ -240,14 +261,16 @@ function FileMenu() {
                     <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div className="modal-body my-modal-body">
-                    <label className="form-label"> <h6>Project Name:</h6></label>
+                    <label className="form-label"> <h6>New File Name:</h6></label>
                     <div className="input-group">
-                    <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3"/>
+                    <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" onChange={(event) => {
+                    setNewFileRename(event.target.value);
+                    }}/>
                 </div>
                 </div>
                 <div className="modal-footer my-modal-footer">
                     <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" className="btn btn-dark">Confirm</button>
+                    <button type="button" className="btn btn-dark" onClick={handleEditFileConfirm}>Confirm</button>
                 </div>
             </div>
             </div>
@@ -265,7 +288,7 @@ function FileMenu() {
                     </div>
                     <div className="modal-footer my-modal-footer">
                         <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" className="btn btn-dark">Confirm</button>
+                        <button type="button" className="btn btn-dark" onClick={()=>{console.log(fileToDelete)}}>Confirm</button>
                     </div>
                 </div>
             </div>
