@@ -6,72 +6,69 @@ import "../Styles/NewChat.css";
 import { v4 as uuidv4 } from "uuid";
 import "./profile.PNG";
 import axios from "axios";
+import { useParams } from 'react-router-dom';
 
 const socket = io.connect("http://localhost:8001");
 
 function NewChat() {
-  const [userName, setUsername] = useState("");
-  const [room, setRoom] = useState("");
+  const { owner, projectName } = useParams();
+  const userName = localStorage.getItem("username");
+  const room = owner + "/" + projectName;
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [avatar, setAvatar] = useState("");
 
-  const getMessages = () => {
+  async function getMessages() {
     // if (localStorage.getItem("undertree-room") != null) {
     //   setRoom(localStorage.getItem("undertree-room"));
     // }
     console.log("Room Value: ", room);
 
     if (room != null) {
-      axios
-        .get("http://localhost:8000/api/chat/getMessages", {
-          params: { room: "1" },
-          withCredentials: true,
-        })
-        .then((res) => {
-          console.log(res.data["messages"]);
-          setMessages(res.data["messages"]);
-          // if (res.data != null) {
-          //   setAvatar(res.data["avatar"]);
-          // }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  };
-
-  //api calls
-  const getAvatar = () => {
-    axios
-      .get("http://localhost:8000/api/chat/getAvatar", {
+      await axios.get("http://localhost:8000/api/chat/getMessages", {
+        params: { room: "a" },
         withCredentials: true,
       })
       .then((res) => {
-        console.log(res.data["avatar"]);
-        if (res.data != null) {
-          setAvatar(res.data["avatar"]);
-        }
+        console.log(res.data["messages"]);
+        setMessages(res.data["messages"]);
+        // if (res.data != null) {
+        //   setAvatar(res.data["avatar"]);
+        // }
       })
       .catch((err) => {
         console.log(err);
       });
+    }
+  };
+
+  //api calls
+  async function getAvatar() {
+    await axios.get("http://localhost:8000/api/chat/getAvatar", {
+      withCredentials: true,
+    })
+    .then((res) => {
+      console.log(res.data["avatar"]);
+      if (res.data != null) {
+        setAvatar(res.data["avatar"]);
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
     return;
   };
 
-  function joinRoom() {
-    console.log("Join Room: ", username, room);
+  const joinRoom = () => {
     if (userName !== "" && room !== "") {
       socket.emit("join_room", room); //room is sent as "data" in backend
       console.log(
         `User with socket ID ${socket.id} and username ${userName} joined the room`
       );
-      // getMessages();
     }
-  }
+  };
 
-  const sendMessage = async (e) => {
-    e.preventDefault();
+  const sendMessage = async () => {
     if (newMessage !== "") {
       const messageContent = {
         room: room,
@@ -84,51 +81,42 @@ function NewChat() {
 
       await socket.emit("send_message", messageContent);
 
-      // await axios
-      //   .post(
-      //     "http://localhost:8000/api/chat/sendMessage",
-      //     { message: messageContent },
-      //     {
-      //       withCredentials: true,
-      //     }
-      //   )
-      //   .then((res) => {
-      //     console.log(res.data);
-      //   })
-      //   .catch((err) => {
-      //     console.log(err);
-      //   });
-
-      setNewMessage("");
-      // socket.on("receive_message", (data) => {
-      //   console.log("received" + data);
-      //   setMessages((list) => [...list, data]);
-      // });
-      // getMessages();
-      // await getMessages();
+      await axios
+        .post(
+          "http://localhost:8000/api/chat/sendMessage",
+          { message: messageContent },
+          {
+            withCredentials: true,
+          }
+        )
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   };
 
-  useEffect(() => {
-    console.log(socket);
-    setRoom("1");
-    setUsername(localStorage.getItem("username"));
-    getAvatar();
-    getMessages();
-    joinRoom();
-    socket.on("receive_message", recieveMessage);
-  }, [socket]);
-
-  function recieveMessage(data) {
-    console.log("received" + data);
-    setMessages((list) => [...list, data]);
+  async function setUpChat(){
+    socket.emit("join_room", owner+"/"+projectName);
+    await getAvatar();
+    await getMessages()
+    socket.on("receive_message", (data) => {
+      //console.log("received" + data)
+      setMessages((list) => [...list, data]);
+    });
   }
+
+  useEffect(() => {
+    setUpChat()
+  }, [socket]);
 
   return (
     <div>
       <div className="form">
         <h3>Join a Chat</h3>
-        <input
+        {/* <input
           type="text"
           placeholder="John.."
           onChange={(event) => {
@@ -141,7 +129,7 @@ function NewChat() {
           onChange={(event) => {
             setRoom(event.target.value);
           }}
-        />
+        /> */}
         <div>
           <button onClick={joinRoom}>CLICK ME</button>
         </div>

@@ -23,7 +23,7 @@ function runChatServer(){
     })
 
     socket.on("send_message", (data) => {
-      console.log("a" + data);
+      console.log("a",data);
       io.to(data.room).emit("receive_message", data);
     })
 
