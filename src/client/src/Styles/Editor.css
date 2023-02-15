@@ -1,5 +1,5 @@
 #container {
-    height: calc(100vh - 73);
+    height: calc(100vh - 73px);
     width: 100%;
 }
 
@@ -9,6 +9,14 @@
 /* .ql-editor{
     height: 100%;
 } */
+
+.ql-tooltip-editor {
+    display: none;
+}
+
+.ql-toolbar {
+    display: none;
+}
 
 .quill.editor{
     /* min-height: 20vh; */

@@ -1,29 +1,39 @@
-import React from 'react';
+import React, { useLayoutEffect, useEffect } from 'react';
 import { useState } from 'react';
 import Split from 'react-split'
 import FileMenu from '../components/FileMenu'
 import Editor from '../components/Editor';
 import Compiler from '../components/Compiler';
-
-
+import Chat from '../components/Chat'
+import DisplayImage from '../components/DisplayImage';
+import "../Styles/Project.css"
 import axios from 'axios';
 
 function Project() {
-  const [currentFile, setCurrentFile] = useState("owner/project/file.tex");
+  const url  = window.location.href;
+  const sp = url.split("/")
+  const [currentFile, setCurrentFile] = useState({
+    fileName: "main.tex",
+    filePath: sp[sp.length-2] + "/" + sp[sp.length-1] + "/" + "main.tex",
+    fileType: "tex"
+  });
   const [currentText, setCurrentText] = useState("");
 
   return (
     <div>
       <Split
-          sizes={[14, 43, 43]} 
+          sizes={currentFile.fileType === "tex" ? [14, 43, 43]: [14, 86]} 
           direction="horizontal" 
           className="split"
       >
         <div className='sidebar'>
-        <FileMenu></FileMenu>
+          <FileMenu currentFile={currentFile} setCurrentFile={setCurrentFile}/>
+          <Chat/>
         </div>
-        <Editor className="editor" documentID={currentFile} setCurrentText={setCurrentText}/>
-        <Compiler className="compiler" documentID={currentFile} latexText={currentText}/>
+        <div className='imageContainer'>
+          {currentFile.fileType === "tex" ? <Editor className="editor" documentID={currentFile.filePath} setCurrentText={setCurrentText}/> : <DisplayImage file={currentFile}/>}
+        </div>
+          {currentFile.fileType === "tex" && <Compiler className="compiler" documentID={currentFile.filePath} latexText={currentText}/>}
       </Split>
     </div>
   );

@@ -14,15 +14,15 @@ async function connect() {
     await client.command({ ping: 1 });
 }
 
-function createCollection(name: collections) {
+function createCollection(name: string) {
     return client.createCollection(name);
 }
 
-function getCollection(name: collections){
+function getCollection(name: string){
     return client.collection(name);
 }
 
-function collectionExists(name: collections) {
+function collectionExists(name: string) {
     return client.listCollections({ name: name }).hasNext();
 }
 

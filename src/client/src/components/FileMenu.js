@@ -1,12 +1,14 @@
 import React from 'react'
 import { ProSidebarProvider } from 'react-pro-sidebar';
 import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import '../Styles/FileMenu.css'
 
-function FileMenu() {
+function FileMenu({currentFile, setCurrentFile}) {
 
     const { owner, projectName } = useParams();
     const tempfiles = ([
@@ -110,13 +112,15 @@ function FileMenu() {
                     return renderFileMenu(folder);
                 })}
                 {tree.files.map((file) => [
-                    <MenuItem key={file.filePath} onClick={handleClick} rootStyles={{backgroundColor: '#DEDEDE'}}> 
+                    <MenuItem key={file.filePath} onClick={handleClick} rootStyles={currentFile.filePath === file.filePath ? {backgroundColor: '#d0d0d0'} : {backgroundColor: '#DEDEDE'}}> 
                         <div className="form-check form-check-inline">
                             <input className="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1"/>
-                            <label className="form-check-label">{file.fileName}</label>
+                            <label className="form-check-label fileName" onClick={(e) => {setCurrentFile(file)}}>{file.fileName}</label>
                         </div>
-                        <i className="bi bi-trash float-end" href="#"data-bs-toggle="modal" data-bs-target="#deleteFile" aria-expanded="false" onClick={()=>{setFileToDelete(file.fileName)}}></i>
-                        <i className="bi bi-pencil-square float-end" href="#"data-bs-toggle="modal" data-bs-target="#editFile" aria-expanded="false" onClick={()=>{setFileToEdit(file.fileName)}}></i>  
+                        <div className='float-end pr'>
+                            <FontAwesomeIcon data-bs-toggle="modal" data-bs-target="#editFile" icon={faPenToSquare} onClick={(e) => {setFileToEdit(file.fileName)}}/>
+                            <FontAwesomeIcon data-bs-toggle="modal" data-bs-target="#deleteFile" style={{marginLeft: "15px"}} icon={faTrash} onClick={(e) => {setFileToDelete(file.fileName)}}/>
+                        </div>  
                     </MenuItem>
                 ])}
             </SubMenu>
@@ -191,10 +195,12 @@ function FileMenu() {
                         return <MenuItem key={file.filePath} onClick={handleClick} rootStyles={{backgroundColor: '#DEDEDE'}}> 
                             <div className="form-check form-check-inline">
                                 <input className="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1"/>
-                                <label className="form-check-label">{file.fileName}</label>
+                                <label className="form-check-label fileName" onClick={(e) => {setCurrentFile(file)}}>{file.fileName}</label>
                             </div>
-                            <i className="bi bi-trash float-end" href="#"data-bs-toggle="modal" data-bs-target="#deleteFile" aria-expanded="false" onClick={()=>{setFileToDelete(file.fileName)}}></i>
-                            <i className="bi bi-pencil-square float-end" href="#"data-bs-toggle="modal" data-bs-target="#editFile" aria-expanded="false" onClick={()=>{setFileToEdit(file.fileName)}}></i>
+                            <div className='float-end pr'>
+                                <FontAwesomeIcon data-bs-toggle="modal" data-bs-target="#editFile" icon={faPenToSquare} onClick={(e) => {setFileToEdit(file.fileName)}}/>
+                                <FontAwesomeIcon data-bs-toggle="modal" data-bs-target="#deleteFile" style={{marginLeft: "15px"}} icon={faTrash} onClick={(e) => {setFileToDelete(file.fileName)}}/>
+                            </div>     
                         </MenuItem>
                     })}
                 </Menu>
@@ -217,7 +223,7 @@ function FileMenu() {
                         setInputtedFilePath(event.target.value);
                         }}/>      
                     </div>
-                    <div className="input-group" style={{"margin-top" : "5%"}} >
+                    <div className="input-group" style={{"marginTop" : "5%"}} >
                     <input type="file" id="input" multiple onChange={(event)=> {setSelectedFileObject(document.getElementById('input').files[0])}}/>
                     </div>
                 </div>
@@ -284,7 +290,7 @@ function FileMenu() {
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div className="modal-body my-modal-body">
-                        <p>Are you sure you want to delete this file?</p>
+                    <p>Are you sure you want to delete this file?</p>
                     </div>
                     <div className="modal-footer my-modal-footer">
                         <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -293,10 +299,7 @@ function FileMenu() {
                 </div>
             </div>
         </div>
-        
-
     </div>
-        
     )
 }
 

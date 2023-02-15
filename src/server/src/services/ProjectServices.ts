@@ -8,6 +8,7 @@ import { ProjectData } from "../data/ProjectData.js";
 import { GitHubUtil } from "../utils/GitHubUtil.js";
 import { FileUtil } from "../utils/FileUtil.js";
 import { File, FileData } from "../data/FileData.js";
+import { PersistenceUtil } from "../utils/PersistenceUtil.js";
 
 const router = express.Router();
 
@@ -20,6 +21,8 @@ router.route("/editProject").post(editProject);
 router.route("/deleteProject").post(deleteProject);
 router.route("/importProjects").post(importProjects);
 
+const latexTemplate = "\\documentclass{article}\n\\begin{document}\nHello World\n\\end{document}"
+
 async function addProject(req: Request, res: Response): Promise<void> {
 	const data: ProjectData = req.body as ProjectData;
 	const accessToken = res.locals.accessToken;
@@ -31,6 +34,7 @@ async function addProject(req: Request, res: Response): Promise<void> {
 		await FileDB.initializeProject(data);
 		const filePath = data.owner+"/"+data.projectName+"/main.tex";
 		const mainFile: File = {fileName: "main.tex", fileType: "tex", filePath: filePath, contributors: [res.locals.username], documentID: filePath}
+		await PersistenceUtil.writeDocumentData(filePath, latexTemplate);
 		await FileDB.addProjectFile(data, mainFile);
 		await FileUtil.createDirectory(data.owner+"/"+data.projectName);
 		res.status(200).json("Succesfully added project");

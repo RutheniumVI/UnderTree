@@ -49,12 +49,12 @@ function deleteProjectDirectory(projectName: string, owner: string): void {
     }
 }
 
-function createPDFOutput(file: string, content: string): Promise<string> {
+function createPDFOutput(file: string, dir: string, content: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
         try{
-            fs.writeFileSync(dataDirectory+"/"+file, content);
+            fs.writeFileSync(dataDirectory + "/" + dir + file, content);
             
-            execSync("cd "+dataDirectory+"&& pdflatex "+ dataDirectory+"/"+file);
+            execSync("cd " + dataDirectory + "/" + dir + "&& pdflatex "+ file);
             resolve("Success");
         } catch (err) {
             reject(err.stdout.toString());
