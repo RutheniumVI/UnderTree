@@ -17,7 +17,6 @@ function Dev() {
       <div class="container w-100 mw-100">
         <div class="row justify-content-start">
           <div class="col">
-            <LiveUsers/>
             {/* <Editor/> */}
             {/* <Chat/> */}
             <Login/>
