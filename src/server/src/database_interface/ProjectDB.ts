@@ -8,10 +8,13 @@ async function projectWithUserExists(projectName: string, owner: string, userNam
 	const existingProject = await collection.findOne({
 		"projectName": projectName, 
 		"owner": owner,
-		"collaborators": userName
 	});
 
-	if(existingProject !== null){
+	console.log(existingProject);
+
+	if(existingProject === null){
+		return false;
+	} else if (userName !== owner && !existingProject.collaborators.includes(userName)){
 		return false;
 	} else {
 		return true;

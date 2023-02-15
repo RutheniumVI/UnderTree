@@ -1,6 +1,5 @@
 import React from 'react';
-// import Editor from '../components/Editor';
-import LiveUsers from '../components/LiveUsers';
+import Editor from '../components/Editor';
 import Chat from './Chat';
 import Compiler from '../components/Compiler';
 import Login from '../components/Login';
