@@ -10,7 +10,7 @@ import Chat from '../components/Chat'
 import axios from 'axios';
 
 function Project() {
-  const [currentFile, setCurrentFile] = useState("owner/project/file.tex");
+  const [currentFile, setCurrentFile] = useState("owner2/project/file.tex");
   const [currentText, setCurrentText] = useState("");
 
   return (

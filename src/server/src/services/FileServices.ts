@@ -1,4 +1,5 @@
 import express from 'express';
+import multer from "multer";
 import { FileDB } from '../database_interface/FileDB.js';
 import { ProjectData } from '../data/ProjectData.js';
 import { File } from '../data/FileData.js';
@@ -10,7 +11,7 @@ import { PersistenceUtil } from '../utils/PersistenceUtil.js';
 const router = express.Router();
 
 router.use(AuthUtil.authorizeJWT);
-router.use(AuthUtil.authorizeProjectAccess);
+// router.use(AuthUtil.authorizeProjectAccess);
 
 router.route("/compilePDF").post(compilePDF);
 router.route("/getPDF").get(getPDF);
@@ -19,10 +20,32 @@ router.route("/renameFile").post(renameFile);
 router.route("/getFiles").get(getFiles);
 router.route("/fileEdited").post(fileEdited);
 
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const dirPath = req.body.owner + "/" + req.body.projectName + "/" + req.body.fullDirPath;
+        FileUtil.createDirectory(dirPath);
+        cb(null, "../file_system/" + dirPath)
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname);
+    }
+})
+  
+const upload = multer({ storage: storage })
+router.route("/uploadImage").post(upload.single("image"), uploadImage);
+
 async function compilePDF(req, res){
+    const documentId = req.body.documentId;
+    console.log(documentId);
+    const lastS = documentId.lastIndexOf("/");
+    const dirPath = documentId.substring(0, lastS+1);
+    const fileName = documentId.substring(lastS+1);
+    const outputFileName = dirPath + fileName.split(".")[0] + ".pdf";
+    
     try {
-        await FileUtil.createPDFOutput("output.tex", req.body.text)
-        const fileData = FileUtil.getFileData("output.pdf");
+        await FileUtil.createDirectory(dirPath);
+        await FileUtil.createPDFOutput(fileName, dirPath, req.body.text)
+        // const fileData = FileUtil.getFileData("../file_system/" + dirPath + outputFileName);
         res.json("Successfully compiled PDF");
     }
     catch (err) {
@@ -31,7 +54,8 @@ async function compilePDF(req, res){
 }
 
 async function getPDF(req, res) {
-    const fileData = FileUtil.getFileData(req.query.file+".pdf");
+    const outputFile = req.query.file.replace(".tex", ".pdf");
+    const fileData = FileUtil.getFileData("../file_system/" +  outputFile);
     res.set('content-type', "application/pdf");
     res.send(fileData);
 }
@@ -39,10 +63,12 @@ async function getPDF(req, res) {
 async function addFile(req, res){
     const projectD: ProjectData = {owner: req.body.owner, projectName: req.body.projectName}
 
+    const fileDir = req.body.fullDirPath;
     const fileName = req.body.fileName;
-    const filePath = projectD.owner + "/" + projectD.projectName + "/" + fileName;
+
+    const filePath = projectD.owner + "/" + projectD.projectName + "/" + fileDir + fileName;
     const extension = fileName.split(".")[1];
-    const fileD: File = {fileName: req.body.fileName, fileType: extension, contributors: [req.body.userName], filePath: filePath};
+    const fileD: File = {fileName: fileName, fileType: extension, contributors: [req.body.userName], filePath: filePath};
 
     try {
         await FileDB.addProjectFile(projectD, fileD);
@@ -51,6 +77,35 @@ async function addFile(req, res){
     catch (err) {
         console.log(err);
 		res.status(500).json("Failed to add file");
+    }
+    
+}
+
+async function uploadImage(req, res){
+    const projectD: ProjectData = {owner: req.body.owner, projectName: req.body.projectName}
+
+    const fileDir = req.body.fullDirPath;
+    const fileName = req.file.filename;
+
+
+    const filePath = projectD.owner + "/" + projectD.projectName + "/" + fileDir + fileName;
+    const extension = fileName.split(".")[1];
+    const fileD: File = {fileName: fileName, fileType: extension, contributors: [req.body.userName], filePath: filePath};
+
+    //TODO: check image type
+
+
+    console.log(req.file.filename);
+    console.log(fileD);
+
+
+    try {
+        await FileDB.addProjectFile(projectD, fileD);
+        res.status(200).json("Successfully added new image");
+    }
+    catch (err) {
+        console.log(err);
+		res.status(500).json("Failed to add image");
     }
     
 }
