@@ -6,6 +6,7 @@ import Editor from '../components/Editor';
 import Compiler from '../components/Compiler';
 import Chat from '../components/Chat'
 import DisplayImage from '../components/DisplayImage';
+import "../Styles/Project.css"
 import axios from 'axios';
 
 function Project() {
@@ -23,7 +24,9 @@ function Project() {
           <FileMenu currentFile={currentFile} setCurrentFile={setCurrentFile}/>
           <Chat/>
         </div>
-          {currentFile.fileType === "tex" ? <Editor className="editor" documentID={currentFile.filePath} setCurrentText={setCurrentText}/> : <DisplayImage/>}
+        <div className='imageContainer'>
+          {currentFile.fileType === "tex" ? <Editor className="editor" documentID={currentFile.filePath} setCurrentText={setCurrentText}/> : <DisplayImage className='image'/>}
+        </div>
           <Compiler className="compiler" documentID={currentFile.filePath} latexText={currentText}/>
       </Split>
     </div>
