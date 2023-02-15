@@ -22,6 +22,7 @@ function FileMenu() {
     }, [])
 
     const [files, setFiles] = useState();
+    const [selectedFiles, setSelectedFiles] = useState([]);
 
     const [fileTree, setFileTree] = useState({folders: [], files: []});
 
@@ -63,7 +64,7 @@ function FileMenu() {
                 {tree.files.map((file) => [
                     <MenuItem key={file.filePath} onClick={handleClick} rootStyles={{backgroundColor: '#DEDEDE'}}> 
                         <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1"/>
+                            <input className="form-check-input" type="checkbox" id="inlineCheckbox1" onClick={() => {selectFile(file)}} value="option1"/>
                             <label className="form-check-label">{file.fileName}</label>
                         </div>
                         <i className="bi bi-three-dots-vertical float-end pr fileDropDown" data-bs-toggle="dropdown" aria-expanded="false"></i>
@@ -77,11 +78,18 @@ function FileMenu() {
         );
     }
     
+    function selectFile(file){
+        if(selectedFiles.includes(file)){
+            setSelectedFiles(selectedFiles.filter((f) => f !== file));
+        } else {
+            setSelectedFiles([...selectedFiles, file]);
+        }
+    }
 
     // tree.push(  f1.push(f2)
 
     function handleClick(){
-        //setActive(!active)
+        // setActive(!active)
         // console.log("clicked")
     }
 
