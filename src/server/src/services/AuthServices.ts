@@ -35,7 +35,7 @@ async function validateUserAuth(token: string): Promise<Object> {
       if (err) {
         if (err.name === "TokenExpiredError") {
           console.log("Token expired");
-          newToken = jwt.sign({ username: user.username }, JWT_SECRET, { expiresIn: "1h" });
+          newToken = jwt.sign({ username: user.username }, JWT_SECRET, { expiresIn: "7d" });
           await AuthDB.updateUserWithToken(token, newToken);    
           console.log("Renewing token: ", token, newToken);
 
@@ -63,7 +63,7 @@ async function getGitHubUser({ code }: { code: string }): Promise<GitHubUser> {
       .post(
         `https://github.com/login/oauth/access_token?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&code=${code}`, { 
           headers: { 
-            "X-OAuth-Scopes": "user, repo, admin:org, delete_repo", 
+            "X-OAuth-Scopes": "user, repo, admin:org", 
             "X-Accepted-OAuth-Scopes": "user"
           } 
       })
@@ -110,8 +110,8 @@ async function getGitHubCode(req: Request, res: Response): Promise<void> {
         throw new Error("No user found");
     }
 
-    const token = jwt.sign({ username: gitHubUser.login }, JWT_SECRET, { expiresIn: "1h" });
-    res.cookie("undertree-jwt", token, { httpOnly: true, maxAge: 1000*60*60*24*365 });
+    const token = jwt.sign({ username: gitHubUser.login }, JWT_SECRET, { expiresIn: "7d" });
+    res.cookie("undertree-jwt", token, { httpOnly: true, maxAge: 1000*60*60*24*365, domain: "localhost" });
 
     // For Production:
     // res.cookie("undertree-jwt", token, { httpOnly: true, secure: true, maxAge: 1000*60*60*24*365 });
@@ -144,7 +144,7 @@ async function getUsername(req: Request, res: Response): Promise<void> {
 
         if (authResult["token"] != "") {
           console.log("Renewing Cookie");
-          res.cookie("undertree-jwt", token, { httpOnly: true, maxAge: 1000*60*60*24*365 });
+          res.cookie("undertree-jwt", token, { httpOnly: true, maxAge: 1000*60*60*24*365, domain: "localhost" });
           decoded = jwt.verify(authResult["token"], JWT_SECRET);
         } else {
           decoded = jwt.verify(token, JWT_SECRET);
