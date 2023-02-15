@@ -19,6 +19,7 @@ router.route("/repositoryExists").get(repositoryExists);
 router.route("/userExists").get(userExists);
 router.route("/getUserReposList").get(getUserReposList);
 router.route("/commitFiles").post(commitFiles);
+router.route("/getGitLog").get(getGitLogForRepo);
 
 async function repositoryExists(req: Request, res: Response): Promise<void> {
 	const accessToken = await AuthServices.getUserPropertyWithToken(res.locals.token, "access_token");
@@ -54,182 +55,204 @@ async function getUserReposList(req: Request, res: Response): Promise<void>  {
   let repos = [];
 
   try{
-    const reposRes = await axios.get("https://api.github.com/user/repos", {
-      headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" },
-      params: { affiliation: "owner,collaborator" },
-    })
+	const reposRes = await axios.get("https://api.github.com/user/repos", {
+		headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" },
+		params: { affiliation: "owner,collaborator" },
+	})
 
-    unfilteredRepos = reposRes.data;
+	unfilteredRepos = reposRes.data;
 
-    for (let i = 0; i < unfilteredRepos.length; i++) {
-      let currRepo = unfilteredRepos[i];
-      
-      let repoDetails: ProjectData = { projectName: currRepo["name"], owner: currRepo["owner"]["login"], isPrivate: currRepo["private"]};
-      repos.push(repoDetails);
-    }
+	for (let i = 0; i < unfilteredRepos.length; i++) {
+		let currRepo = unfilteredRepos[i];
+		
+		let repoDetails: ProjectData = { projectName: currRepo["name"], owner: currRepo["owner"]["login"], isPrivate: currRepo["private"]};
+		repos.push(repoDetails);
+	}
 
-    res.status(200).json(repos)
+	res.status(200).json(repos)
 
   } catch (err) {
-    console.log(err);
-    res.status(500).json("Failed to get list of user's repositories")
+		console.log(err);
+		res.status(500).json("Failed to get list of user's repositories")
   }
 }
 
+async function getGitLogForRepo(req: Request, res: Response): Promise<void> {
+	console.log("Route Called: /getGitLog");
+	const accessToken = res.locals.accessToken;
+	const owner = req.query.owner;
+	const repo = req.query.repo;
+
+	let commits = [];
+
+	try {
+		const commitsRes = await axios.get(`https://api.github.com/repos/${owner}/${repo}/commits`, {
+		headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" },
+		})
+
+		commits = commitsRes.data;
+
+		res.status(200).json(commits)
+	} catch (err) {
+		console.log(err);
+		res.status(500).json("Failed to get list of commits for repository")
+	}
+}
+
 async function commitFiles(req: Request, res: Response): Promise<void> {
-  let project: ProjectData = req.body as ProjectData;
-  let files = req.body.files;
-  let fileBlobs = [];
+	let project: ProjectData = req.body as ProjectData;
+	let files = req.body.files;
+	let fileBlobs = [];
 
-  let accessToken = res.locals.accessToken;
+	let accessToken = res.locals.accessToken;
 
-  const owner = project.owner;
-  const repo = project.projectName;
+	const owner = project.owner;
+	const repo = project.projectName;
 
-  let latestCommitSHA = "";
-  let latestCommitURL = "";
+	let latestCommitSHA = "";
+	let latestCommitURL = "";
 
-  // Get reference to the Main branch
-  await axios.get(`https://api.github.com/repos/${owner}/${repo}/git/ref/heads/main`, {
-      headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
-    }).then((res) => {
-      console.log("Main Branch Data: ", res.data);
-      latestCommitSHA = res.data["object"]["sha"];
-      latestCommitURL = res.data["object"]["url"];
-    }).catch((error) => {
-      console.error(error);
-      res.status(500).json("Error getting branch reference from GitHub");
-    });
+  	// Get reference to the Main branch
+	await axios.get(`https://api.github.com/repos/${owner}/${repo}/git/ref/heads/main`, {
+		headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
+		}).then((res) => {
+		console.log("Main Branch Data: ", res.data);
+		latestCommitSHA = res.data["object"]["sha"];
+		latestCommitURL = res.data["object"]["url"];
+		}).catch((error) => {
+		console.error(error);
+		res.status(500).json("Error getting branch reference from GitHub");
+		});
 
-  let latestTreeSHA = "";
-  let latestTreeURL = "";
+	let latestTreeSHA = "";
+	let latestTreeURL = "";
   
-  // Get the latest commit
-  await axios.get(latestCommitURL, {
-    headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
-  }).then((res) => {
-    console.log("Commit Data: ", res.data);
-    // latestCommitSHA = res.data["sha"];
-    latestTreeSHA = res.data["tree"]["sha"];
-    latestTreeURL = res.data["tree"]["url"];
-  }).catch((error) => {
-    console.error(error);
-    res.status(500).json("Error getting latest commit from GitHub");
-  });
+	// Get the latest commit
+	await axios.get(latestCommitURL, {
+		headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
+	}).then((res) => {
+		console.log("Commit Data: ", res.data);
+		// latestCommitSHA = res.data["sha"];
+		latestTreeSHA = res.data["tree"]["sha"];
+		latestTreeURL = res.data["tree"]["url"];
+	}).catch((error) => {
+		console.error(error);
+		res.status(500).json("Error getting latest commit from GitHub");
+	});
 
-  for(let i = 0; i < files.length; i++) {
-    let currFile = files[i];
+  	for(let i = 0; i < files.length; i++) {
+		let currFile = files[i];
 
-    // Post the new file to GitHub blobs
-    await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/blobs`, {
-      "content": currFile.content,
-      "encoding": "utf-8"
-    }, { 
-      headers: { 
-        Authorization: `Bearer ${accessToken}`, 
-        Accept: "application/vnd.github+json" 
-      }
-    }).then((res) => {
-      console.log("Blob Data: ", res.data);
-      fileBlobs.push({ 
-        "path": currFile.filepath,
-        "mode": "100644",
-        "type": "blob", 
-        "sha": res.data["sha"]
-      })
-    }).catch((error) => {
-      console.error(error);
-      res.status(500).json("Error posting blob to GitHub");
-    });
+		// Post the new file to GitHub blobs
+		await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/blobs`, {
+		"content": currFile.content,
+		"encoding": "utf-8"
+		}, { 
+		headers: { 
+			Authorization: `Bearer ${accessToken}`, 
+			Accept: "application/vnd.github+json" 
+		}
+		}).then((res) => {
+		console.log("Blob Data: ", res.data);
+		fileBlobs.push({ 
+			"path": currFile.filepath,
+			"mode": "100644",
+			"type": "blob", 
+			"sha": res.data["sha"]
+		})
+		}).catch((error) => {
+		console.error(error);
+		res.status(500).json("Error posting blob to GitHub");
+	});
   }
 
-  // Get the latest tree in GitHub
-  await axios.get(latestTreeURL, { 
-    headers: { 
-      Authorization: `Bearer ${accessToken}`, 
-      Accept: "application/vnd.github+json" 
-    }
-  }).then((res) => {
-    console.log("Old Tree Data: ", res.data);
-    // latestTreeSHA = res.data["sha"];
-  }).catch((error) => {
-    console.error(error);
-    res.status(500).json("Error getting latest tree from GitHub");
-  });
+	// Get the latest tree in GitHub
+	await axios.get(latestTreeURL, { 
+		headers: { 
+			Authorization: `Bearer ${accessToken}`, 
+			Accept: "application/vnd.github+json" 
+		}
+		}).then((res) => {
+		console.log("Old Tree Data: ", res.data);
+		// latestTreeSHA = res.data["sha"];
+		}).catch((error) => {
+		console.error(error);
+		res.status(500).json("Error getting latest tree from GitHub");
+		});
 
-  let userTreeSHA = "";
-  let userTreeURL = "";
+		let userTreeSHA = "";
+		let userTreeURL = "";
 
-  // Create a new tree with the new blob data
-  await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/trees`, {
-    "base_tree": latestTreeSHA,
-    "tree": fileBlobs
-    // "tree": [
-    //   {
-    //     "path": fileTest.filepath,
-    //     "mode": "100644",
-    //     "type": "blob",
-    //     "sha": userBlobSHA
-    //   }
-    // ]
-  }, {
-    headers: { 
-      Authorization: `Bearer ${accessToken}`, 
-      Accept: "application/vnd.github+json" 
-    } 
-  }).then((res) => {
-    console.log("New Tree Data: ", res.data);
-    userTreeSHA = res.data["sha"];
-    userTreeURL = res.data["url"];
-  }).catch((error) => {
-    console.error(error);
-    res.status(500).json("Error creating new tree with blob data");
-  });
+	// Create a new tree with the new blob data
+	await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/trees`, {
+		"base_tree": latestTreeSHA,
+		"tree": fileBlobs
+		// "tree": [
+		//   {
+		//     "path": fileTest.filepath,
+		//     "mode": "100644",
+		//     "type": "blob",
+		//     "sha": userBlobSHA
+		//   }
+		// ]
+	}, {
+		headers: { 
+		Authorization: `Bearer ${accessToken}`, 
+		Accept: "application/vnd.github+json" 
+		} 
+	}).then((res) => {
+		console.log("New Tree Data: ", res.data);
+		userTreeSHA = res.data["sha"];
+		userTreeURL = res.data["url"];
+	}).catch((error) => {
+		console.error(error);
+		res.status(500).json("Error creating new tree with blob data");
+	});
 
-  let userCommitSHA = "";
-  let userCommitURL = "";
+	let userCommitSHA = "";
+	let userCommitURL = "";
 
 
-  // make logic to check if userCommitSHA exists in the project data, 
-  // if so, use that as the parent instead of the latest commit SHA
-  let commitParent = latestCommitSHA;
+	// make logic to check if userCommitSHA exists in the project data, 
+	// if so, use that as the parent instead of the latest commit SHA
+	let commitParent = latestCommitSHA;
 
-  // Create a new commit with the new tree data
-  await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/commits`, {
-    "message": "Commit created by UnderTree!",
-    "tree": userTreeSHA,
-    "parents": [
-      commitParent
-    ]
-  }, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      Accept: "application/vnd.github+json"
-    }
-  }).then((res) => {
-    console.log("New Commit Data: ", res.data);
-    userCommitSHA = res.data["sha"];
-    userCommitURL = res.data["url"];
-  }).catch((error) => {
-    console.error(error);
-    res.status(500).json("Error creating new commit with tree data");
-  });
+	// Create a new commit with the new tree data
+	await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/commits`, {
+		"message": "Commit created by UnderTree!",
+		"tree": userTreeSHA,
+		"parents": [
+		commitParent
+		]
+	}, {
+		headers: {
+		Authorization: `Bearer ${accessToken}`,
+		Accept: "application/vnd.github+json"
+		}
+	}).then((res) => {
+		console.log("New Commit Data: ", res.data);
+		userCommitSHA = res.data["sha"];
+		userCommitURL = res.data["url"];
+	}).catch((error) => {
+		console.error(error);
+		res.status(500).json("Error creating new commit with tree data");
+	});
 
-  // PUSH: Update the main branch with the new commit
-  await axios.patch(`https://api.github.com/repos/${owner}/${repo}/git/refs/heads/main`, {
-    "sha": userCommitSHA,
-    "force": true
-  }, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      Accept: "application/vnd.github+json"
-    }
-  }).then((res) => {
-    console.log("Updated Main Branch Data: ", res.data);
-  }).catch((error) => {
-    console.error(error);
-    res.status(500).json("Error updating main branch with new commit");
-  });
+	// PUSH: Update the main branch with the new commit
+	await axios.patch(`https://api.github.com/repos/${owner}/${repo}/git/refs/heads/main`, {
+		"sha": userCommitSHA,
+		"force": true
+	}, {
+		headers: {
+		Authorization: `Bearer ${accessToken}`,
+		Accept: "application/vnd.github+json"
+		}
+	}).then((res) => {
+		console.log("Updated Main Branch Data: ", res.data);
+	}).catch((error) => {
+		console.error(error);
+		res.status(500).json("Error updating main branch with new commit");
+	});
 
 }
 

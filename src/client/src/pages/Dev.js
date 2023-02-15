@@ -68,9 +68,6 @@ function Dev() {
               });
             }}>Rename File</button>
           </div>
-          <div class="col">
-            <Compiler/>
-          </div>
         </div>
       </div>
     </div>
