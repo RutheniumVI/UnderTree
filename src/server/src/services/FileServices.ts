@@ -16,7 +16,7 @@ router.route("/compilePDF").post(compilePDF);
 router.route("/getPDF").get(getPDF);
 router.route("/addFile").post(addFile);
 router.route("/renameFile").post(renameFile);
-router.route("/getFiles").post(getFiles);
+router.route("/getFiles").get(getFiles);
 router.route("/fileEdited").post(fileEdited);
 
 async function compilePDF(req, res){
@@ -77,7 +77,7 @@ async function renameFile(req, res){
 }
 
 async function getFiles(req, res){
-    const projectD: ProjectData = {owner: req.body.owner, projectName: req.body.projectName}
+    const projectD: ProjectData = {owner: req.query.owner, projectName: req.query.projectName}
 
     try {
         const files: File[]  = await FileDB.getFiles(projectD);
@@ -86,7 +86,8 @@ async function getFiles(req, res){
             return {
                 filePath: e.filePath,
                 fileName: e.fileName,
-                fileType: e.fileType
+                fileType: e.fileType,
+                selected: false,
             }}
         );
         res.send(fileData);

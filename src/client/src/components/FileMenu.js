@@ -2,100 +2,30 @@ import React from 'react'
 import { ProSidebarProvider } from 'react-pro-sidebar';
 import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
 import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 import '../Styles/FileMenu.css'
 
 function FileMenu() {
 
+    const { owner, projectName } = useParams();
+
     useEffect(() => {
-        getFileTreeFromFiles();
+        axios.get("http://localhost:8000/api/file/getFiles?owner="+owner+"&projectName="+projectName, {withCredentials: true})
+        .then((res) => {
+            getFileTreeFromFiles(res.data);
+            setFiles(res.data);
+        })
+        .catch((err) => {
+            console.log(err)
+        })
     }, [])
 
-    const [files, setFiles] = useState([
-        {
-            fileName: 'ss2.png',
-            fileType: 'image',
-            filePath: 'fahmed8383/dotfiles/Screenshots/test/ss1.png',
-            contributors: [
-                'fahmed8383'
-            ]
-        },
-        {
-            fileName: 'ss2.png',
-            fileType: 'image',
-            filePath: 'fahmed8383/dotfiles/Screenshots/test/ss2.png',
-            contributors: [
-                'fahmed8383'
-            ]
-        },
-        {
-            fileName: 'ss1.png',
-            fileType: 'image',
-            filePath: 'fahmed8383/dotfiles/Screenshots/ss1.png',
-            contributors: [
-                'fahmed8383'
-            ]
-        },
-        {
-            fileName: 'ss0.png',
-            fileType: 'image',
-            filePath: 'fahmed8383/dotfiles/Screenshots/test/ss0.png',
-            contributors: [
-                'fahmed8383'
-            ]
-        },
-        {
-            fileName: 'ss3.png',
-            fileType: 'image',
-            filePath: 'fahmed8383/dotfiles/ss3.png',
-            contributors: [
-                'fahmed8383'
-            ]
-        },
-        {
-            fileName: 'ss2.png',
-            fileType: 'image',
-            filePath: 'fahmed8383/dotfiles/Screenshots/test/ss1.png',
-            contributors: [
-                'fahmed8383'
-            ]
-        },
-        {
-            fileName: 'ss2.png',
-            fileType: 'image',
-            filePath: 'fahmed8383/dotfiles/Screenshots/test/ss2.png',
-            contributors: [
-                'fahmed8383'
-            ]
-        },
-        {
-            fileName: 'ss1.png',
-            fileType: 'image',
-            filePath: 'fahmed8383/dotfiles/Screenshots/ss1.png',
-            contributors: [
-                'fahmed8383'
-            ]
-        },
-        {
-            fileName: 'ss0.png',
-            fileType: 'image',
-            filePath: 'fahmed8383/dotfiles/Screenshots/test/ss0.png',
-            contributors: [
-                'fahmed8383'
-            ]
-        },
-        {
-            fileName: 'ss3.png',
-            fileType: 'image',
-            filePath: 'fahmed8383/dotfiles/ss3.png',
-            contributors: [
-                'fahmed8383'
-            ]
-        }
-    ]);
+    const [files, setFiles] = useState();
 
     const [fileTree, setFileTree] = useState({folders: [], files: []});
 
-    function getFileTreeFromFiles(){
+    function getFileTreeFromFiles(files){
         let tree = {folders: [], files: []};
         for(let i = 0; i < files.length; i++){
             const file = files[i];
@@ -126,26 +56,24 @@ function FileMenu() {
 
     function renderFileMenu(tree, root){
         return(
-            <div style={{backgroundColor: '#DEDEDE'}}>
-                <SubMenu label={tree.name} key={tree.path}>
-                    {tree.folders.map((folder) => {
-                        return renderFileMenu(folder);
-                    })}
-                    {tree.files.map((file) => [
-                        <MenuItem key={file.filePath} onClick={handleClick} rootStyles={{backgroundColor: '#DEDEDE'}}> 
-                            <div className="form-check form-check-inline">
-                                <input className="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1"/>
-                                <label className="form-check-label" for="inlineCheckbox1">{file.fileName}</label>
-                            </div>
-                            <i className="bi bi-three-dots-vertical float-end pr fileDropDown" data-bs-toggle="dropdown" aria-expanded="false"></i>
-                            <ul className="dropdown-menu">
-                                <li><a className="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editFile">Edit File</a></li>
-                                <li><a className="dropdown-item" href="#"data-bs-toggle="modal" data-bs-target="#deleteFile">Delete File</a></li>
-                            </ul>    
-                        </MenuItem>
-                    ])}
-                </SubMenu>
-            </div>
+            <SubMenu label={tree.name} key={tree.path} rootStyles={{backgroundColor: '#DEDEDE'}}>
+                {tree.folders.map((folder) => {
+                    return renderFileMenu(folder);
+                })}
+                {tree.files.map((file) => [
+                    <MenuItem key={file.filePath} onClick={handleClick} rootStyles={{backgroundColor: '#DEDEDE'}}> 
+                        <div className="form-check form-check-inline">
+                            <input className="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1"/>
+                            <label className="form-check-label">{file.fileName}</label>
+                        </div>
+                        <i className="bi bi-three-dots-vertical float-end pr fileDropDown" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                        <ul className="dropdown-menu">
+                            <li><a className="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editFile">Edit File</a></li>
+                            <li><a className="dropdown-item" href="#"data-bs-toggle="modal" data-bs-target="#deleteFile">Delete File</a></li>
+                        </ul>    
+                    </MenuItem>
+                ])}
+            </SubMenu>
         );
     }
     
@@ -176,7 +104,7 @@ function FileMenu() {
                         return <MenuItem key={file.filePath} onClick={handleClick} rootStyles={{backgroundColor: '#DEDEDE'}}> 
                             <div className="form-check form-check-inline">
                                 <input className="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1"/>
-                                <label className="form-check-label" for="inlineCheckbox1">{file.fileName}</label>
+                                <label className="form-check-label">{file.fileName}</label>
                             </div>
                             <i className="bi bi-three-dots-vertical float-end pr fileDropDown" data-bs-toggle="dropdown" aria-expanded="false"></i>
                             <ul className="dropdown-menu">
