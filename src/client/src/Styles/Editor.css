@@ -10,6 +10,14 @@
     height: 100%;
 } */
 
+.ql-tooltip-editor {
+    display: none;
+}
+
+.ql-toolbar {
+    display: none;
+}
+
 .quill.editor{
     /* min-height: 20vh; */
     /* margin: 1 rem; */

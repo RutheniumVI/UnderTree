@@ -8,6 +8,14 @@
     height: calc(60vh - 73px);
 }
 
+.fileName{
+    color: blue;
+}
+
+.fileName:hover {
+    cursor: pointer;
+}
+
 .fileButton {
     font-size: 30px;
     margin-left: 20px;

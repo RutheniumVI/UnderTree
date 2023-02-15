@@ -40,12 +40,13 @@ async function authorizeProjectAccess(req: Request, res: Response, next){
 
 	if(project === undefined || owner === undefined){
 		res.status(401).json("Project information missing, for project authorization query");
-	}
-
-	if(!await ProjectDB.projectWithUserExists(project, owner, username)){
-		res.status(401).json("User not authorized to access the following project");
 	} else {
-		next();
+
+		if(!await ProjectDB.projectWithUserExists(project, owner, username)){
+			res.status(401).json("User not authorized to access the following project");
+		} else {
+			next();
+		}
 	}
 }
 

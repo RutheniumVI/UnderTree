@@ -15,6 +15,7 @@ router.use(AuthUtil.authorizeJWT);
 
 router.route("/compilePDF").post(compilePDF);
 router.route("/getPDF").get(getPDF);
+router.route("/getImage").get(getImage);
 router.route("/addFile").post(addFile);
 router.route("/renameFile").post(renameFile);
 router.route("/getFiles").get(getFiles);
@@ -57,6 +58,17 @@ async function getPDF(req, res) {
     const outputFile = req.query.file.replace(".tex", ".pdf");
     const fileData = FileUtil.getFileData("../file_system/" +  outputFile);
     res.set('content-type', "application/pdf");
+    res.send(fileData);
+}
+
+async function getImage(req, res) {
+    const fileData = FileUtil.getFileData("../file_system/" +  req.query.file);
+    const fileType = req.query.file.split(".")[1];
+    if(fileType === "png"){
+        res.set('content-type', "image/png");
+    } else {
+        res.set('content-type', "image/jpeg");
+    }
     res.send(fileData);
 }
 
