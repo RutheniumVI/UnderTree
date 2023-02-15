@@ -8,7 +8,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import '../Styles/FileMenu.css'
 
-function FileMenu() {
+function FileMenu({currentFile, setCurrentFile}) {
 
     const { owner, projectName } = useParams();
 
@@ -66,7 +66,7 @@ function FileMenu() {
                     <MenuItem key={file.filePath} onClick={handleClick} rootStyles={{backgroundColor: '#DEDEDE'}}> 
                         <div className="form-check form-check-inline">
                             <input className="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1"/>
-                            <label className="form-check-label">{file.fileName}</label>
+                            <label className="form-check-label fileName" onClick={(e) => {setCurrentFile(file)}}>{file.fileName}</label>
                         </div>
                         <div className='float-end pr'>
                             <FontAwesomeIcon data-bs-toggle="modal" data-bs-target="#editFile" icon={faPenToSquare} onClick={(e) => {selectProject(i)}}/>
@@ -105,13 +105,12 @@ function FileMenu() {
                         return <MenuItem key={file.filePath} onClick={handleClick} rootStyles={{backgroundColor: '#DEDEDE'}}> 
                             <div className="form-check form-check-inline">
                                 <input className="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1"/>
-                                <label className="form-check-label">{file.fileName}</label>
+                                <label className="form-check-label fileName" onClick={(e) => {setCurrentFile(file)}}>{file.fileName}</label>
                             </div>
-                            <i className="bi bi-three-dots-vertical float-end pr fileDropDown" data-bs-toggle="dropdown" aria-expanded="false"></i>
-                            <ul className="dropdown-menu">
-                                <li><a className="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editFile">Edit File</a></li>
-                                <li><a className="dropdown-item" href="#"data-bs-toggle="modal" data-bs-target="#deleteFile">Delete File</a></li>
-                            </ul>    
+                            <div className='float-end pr'>
+                                <FontAwesomeIcon data-bs-toggle="modal" data-bs-target="#editFile" icon={faPenToSquare} onClick={(e) => {selectProject(i)}}/>
+                                <FontAwesomeIcon data-bs-toggle="modal" data-bs-target="#deleteFile" style={{marginLeft: "15px"}} icon={faTrash} onClick={(e) => {selectProject(i)}}/>
+                            </div>     
                         </MenuItem>
                     })}
                 </Menu>

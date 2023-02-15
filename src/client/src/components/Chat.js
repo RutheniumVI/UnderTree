@@ -44,7 +44,7 @@ function NewChat() {
 
   //api calls
   async function getAvatar() {
-    await axios.get("http://localhost:8000/api/chat/getAvatar", {
+    await axios.get("http://localhost:8000/api/chat/getAvatar?owner="+owner+"&projectName="+projectName, {
       withCredentials: true,
     })
     .then((res) => {
