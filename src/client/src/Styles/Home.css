@@ -1,6 +1,31 @@
-.home-container{
-    display: flex;
-    flex-direction: row;
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+
+.backgroundImage {
+    background: linear-gradient(
+        rgba(0, 0, 0, 0.7), 
+        rgba(0, 0, 0, 0.7)
+      ), url("https://rare-gallery.com/uploads/posts/585722-background-caf.jpg");
+    height: calc(100vh - 71px);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.5));
 }
 
+.mainContent {
+    font-family: 'Open Sans', sans-serif;
+    color: #ECECEC;
+    text-align: center;
+    margin-bottom: 20vh;
+}
 
+.mainContent h1 {
+    margin-bottom: 10px;
+    font-size: 400%;
+}
+
+.mainContent h2 {
+    margin-bottom: 20px;
+    font-size: 150%;
+}

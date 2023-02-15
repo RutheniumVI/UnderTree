@@ -17,8 +17,8 @@
 }
 
 .projectsGrid {
-    width: 100%;
-    max-width: 99%;
+    width: 100% !important;
+    max-width: 99% !important;
 }
 
 .mainDivider {
@@ -36,6 +36,13 @@
     margin-top: 5px;
 }
 
+.projectName {
+    color: #3e70bb;
+}
+
+.projectName:hover {
+    cursor: pointer;
+}
 
 .projectIcons {
     font-size: 22px;
@@ -51,4 +58,35 @@
 .collaboratorsList {
     border-radius: 50px;
     margin: 0px 2px;
+}
+
+.importProjectsList {
+    max-height: 80vh;
+    overflow: scroll;
+    overflow-x: hidden;
+}
+
+.importProjectItem {
+    margin: 5px 10px;
+}
+
+.split {
+    display: flex;
+    flex-direction: row;
+}
+
+.editor {
+    width: 50%;
+    height: 100vh;
+}
+
+.gutter {
+    background-color: #eee;
+    background-repeat: no-repeat;
+    background-position: 50%;
+}
+
+.gutter.gutter-horizontal {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
+    cursor: col-resize;
 }

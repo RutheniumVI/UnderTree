@@ -1,7 +1,7 @@
 import { execSync } from 'child_process';
 import fs from 'fs';
 
-const dataDirectory = "../data";
+const dataDirectory = "../file_system";
 
 function setUpFileSystem(): void{
     if(!fs.existsSync(dataDirectory)){
@@ -21,10 +21,38 @@ function setUpFileSystem(): void{
     }
 }
 
-function createPDFOutput(file: string, text: string): Promise<string> {
+function createDirectory(path: string): void {
+    const dirs = path.split("/");
+    let currPath = dataDirectory;
+
+    dirs.forEach((dir) => {
+        const checkPath = currPath+"/"+dir;
+        if(!fs.existsSync(checkPath)){
+            fs.mkdirSync(checkPath);
+        }
+        currPath = checkPath;
+    })
+}
+
+function saveFile(path: string, content: string | Buffer): void {
+    if(!fs.existsSync(dataDirectory+"/"+path)){
+        const dirPath = path.split("/").slice(0, -1).join("/");
+        createDirectory(dirPath);
+        fs.writeFileSync(dataDirectory+"/"+path, content);
+    }
+}
+
+function deleteProjectDirectory(projectName: string, owner: string): void {
+    const path = dataDirectory+"/"+owner+"/"+projectName;
+    if(fs.existsSync(path)){
+        fs.rmSync(path, { recursive: true, force: true });
+    }
+}
+
+function createPDFOutput(file: string, content: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
         try{
-            fs.writeFileSync(dataDirectory+"/"+file, text);
+            fs.writeFileSync(dataDirectory+"/"+file, content);
             
             execSync("cd "+dataDirectory+"&& pdflatex "+ dataDirectory+"/"+file);
             resolve("Success");
@@ -44,6 +72,9 @@ function getFileData(file: string){
 
 const FileUtil = {
     setUpFileSystem,
+    createDirectory,
+    saveFile,
+    deleteProjectDirectory,
     createPDFOutput,
     getFileData
 }
