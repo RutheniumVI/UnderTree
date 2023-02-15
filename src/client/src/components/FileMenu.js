@@ -1,6 +1,8 @@
 import React from 'react'
 import { ProSidebarProvider } from 'react-pro-sidebar';
 import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -66,11 +68,10 @@ function FileMenu() {
                             <input className="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1"/>
                             <label className="form-check-label">{file.fileName}</label>
                         </div>
-                        <i className="bi bi-three-dots-vertical float-end pr fileDropDown" data-bs-toggle="dropdown" aria-expanded="false"></i>
-                        <ul className="dropdown-menu">
-                            <li><a className="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editFile">Edit File</a></li>
-                            <li><a className="dropdown-item" href="#"data-bs-toggle="modal" data-bs-target="#deleteFile">Delete File</a></li>
-                        </ul>    
+                        <div className='float-end pr'>
+                            <FontAwesomeIcon data-bs-toggle="modal" data-bs-target="#editFile" icon={faPenToSquare} onClick={(e) => {selectProject(i)}}/>
+                            <FontAwesomeIcon data-bs-toggle="modal" data-bs-target="#deleteFile" style={{marginLeft: "15px"}} icon={faTrash} onClick={(e) => {selectProject(i)}}/>
+                        </div>  
                     </MenuItem>
                 ])}
             </SubMenu>
@@ -183,22 +184,22 @@ function FileMenu() {
 
         <div className="modal fade" id="deleteFile" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="deleteFileLabel" aria-hidden="true">
             <div className="modal-dialog">
-            <div className="modal-content">
-                <div className="modal-header my-modal-header">
-                <h1 className="modal-title fs-5" id="deleteFileLabel">Delete File</h1>
-                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div className="modal-content">
+                    <div className="modal-header my-modal-header">
+                        <h1 className="modal-title fs-5" id="deleteFileLabel">Delete File</h1>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div className="modal-body my-modal-body">
+                    <p>Are you sure you want to delete this file?</p>
+                    </div>
+                    <div className="modal-footer my-modal-footer">
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" className="btn btn-dark">Confirm</button>
+                    </div>
                 </div>
-                <div className="modal-body my-modal-body">
-                <p>Are you sure you want to delete this file?</p>
-                </div>
-                </div>
-                <div className="modal-footer my-modal-footer">
-                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" className="btn btn-dark">Confirm</button>
-                </div>
-            </div>
             </div>
         </div>
+    </div>
         
     )
 }
