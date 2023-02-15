@@ -1,20 +1,18 @@
 import React from 'react';
 import axios from 'axios';
-import { useState, useEffect } from 'react';
+import { useState, useLayoutEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import '../Styles/Compiler.css'
 
-function Compiler(){
+function Compiler({latexText}){
 
     const { owner, projectName } = useParams();
-
-    const [latexText, setLatexText] = useState("");
     const [err, setErr] = useState("");
 
     const [pdf, setPdf] = useState("");
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         getPDF()
     }, []);
 
@@ -24,8 +22,16 @@ function Compiler(){
             credentials: 'include'
         })
         .then(async (res) => {
-            const blob = await res.blob()
-            setPdf(URL.createObjectURL(blob))
+            if(res.status == 401){
+                localStorage.removeItem("username");
+                window.location.href="/"
+            } else {
+                const blob = await res.blob()
+                setPdf(URL.createObjectURL(blob))
+            }
+        })
+        .catch((err) => {
+            console.log(err);
         });
     }
 
@@ -45,10 +51,8 @@ function Compiler(){
 
     return (
         <div className='compilerPage'>
-            {/* Place holder textarea, remove once integrated with editor instead */}
-            <textarea style={{width: "100%"}} onChange={(e) => {setLatexText(e.target.value)}}></textarea>
             <div className='compilerInfo'>
-                <button class="btn btn-dark" onClick={compileLatex}>Compile</button>
+                <button className="btn btn-dark" onClick={compileLatex}>Compile</button>
             </div>
             {err !== "" ? <pre className='errMessage'>{err}</pre> : <iframe className='pdfRenderer' src={pdf}/>}
         </div>

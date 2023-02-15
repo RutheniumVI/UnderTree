@@ -1,12 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
 
 .compilerPage {
+    margin-top: 10px;
+    margin-left: 10px;
     font-family: 'Open Sans', sans-serif;
+    width: 100%;
 }
 
 .pdfRenderer {
-    width: 100%;
-    height: 90vh;
+    width: 100% !important;
+    height: 90vh !important;
 }
 
 .compilerInfo {
