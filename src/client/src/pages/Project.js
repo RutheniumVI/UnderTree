@@ -4,6 +4,7 @@ import Split from 'react-split'
 import FileMenu from '../components/FileMenu'
 import Editor from '../components/Editor';
 import Compiler from '../components/Compiler';
+import Chat from '../components/Chat'
 
 
 import axios from 'axios';
@@ -20,10 +21,11 @@ function Project() {
           className="split"
       >
         <div className='sidebar'>
-        <FileMenu></FileMenu>
+          <FileMenu/>
+          <Chat/>
         </div>
-        <Editor className="editor" documentID={currentFile} setCurrentText={setCurrentText}/>
-        <Compiler className="compiler" documentID={currentFile} latexText={currentText}/>
+          <Editor className="editor" documentID={currentFile} setCurrentText={setCurrentText}/>
+          <Compiler className="compiler" documentID={currentFile} latexText={currentText}/>
       </Split>
     </div>
   );
