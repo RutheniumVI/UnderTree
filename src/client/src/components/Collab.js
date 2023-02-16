@@ -5,7 +5,7 @@ import Modal from './LogsModal';
 async function getLogs() {
   console.log("getting logs");      
   let values;
-  await axios.get("http://localhost:8000/api/github/getGitLog", {
+  await axios.get(process.env.REACT_APP_API_URL+"/github/getGitLog", {
 	params: {
 		repo: "UnderTree",
 		owner: "RutheniumVI",
@@ -39,7 +39,7 @@ async function getLogs() {
 
 async function handleRemoveCollab() {
   console.log("Removing user");
-//   await axios.post("http://localhost:8000/api/github/removeCollaborator", {
+//   await axios.post(process.env.REACT_APP_API_URL+"/github/removeCollaborator", {
 //     repo: "UnderTree-Test",
 //     userToRemove: "fahmed8383",
 //   }, {

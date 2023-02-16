@@ -13,7 +13,7 @@ function FileMenu({currentFile, setCurrentFile}) {
     const { owner, projectName } = useParams();
 
     useEffect(() => {
-        axios.get("http://localhost:8000/api/file/getFiles?owner="+owner+"&projectName="+projectName, {withCredentials: true})
+        axios.get(process.env.REACT_APP_API_URL+"/file/getFiles?owner="+owner+"&projectName="+projectName, {withCredentials: true})
         .then((res) => {
             getFileTreeFromFiles(res.data);
             setFiles(res.data);

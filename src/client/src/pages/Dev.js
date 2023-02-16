@@ -21,7 +21,7 @@ function Dev() {
             <Commit/>
             <Collab/> */}
             <button onClick={() => {
-              axios.post("http://localhost:8000/api/file/addFile", {
+              axios.post(process.env.REACT_APP_API_URL+"/file/addFile", {
                   owner: "RutheniumVI",
                   projectName: "veetestrepo",
                   fileName: "random.tex",
@@ -37,7 +37,7 @@ function Dev() {
             }}>Create File</button>
 
             <button onClick={() => {
-              axios.post("http://localhost:8000/api/file/renameFile", {
+              axios.post(process.env.REACT_APP_API_URL+"/file/renameFile", {
                   owner: "RutheniumVI",
                   projectName: "veetestrepo",
                   fileName: "random.tex",
@@ -53,7 +53,7 @@ function Dev() {
             }}>Rename File</button>
 
             <button onClick={() => {
-              axios.post("http://localhost:8000/api/file/getFiles", {
+              axios.post(process.env.REACT_APP_API_URL+"/file/getFiles", {
                   owner: "RutheniumVI",
                   projectName: "veetestrepo"
               }, {
@@ -71,7 +71,7 @@ function Dev() {
               formData.append("projectName", "project");
               formData.append("fullDirPath", "");
               formData.append("image", event.target.files[0]);
-              axios.post("http://localhost:8000/api/file/uploadImage", formData, {
+              axios.post(process.env.REACT_APP_API_URL+"/file/uploadImage", formData, {
                 withCredentials: true,
                 headers: {'Content-Type': 'multipart/form-data'}
               }).then((res) => {

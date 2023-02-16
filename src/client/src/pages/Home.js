@@ -14,7 +14,7 @@ function Home() {
       <div className='mainContent'>
         <h1>Collaborative Text Editor</h1>
         <h2>With GitHub Source Control Integration</h2>
-        <a href="https://github.com/login/oauth/authorize?scope=user%20repo%20admin:org%20delete_repo&client_id=79279cb46a338e30112e">
+        <a href={"https://github.com/login/oauth/authorize?scope=user%20repo%20admin:org&client_id="+process.env.REACT_APP_CLIENT_ID}>
           <button className="btn btn-primary btn-lg">Get Started</button>
         </a>
       </div>

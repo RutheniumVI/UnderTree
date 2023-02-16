@@ -11,7 +11,7 @@ function DisplayImage({file}) {
     }, [file]);
 
     function getImage(){
-        fetch("http://localhost:8000/api/file/getImage?file=" + file.filePath + "&owner="+owner+"&projectName="+projectName, {
+        fetch(process.env.REACT_APP_API_URL+"/file/getImage?file=" + file.filePath + "&owner="+owner+"&projectName="+projectName, {
             method: "GET",
             credentials: 'include'
         })

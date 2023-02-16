@@ -14,7 +14,7 @@ function Navbar() {
         let username = localStorage.getItem("username");
       
         if (username === null) {
-            await axios.get("http://localhost:8000/api/auth/getUsername", {
+            await axios.get(process.env.REACT_APP_API_URL+"/auth/getUsername", {
                 withCredentials: true,
             }).then((res) => {
                 console.log("Username: ", res.data);
@@ -28,7 +28,7 @@ function Navbar() {
     }
 
     async function handleLogout() {
-        await axios.get("http://localhost:8000/api/auth/logout", {
+        await axios.get(process.env.REACT_APP_API_URL+"/auth/logout", {
         withCredentials: true,
         }).then((res) => {
             localStorage.removeItem('username');
@@ -59,7 +59,7 @@ function Navbar() {
                     </li>
                 </ul>
                 {localStorage.getItem("username") === null ? 
-                    <a href="https://github.com/login/oauth/authorize?scope=user%20repo%20admin:org%20delete_repo&client_id=79279cb46a338e30112e">
+                    <a href={"https://github.com/login/oauth/authorize?scope=user%20repo%20admin:org&client_id="+process.env.REACT_APP_CLIENT_ID}>
                         <button type="button" className="btn btn-primary mx-2">Log In</button>
                     </a> 
                     : 

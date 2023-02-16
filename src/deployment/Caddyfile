@@ -1,0 +1,25 @@
+{
+  debug
+}
+
+web.localhost:80 {
+        log {
+                output stdout
+        }
+
+        handle_path /api/* {
+                reverse_proxy http://backend:8000
+        }
+
+        handle_path /chat/* {
+                reverse_proxy http://backend:8001
+        }
+
+        handle {
+                root * /usr/share/caddy
+
+                file_server
+
+                try_files {path} /index.html
+        }
+}
