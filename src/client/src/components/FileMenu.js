@@ -326,12 +326,12 @@ function FileMenu({ currentFile, setCurrentFile }) {
     <div>
       <div className="my-card">
         <div>
-          <i
+          {/* <i
             className="bi bi-folder-plus fileButton"
             href="#"
             data-bs-toggle="modal"
             data-bs-target="#newFolder"
-          ></i>
+          ></i> */}
           <i
             className="bi bi-file-earmark-plus fileButton"
             data-bs-toggle="modal"
