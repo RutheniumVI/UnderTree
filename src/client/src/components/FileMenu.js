@@ -172,17 +172,17 @@ function FileMenu({currentFile, setCurrentFile}) {
         //     const file = selectedFiles[i];
 
 
-        // await axios.post("http://localhost:8000/api/github/commitFiles", {
-        //     projectName: projectName,
-        //     owner: owner,
-        //     files: filesToCommit,
-        //   }, {
-        //     withCredentials: true,
-        //   }).then((res) => {
-        //     console.log(res.data)
-        //   }).catch((error) => {
-        //     console.error(`Error making commit`);
-        //   });
+        await axios.post("http://localhost:8000/api/github/commitFiles", {
+            projectName: projectName,
+            owner: owner,
+            files: filesToCommit,
+          }, {
+            withCredentials: true,
+          }).then((res) => {
+            console.log(res.data)
+          }).catch((error) => {
+            console.error(`Error making commit`);
+          });
 
     }
 
@@ -333,7 +333,7 @@ function FileMenu({currentFile, setCurrentFile}) {
                     {fileTree.files.map((file) => {
                         return <MenuItem key={file.filePath} onClick={handleClick} rootStyles={{backgroundColor: '#DEDEDE'}}> 
                             <div className="form-check form-check-inline">
-                                <input className="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1"/>
+                                <input className="form-check-input" type="checkbox" id="inlineCheckbox1" onChange={() => {file["selected"] = !file["selected"]}} value="option1"/>
                                 <label className="form-check-label fileName" onClick={(e) => {setCurrentFile(file)}}>{file.fileName}</label>
                             </div>
                             <div className='float-end pr'>
