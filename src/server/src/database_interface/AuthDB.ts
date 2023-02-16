@@ -50,6 +50,12 @@ function updateUserWithToken(oldToken: string, newToken: string): Promise<void> 
   });
 }
 
+
+async function getUserEmail(userName: String){
+  const result = await DBClient.getCollection("users").findOne({ username: userName });
+  return result.email;
+}
+
 async function deleteUserWithToken(token: string): Promise<void> {
     const delResult = await DBClient.getCollection("users").deleteMany({ jwt: token });
     if (delResult.deletedCount > 0) { 
@@ -65,6 +71,7 @@ const AuthDB = {
   getUserWithToken,
   updateUserWithToken,
   deleteUserWithToken,
+  getUserEmail
 }
 
 export { AuthDB }
