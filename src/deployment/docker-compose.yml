@@ -1,6 +1,27 @@
 version: '3.8'
 
 services:
+
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - '../client/build:/usr/share/caddy'
+
+  backend:
+    build:
+      context: ../server
+      dockerfile: ../deployment/Dockerfile
+    image: backend
+    container_name: backend
+    ports:
+      - 8000:8000
+      - 8001:8001
+
   mongo:
     image: mongo
     container_name: undertree_db

@@ -3,7 +3,7 @@ import axios from 'axios';
 
 async function handleCommit() {
   console.log("Committing Files");      
-  await axios.post("http://localhost:8000/api/github/commitFiles", {
+  await axios.post(process.env.REACT_APP_API_URL+"/github/commitFiles", {
     projectName: "UnderTree-Test",
     owner: "KevinRK29",
     files: [{ filepath: "main.tex", content: "This the content for the main tex file of the repo made by UnderTree" }, 

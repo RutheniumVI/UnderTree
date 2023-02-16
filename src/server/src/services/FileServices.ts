@@ -246,10 +246,10 @@ async function getContentFromFiles(req: Request, res: Response): Promise<void> {
             currContent = await PersistenceUtil.getDocumentData(files[i]["filePath"]);
             newFiles.push({ filepath: currPath, content: currContent, fileType: "tex" });
             continue;
-        } else if (files[i]["fileType"] == "image"){
+        } else {
             currPath = files[i]["filePath"].split("/").slice(2).join("/");
             currContent = FileUtil.getFileData(files[i]["filePath"]).toString('base64');
-            newFiles.push({ filepath: currPath, content: currContent, fileType: "image" });
+            newFiles.push({ filepath: currPath, content: currContent, fileType: files[i].fileType});
         }
         console.log(currPath, currContent);
     }

@@ -10,7 +10,7 @@ function runChatServer(){
 
   const io = new Server(chatserver, {
     cors: {
-      origin: "http://localhost:3000",
+      origin: process.env.FULL_DOMAIN_URL,
       methods: ["GET", "POST"],
     }
   })

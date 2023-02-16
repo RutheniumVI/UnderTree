@@ -90,7 +90,7 @@ function Editor({currentFile, setCurrentText}) {
         }
 
         ydoc = new Y.Doc();   
-        provider = new WebsocketProvider('ws://localhost:8000', documentID, ydoc, {params: {jwt: "123"}});
+        provider = new WebsocketProvider(process.env.REACT_APP_SOCKET_URL, documentID, ydoc, {params: {jwt: "123"}});
 
         const ytext = ydoc.getText('quill');
 
@@ -117,7 +117,7 @@ function Editor({currentFile, setCurrentText}) {
 
         const fileDetails = documentID.split('/');
 
-        axios.post("http://localhost:8000/api/file/fileEdited", {
+        axios.post(process.env.REACT_APP_API_URL+"/file/fileEdited", {
             owner: fileDetails[0],
             projectName: fileDetails[1],
             filePath: documentID,

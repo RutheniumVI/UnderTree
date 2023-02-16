@@ -56,7 +56,7 @@ function FileMenu({currentFile, setCurrentFile}) {
     ])
 
     useEffect(() => {
-        axios.get("http://localhost:8000/api/file/getFiles?owner="+owner+"&projectName="+projectName, {withCredentials: true})
+        axios.get(process.env.REACT_APP_API_URL+"/file/getFiles?owner="+owner+"&projectName="+projectName, {withCredentials: true})
         .then((res) => {
             getFileTreeFromFiles(res.data);
             setFiles(res.data);
@@ -146,7 +146,7 @@ function FileMenu({currentFile, setCurrentFile}) {
             return;
         }
         let filesToCommit = []
-        await axios.get("http://localhost:8000/api/file/getContentFromFiles", {
+        await axios.get(process.env.REACT_APP_API_URL+"/file/getContentFromFiles", {
             params: { 
                 files: selectedFiles,
                 owner: owner,
@@ -172,7 +172,7 @@ function FileMenu({currentFile, setCurrentFile}) {
         //     const file = selectedFiles[i];
 
 
-        await axios.post("http://localhost:8000/api/github/commitFiles", {
+        await axios.post(process.env.REACT_APP_API_URL+"/github/commitFiles", {
             projectName: projectName,
             owner: owner,
             files: filesToCommit,
@@ -211,7 +211,7 @@ function FileMenu({currentFile, setCurrentFile}) {
             formData.append("fullDirPath", dirPath);
             formData.append("fileName", fileName);
             formData.append("image", selectedFileObject);
-            axios.post("http://localhost:8000/api/file/uploadImage", formData, {
+            axios.post(process.env.REACT_APP_API_URL+"/file/uploadImage", formData, {
               withCredentials: true,
               headers: {'Content-Type': 'multipart/form-data'}
             }).then((res) => {
@@ -225,7 +225,7 @@ function FileMenu({currentFile, setCurrentFile}) {
             reader.readAsText(selectedFileObject, "UTF-8");
             console.log(fileName)
             reader.onload = function (evt) {
-                axios.post("http://localhost:8000/api/file/uploadTexFile", {
+                axios.post(process.env.REACT_APP_API_URL+"/file/uploadTexFile", {
                     owner: owner,
                     projectName: projectName,
                     fileName: fileName,
@@ -255,7 +255,7 @@ function FileMenu({currentFile, setCurrentFile}) {
         if(dirPath == "/")
             dirPath = "";
 
-        axios.post("http://localhost:8000/api/file/addFile", {
+        axios.post(process.env.REACT_APP_API_URL+"/file/addFile", {
             owner: owner,
             projectName: projectName,
             fileName: fileName,
@@ -275,7 +275,7 @@ function FileMenu({currentFile, setCurrentFile}) {
     function handleConfirmDeleteClick(){
         console.log(fileToDelete)
 
-        axios.post("http://localhost:8000/api/file/deleteFile", {
+        axios.post(process.env.REACT_APP_API_URL+"/file/deleteFile", {
             owner: owner,
             projectName: projectName,
             filePath: fileToDelete.filePath,
@@ -297,7 +297,7 @@ function FileMenu({currentFile, setCurrentFile}) {
         console.log(newFileRename)
         
 
-        axios.post("http://localhost:8000/api/file/renameFile", {
+        axios.post(process.env.REACT_APP_API_URL+"/file/renameFile", {
             owner: owner,
             projectName: projectName,
             filePath: fileToEdit.filePath,

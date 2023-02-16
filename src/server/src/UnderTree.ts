@@ -24,7 +24,7 @@ import runChatServer from './services/ChatSocket.js';
 
 const app = express();
 app.use(cors({
-    origin: "http://localhost:3000",
+    origin: process.env.FULL_DOMAIN_URL,
     credentials: true,
 }))
 app.use(cookieParser());

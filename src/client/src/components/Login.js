@@ -7,7 +7,7 @@ async function signIn() {
   let username = localStorage.getItem("username");
 
   if (username === null) {
-    await axios.get("http://localhost:8000/api/auth/getUsername", {
+    await axios.get(process.env.REACT_APP_API_URL+"/auth/getUsername", {
       withCredentials: true,
       }).then((res) => {
         console.log("Username: ", res.data);
@@ -31,7 +31,7 @@ function Login() {
   return (
     <div> 
       <h2>Login</h2>
-      <a href="https://github.com/login/oauth/authorize?scope=user%20repo%20admin:org&client_id=79279cb46a338e30112e">
+      <a href={"https://github.com/login/oauth/authorize?scope=user%20repo%20admin:org&client_id="+process.env.REACT_APP_CLIENT_ID}>
         <button>
           Login with GitHub
         </button>
