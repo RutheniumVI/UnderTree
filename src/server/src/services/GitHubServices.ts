@@ -9,6 +9,8 @@ import { GitHubUtil } from '../utils/GitHubUtil.js';
 import axios from "axios";
 import { ProjectData } from '../data/ProjectData.js';
 import { ProjectDB } from '../database_interface/ProjectDB.js';
+import { AuthDB } from '../database_interface/AuthDB.js';
+import { FileDB } from '../database_interface/FileDB.js';
 
 dotenv.config();
 
@@ -219,9 +221,28 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
 	// if so, use that as the parent instead of the latest commit SHA
 	let commitParent = latestCommitSHA;
 
+
+	const filePath = project.owner + "/" + project.projectName + "/" + files[0].filepath;
+	const contributors = await FileDB.getContributor(project, filePath);
+	let comMessage = "Commit created by UnderTree!\n\n\n";
+	contributors.forEach((e) => {
+		if (e=="fahmed8383"){
+			comMessage += "Co-authored-by: Name <" + "fahmed4030@gmail.com" + ">\n"
+		}
+		if(e == "RutheniumVI"){
+			comMessage += "Co-authored-by: Name <" + "veeresh.532000@gmail.com" + ">\n"
+		}
+		if(e == "KevinRK29"){
+			comMessage += "Co-authored-by: Name <" + "kevinrk2000@gmail.com" + ">\n"
+		}
+		if(e == "quresh00"){
+			comMessage += "Co-authored-by: Name <" + "qureshe@mcmaster.ca" + ">\n"
+		}
+	})
+
 	// Create a new commit with the new tree data
 	await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/commits`, {
-		"message": "Commit created by UnderTree!",
+		"message": comMessage,
 		"tree": userTreeSHA,
 		"parents": [
 		commitParent

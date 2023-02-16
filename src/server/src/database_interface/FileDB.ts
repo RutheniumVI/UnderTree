@@ -145,6 +145,26 @@ async function getFiles(project: ProjectData): Promise<File[]> {
 	return result.files as File[];
 }
 
+async function getContributor(project: ProjectData, filePath: string) {
+	const collection = DBClient.getCollection(collectionName);
+	const result = await collection.findOne(
+		{
+			"projectName": project.projectName,
+			"owner": project.owner,
+			"files.filePath": filePath
+		}
+	);
+	let contributor = [];
+	result.files.forEach((ele) => {
+		
+		if(ele.filePath === filePath){
+			console.log(ele);
+			contributor = ele.contributors;
+		}
+	})
+	return contributor;
+}
+
 
 const FileDB = {
 	initializeProject,
@@ -153,7 +173,8 @@ const FileDB = {
 	editFileCollaborator,
 	renameFile,
 	getFiles,
-	deleteFile
+	deleteFile,
+	getContributor
 };
 
 export { FileDB };
