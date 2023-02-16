@@ -19,6 +19,8 @@ import { MongodbPersistence } from "y-mongodb-provider";
 import yUtils from "y-websocket/bin/utils";
 
 dotenv.config();
+import { router as chatRoutes } from './services/ChatServices.js';
+import runChatServer from './services/ChatSocket.js';
 
 const app = express();
 app.use(cors({
@@ -26,6 +28,7 @@ app.use(cors({
     credentials: true,
 }))
 app.use(cookieParser());
+
 const server = http.createServer(app);
 
 const wss = new WebSocketServer({ server });
@@ -72,11 +75,14 @@ async function main(){
     FileUtil.setUpFileSystem();
     console.log("Connected successfully to database");
 
+    runChatServer();
     app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
     app.use("/api/projects", projectRoutes);
     app.use("/api/auth", authRoutes);
     app.use("/api/file", fileRoutes);
     app.use("/api/github", githubRoutes);
+    app.use("/api/chat", chatRoutes);
 
     server.listen(8000, () => {
         console.log('listening on *8000');

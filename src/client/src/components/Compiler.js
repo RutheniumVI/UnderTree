@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 
 import '../Styles/Compiler.css'
 
-function Compiler({latexText}){
+function Compiler({latexText, documentID}){
 
     const { owner, projectName } = useParams();
     const [err, setErr] = useState("");
@@ -17,7 +17,7 @@ function Compiler({latexText}){
     }, []);
 
     function getPDF(){
-        fetch("http://localhost:8000/api/file/getPDF?file=output&owner="+owner+"&projectName="+projectName, {
+        fetch("http://localhost:8000/api/file/getPDF?file=" + encodeURIComponent(documentID) + "&owner="+owner+"&projectName="+projectName, {
             method: "GET",
             credentials: 'include'
         })
@@ -37,7 +37,7 @@ function Compiler({latexText}){
 
     async function compileLatex(){
         const response = await axios.post("http://localhost:8000/api/file/compilePDF", 
-            {text: latexText, projectName: projectName, owner: owner},
+            {text: latexText, projectName: projectName, owner: owner, documentId: documentID},
             {withCredentials: true}
         );
         if(response.data === "Successfully compiled PDF"){

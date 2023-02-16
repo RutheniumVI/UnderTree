@@ -5,6 +5,15 @@
     font-family: 'Open Sans', sans-serif;
     background-color: #DEDEDE;
     width: 100%;
+    height: calc(60vh - 73px);
+}
+
+.fileName{
+    color: blue;
+}
+
+.fileName:hover {
+    cursor: pointer;
 }
 
 .fileButton {
