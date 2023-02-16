@@ -3,6 +3,7 @@ import { ProSidebarProvider } from 'react-pro-sidebar';
 import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -321,7 +322,7 @@ function FileMenu({currentFile, setCurrentFile}) {
                 <i className="bi bi-folder-plus fileButton"></i>
                 <i className="bi bi-file-earmark-plus fileButton" data-bs-toggle="modal" data-bs-target="#newFile"></i>
                 <i className="bi bi-cloud-upload fileButton" data-bs-toggle="modal" data-bs-target="#fileUpload"></i>
-                <i className="bi bi-folder-plus fileButton" onClick={commitFiles}></i>
+                <i className="bi bi-github fileButton" onClick={commitFiles}></i>
             </div>
             <ProSidebarProvider>
             <Sidebar width='100%' backgroundColor='#DEDEDE' breakPoint='sm'>
