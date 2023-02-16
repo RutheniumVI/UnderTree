@@ -102,12 +102,15 @@ async function importProjects(req: Request, res: Response): Promise<void>  {
 				const fileInfo: File = {fileName: file.name, fileType: "image", filePath: filePath, contributors: [project.owner, ...project.collaborators]}
 				FileDB.addProjectFile(project, fileInfo);
 			})
-			// Add your stuff here veerash
-			// files.texFiles.forEach(async (file) => {
-			// 	const fileContent = await GitHubUtil.getContentFromBlob(accessToken, project, file);
-			// 	const fileInfo: File = {fileName: file.name, fileType: "tex", filePath: file.path, contributors: project.collaborators, documentID: file.path};
-			// 	FileDB.addProjectFile(project, fileInfo);
-			// })
+
+			files.texFiles.forEach(async (file) => {
+				const fileContent = await GitHubUtil.getContentFromBlob(accessToken, project, file);
+				console.log(fileContent.content);
+				const filePath = project.owner+"/"+project.projectName+"/"+file.path;
+				const fileInfo: File = {fileName: file.name, fileType: "tex", filePath: filePath, contributors: project.collaborators, documentID: file.path};
+				await PersistenceUtil.writeDocumentData(filePath, Buffer.from(fileContent.content, fileContent.encoding as BufferEncoding).toString());
+				FileDB.addProjectFile(project, fileInfo);
+			})
 			await ProjectDB.addProject(project);
 		}
 		res.status(200).json("Successfully imported project");
