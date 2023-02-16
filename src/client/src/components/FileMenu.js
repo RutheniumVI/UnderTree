@@ -3,6 +3,7 @@ import { ProSidebarProvider } from 'react-pro-sidebar';
 import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -115,7 +116,7 @@ function FileMenu({currentFile, setCurrentFile}) {
                 {tree.files.map((file) => [
                     <MenuItem key={file.filePath} onClick={handleClick} rootStyles={currentFile.filePath === file.filePath ? {backgroundColor: '#d0d0d0'} : {backgroundColor: '#DEDEDE'}}> 
                         <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1"/>
+                            <input className="form-check-input" type="checkbox" id="inlineCheckbox1" onChange={() => {file["selected"] = !file["selected"]}} value="option1"/>
                             <label className="form-check-label fileName" onClick={(e) => {setCurrentFile(file)}}>{file.fileName}</label>
                         </div>
                         <div className='float-end pr'>
@@ -128,11 +129,68 @@ function FileMenu({currentFile, setCurrentFile}) {
         );
     }
     
+    function selectFile(file){
+        // if(selectedFiles.includes(file)){
+        //     file["selected"] = false;
+        //     setSelectedFiles(selectedFiles.filter((f) => f !== file));
+        // } else {
+        //     file["selected"] = true;
+        //     setSelectedFiles([...selectedFiles, file]);
+        // }
+    }
+
+    async function commitFiles(){
+        console.log("Files in the application: ", files);
+        let selectedFiles = files.filter((file) => file.selected);
+        if (selectedFiles.length == 0){
+            console.log("No files were selected");
+            return;
+        }
+        let filesToCommit = []
+        await axios.get("http://localhost:8000/api/file/getContentFromFiles", {
+            params: { 
+                files: selectedFiles,
+                owner: owner,
+                projectName: projectName
+            },
+            withCredentials: true
+        }).then((res) => {
+            console.log(res.data);
+            filesToCommit = res.data;
+        }).catch((err) => {
+            console.log(err);
+        });
+
+        // for(let i = 0; i < files.length; i++){
+        //     if(files[i].selected){
+        //         // let file = { filepath: files[i]["filePath"], content: "Need to convert file to string" };
+        //         filesToCommit.push(files[i]);
+        //     }
+        // }
+        console.log("committing files", owner, projectName);
+        console.log("files to commit: ", filesToCommit);
+        // for(let i = 0; i < selectedFiles.length; i++){
+        //     const file = selectedFiles[i];
+
+
+        await axios.post("http://localhost:8000/api/github/commitFiles", {
+            projectName: projectName,
+            owner: owner,
+            files: filesToCommit,
+          }, {
+            withCredentials: true,
+          }).then((res) => {
+            console.log(res.data)
+          }).catch((error) => {
+            console.error(`Error making commit`);
+          });
+
+    }
 
     // tree.push(  f1.push(f2)
 
     function handleClick(){
-        //setActive(!active)
+        // setActive(!active)
         // console.log("clicked")
     }
 
@@ -264,6 +322,7 @@ function FileMenu({currentFile, setCurrentFile}) {
                 <i className="bi bi-folder-plus fileButton"></i>
                 <i className="bi bi-file-earmark-plus fileButton" data-bs-toggle="modal" data-bs-target="#newFile"></i>
                 <i className="bi bi-cloud-upload fileButton" data-bs-toggle="modal" data-bs-target="#fileUpload"></i>
+                <i className="bi bi-github fileButton" onClick={commitFiles}></i>
             </div>
             <ProSidebarProvider>
             <Sidebar width='100%' backgroundColor='#DEDEDE' breakPoint='sm'>
@@ -275,7 +334,7 @@ function FileMenu({currentFile, setCurrentFile}) {
                     {fileTree.files.map((file) => {
                         return <MenuItem key={file.filePath} onClick={handleClick} rootStyles={{backgroundColor: '#DEDEDE'}}> 
                             <div className="form-check form-check-inline">
-                                <input className="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1"/>
+                                <input className="form-check-input" type="checkbox" id="inlineCheckbox1" onChange={() => {file["selected"] = !file["selected"]}} value="option1"/>
                                 <label className="form-check-label fileName" onClick={(e) => {setCurrentFile(file)}}>{file.fileName}</label>
                             </div>
                             <div className='float-end pr'>

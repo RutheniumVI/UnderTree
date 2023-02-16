@@ -1,4 +1,4 @@
-import express from 'express';
+import express, {Request, Response} from 'express';
 import multer from "multer";
 import { FileDB } from '../database_interface/FileDB.js';
 import { ProjectData } from '../data/ProjectData.js';
@@ -21,6 +21,7 @@ router.route("/renameFile").post(renameFile);
 router.route("/getFiles").get(getFiles);
 router.route("/fileEdited").post(fileEdited);
 router.route("/deleteFile").post(deleteFile);
+router.route("/getContentFromFiles").get(getContentFromFiles);
 router.route("/uploadTexFile").post(uploadTexFile);
 
 const storage = multer.diskStorage({
@@ -232,5 +233,28 @@ async function getFileList(project: ProjectData){
     );
     return fileData;
 }
+
+async function getContentFromFiles(req: Request, res: Response): Promise<void> {
+    let files = req.query.files;
+    let newFiles = [];
+
+    for(let i = 0; i < files.length; i++){
+        let currPath;
+        let currContent;
+        if (files[i]["fileType"] == "tex"){
+            currPath = files[i]["filePath"].split("/").slice(2).join("/");
+            currContent = await PersistenceUtil.getDocumentData(files[i]["filePath"]);
+            newFiles.push({ filepath: currPath, content: currContent, fileType: "tex" });
+            continue;
+        } else if (files[i]["fileType"] == "image"){
+            currPath = files[i]["filePath"].split("/").slice(2).join("/");
+            currContent = FileUtil.getFileData(files[i]["filePath"]).toString('base64');
+            newFiles.push({ filepath: currPath, content: currContent, fileType: "image" });
+        }
+        console.log(currPath, currContent);
+    }
+    res.status(200).json(newFiles);
+}
+
 
 export { router };
