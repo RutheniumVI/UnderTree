@@ -10,7 +10,50 @@ import '../Styles/FileMenu.css'
 
 function FileMenu({currentFile, setCurrentFile}) {
 
+    const username = localStorage.getItem("username");
     const { owner, projectName } = useParams();
+    const tempfiles = ([
+        {
+            "filePath": "RutheniumVI/veetestrepo/main.tex",
+            "fileName": "main.tex",
+            "fileType": "tex"
+        },
+        {
+            "filePath": "RutheniumVI/veetestrepo/random.tex",
+            "fileName": "rando1.tex",
+            "fileType": "tex"
+        },
+        {
+            "filePath": "RutheniumVI/veetestrepo//sad.png",
+            "fileName": "sad.png",
+            "fileType": "png"
+        },
+        {
+            "filePath": "RutheniumVI/veetestrepo/pihubupload.png",
+            "fileName": "pihubupload.png",
+            "fileType": "png"
+        },
+        {
+            "filePath": "RutheniumVI/veetestrepo/test/v/amazon.jpg",
+            "fileName": "amazon.jpg",
+            "fileType": "jpg"
+        },
+        {
+            "filePath": "RutheniumVI/veetestrepo/test/v/sad.png",
+            "fileName": "sad.png",
+            "fileType": "png"
+        },
+        {
+            "filePath": "RutheniumVI/veetestrepo/test/v/amazon.jpg",
+            "fileName": "amazon.jpg",
+            "fileType": "jpg"
+        },
+        {
+            "filePath": "RutheniumVI/veetestrepo/test/v/sad.png",
+            "fileName": "sad.png",
+            "fileType": "png"
+        }
+    ])
 
     useEffect(() => {
         axios.get(process.env.REACT_APP_API_URL+"/file/getFiles?owner="+owner+"&projectName="+projectName, {withCredentials: true})
@@ -21,11 +64,18 @@ function FileMenu({currentFile, setCurrentFile}) {
         .catch((err) => {
             console.log(err)
         })
+        // getFileTreeFromFiles(tempfiles);
+        // setFiles(tempfiles);
     }, [])
 
     const [files, setFiles] = useState();
-
     const [fileTree, setFileTree] = useState({folders: [], files: []});
+    const [selectedFileObject, setSelectedFileObject] = useState();
+    const [inputtedFilePath, setInputtedFilePath] = useState("");
+    const [newFileName, setNewFileName] = useState("");
+    const [fileToDelete, setFileToDelete] = useState();
+    const [fileToEdit, setFileToEdit] = useState();
+    const [newFileRename, setNewFileRename] = useState();
 
     function getFileTreeFromFiles(files){
         let tree = {folders: [], files: []};
@@ -69,8 +119,8 @@ function FileMenu({currentFile, setCurrentFile}) {
                             <label className="form-check-label fileName" onClick={(e) => {setCurrentFile(file)}}>{file.fileName}</label>
                         </div>
                         <div className='float-end pr'>
-                            <FontAwesomeIcon data-bs-toggle="modal" data-bs-target="#editFile" icon={faPenToSquare} onClick={(e) => {selectProject(i)}}/>
-                            <FontAwesomeIcon data-bs-toggle="modal" data-bs-target="#deleteFile" style={{marginLeft: "15px"}} icon={faTrash} onClick={(e) => {selectProject(i)}}/>
+                            <FontAwesomeIcon data-bs-toggle="modal" data-bs-target="#editFile" icon={faPenToSquare} onClick={(e) => {setFileToEdit(file)}}/>
+                            <FontAwesomeIcon data-bs-toggle="modal" data-bs-target="#deleteFile" style={{marginLeft: "15px"}} icon={faTrash} onClick={(e) => {setFileToDelete(file)}}/>
                         </div>  
                     </MenuItem>
                 ])}
@@ -84,6 +134,105 @@ function FileMenu({currentFile, setCurrentFile}) {
     function handleClick(){
         //setActive(!active)
         // console.log("clicked")
+    }
+
+    function handleConfirmFileUploadClick(){
+        console.log(inputtedFilePath)
+        console.log(selectedFileObject)
+
+        const sp = inputtedFilePath.split("/");
+        const fileName = sp[sp.length-1];
+        let dirPath = sp.slice(0, -1).join("/") + "/"
+        if(dirPath == "/")
+            dirPath = "";
+        
+        const fileType = selectedFileObject.type;
+        if(fileType === "image/png" || fileType == "image/jpeg"){
+            const formData = new FormData();
+            formData.append("owner", owner);
+            formData.append("projectName", projectName);
+            formData.append("fullDirPath", dirPath);
+            formData.append("fileName", fileName);
+            formData.append("image", selectedFileObject);
+            axios.post("http://localhost:8000/api/file/uploadImage", formData, {
+              withCredentials: true,
+              headers: {'Content-Type': 'multipart/form-data'}
+            }).then((res) => {
+                getFileTreeFromFiles(res.data);
+                setFiles(res.data);
+            }).catch((error) => {
+              console.error(`Error Adding user to modified`);
+            });
+        } else {
+
+        }
+    }
+
+    function handleConfirmNewFileClick(){
+        console.log(newFileName)
+        const sp = newFileName.split("/");
+        const fileName = sp[sp.length-1];
+        let dirPath = sp.slice(0, -1).join("/") + "/";
+        if(dirPath == "/")
+            dirPath = "";
+
+        axios.post("http://localhost:8000/api/file/addFile", {
+            owner: owner,
+            projectName: projectName,
+            fileName: fileName,
+            userName: username,
+            fullDirPath: dirPath
+        }, {
+          withCredentials: true,
+        }).then((res) => {
+            console.log(res.data);
+            getFileTreeFromFiles(res.data);
+            setFiles(res.data);
+        }).catch((error) => {
+          console.error(`Error Adding user to modified`);
+        });
+    }
+
+    function handleConfirmDeleteClick(){
+        console.log(fileToDelete)
+
+        axios.post("http://localhost:8000/api/file/deleteFile", {
+            owner: owner,
+            projectName: projectName,
+            filePath: fileToDelete.filePath,
+            userName: username,
+        }, {
+          withCredentials: true,
+        }).then((res) => {
+            console.log(res.data);
+            getFileTreeFromFiles(res.data);
+            setFiles(res.data);
+        }).catch((error) => {
+          console.error(`Error Adding user to modified`);
+        });
+
+    }
+
+    function handleEditFileConfirm(){
+        console.log(fileToEdit)
+        console.log(newFileRename)
+        
+
+        axios.post("http://localhost:8000/api/file/renameFile", {
+            owner: owner,
+            projectName: projectName,
+            filePath: fileToEdit.filePath,
+            fileName: fileToEdit.fileName,
+            userName: username,
+            newFileName: newFileRename
+        }, {
+          withCredentials: true,
+        }).then((res) => {
+            getFileTreeFromFiles(res.data);
+            setFiles(res.data);
+        }).catch((error) => {
+          console.error(`Error Adding user to modified`);
+        });
     }
 
     return (
@@ -108,8 +257,8 @@ function FileMenu({currentFile, setCurrentFile}) {
                                 <label className="form-check-label fileName" onClick={(e) => {setCurrentFile(file)}}>{file.fileName}</label>
                             </div>
                             <div className='float-end pr'>
-                                <FontAwesomeIcon data-bs-toggle="modal" data-bs-target="#editFile" icon={faPenToSquare} onClick={(e) => {selectProject(i)}}/>
-                                <FontAwesomeIcon data-bs-toggle="modal" data-bs-target="#deleteFile" style={{marginLeft: "15px"}} icon={faTrash} onClick={(e) => {selectProject(i)}}/>
+                                <FontAwesomeIcon data-bs-toggle="modal" data-bs-target="#editFile" icon={faPenToSquare} onClick={(e) => {setFileToEdit(file)}}/>
+                                <FontAwesomeIcon data-bs-toggle="modal" data-bs-target="#deleteFile" style={{marginLeft: "15px"}} icon={faTrash} onClick={(e) => {setFileToDelete(file)}}/>
                             </div>     
                         </MenuItem>
                     })}
@@ -126,14 +275,20 @@ function FileMenu({currentFile, setCurrentFile}) {
                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div className="modal-body my-modal-body">
-                <label className="form-label"> <h6>Project Name:</h6></label>
+                <label className="form-label"> <h6>File Name:</h6></label>
                     <div className="input-group">
-                    <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3"/>
-                </div>
+                        <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" 
+                        onChange={(event) => {
+                        setInputtedFilePath(event.target.value);
+                        }}/>      
+                    </div>
+                    <div className="input-group" style={{"marginTop" : "5%"}} >
+                    <input type="file" id="input" multiple onChange={(event)=> {setSelectedFileObject(document.getElementById('input').files[0])}}/>
+                    </div>
                 </div>
                 <div className="modal-footer my-modal-footer">
                     <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" className="btn btn-dark">Confirm</button>
+                    <button type="button" className="btn btn-dark" data-bs-dismiss="modal" onClick={handleConfirmFileUploadClick}>Confirm</button>
                 </div>
             </div>
             </div>
@@ -147,14 +302,17 @@ function FileMenu({currentFile, setCurrentFile}) {
                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div className="modal-body my-modal-body">
-                <label className="form-label"> <h6>Project Name:</h6></label>
+                <label className="form-label"> <h6>File Name:</h6></label>
                     <div className="input-group">
-                    <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3"/>
+                    <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3"
+                    onChange={(event) => {
+                        setNewFileName(event.target.value);
+                    }}/>
                 </div>
                 </div>
                 <div className="modal-footer my-modal-footer">
                     <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" className="btn btn-dark">Confirm</button>
+                    <button type="button" className="btn btn-dark" data-bs-dismiss="modal" onClick={handleConfirmNewFileClick}>Confirm</button>
                 </div>
             </div>
             </div>
@@ -168,14 +326,16 @@ function FileMenu({currentFile, setCurrentFile}) {
                     <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div className="modal-body my-modal-body">
-                    <label className="form-label"> <h6>Project Name:</h6></label>
+                    <label className="form-label"> <h6>New File Name:</h6></label>
                     <div className="input-group">
-                    <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3"/>
+                    <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" onChange={(event) => {
+                        setNewFileRename(event.target.value);
+                    }}/>
                 </div>
                 </div>
                 <div className="modal-footer my-modal-footer">
                     <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" className="btn btn-dark">Confirm</button>
+                    <button type="button" className="btn btn-dark" data-bs-dismiss="modal" onClick={handleEditFileConfirm}>Confirm</button>
                 </div>
             </div>
             </div>
@@ -193,13 +353,12 @@ function FileMenu({currentFile, setCurrentFile}) {
                     </div>
                     <div className="modal-footer my-modal-footer">
                         <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" className="btn btn-dark">Confirm</button>
+                        <button type="button" className="btn btn-dark" data-bs-dismiss="modal" onClick={handleConfirmDeleteClick}>Confirm</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-        
     )
 }
 

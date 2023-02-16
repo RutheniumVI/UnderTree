@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useLayoutEffect, useEffect } from 'react';
 import { useState } from 'react';
 import Split from 'react-split'
 import FileMenu from '../components/FileMenu'
@@ -10,7 +10,13 @@ import "../Styles/Project.css"
 import axios from 'axios';
 
 function Project() {
-  const [currentFile, setCurrentFile] = useState({fileName: "default", filePath: "owner2/project/file.tex", fileType: "tex"});
+  const url  = window.location.href;
+  const sp = url.split("/")
+  const [currentFile, setCurrentFile] = useState({
+    fileName: "main.tex",
+    filePath: sp[sp.length-2] + "/" + sp[sp.length-1] + "/" + "main.tex",
+    fileType: "tex"
+  });
   const [currentText, setCurrentText] = useState("");
 
   return (
