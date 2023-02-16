@@ -79,17 +79,20 @@ async function editFileCollaborator(owner: string, projectName: string, fileName
 
 }
 
-async function renameFile(project: ProjectData, file: File, newFileName: string, userName: string): Promise<string> {
+async function renameFile(project: ProjectData, file: File, newFileName: string, newFilePath: string, userName: string): Promise<string> {
 	const collection = DBClient.getCollection(collectionName);
 
 	const result = await collection.updateOne(
 		{
 			"projectName": project.projectName,
 			"owner": project.owner,
-			"files.fileName": file.fileName
+			"files.filePath": file.filePath
 		},
 		{
-			$set: {'files.$.fileName': newFileName},
+			$set: {
+				'files.$.fileName': newFileName,
+				'files.$.filePath': newFilePath
+			},
 			$addToSet: {'files.$.contributors': userName}
 		}
 	);
@@ -99,6 +102,30 @@ async function renameFile(project: ProjectData, file: File, newFileName: string,
 	}
 
 	return "Succesfully changed fileName";
+}
+
+
+async function deleteFile(project: ProjectData, filePath: string, userName: string): Promise<string> {
+	const collection = DBClient.getCollection(collectionName);
+
+	const result = await collection.update(
+		{
+			"projectName": project.projectName,
+			"owner": project.owner,
+		},
+		{
+			$pull: {
+				"files": {"filePath": filePath}
+			},
+			$addToSet: {'deletedFiles': filePath}
+		}
+	);
+	console.log(result);
+	if(result.modifiedCount != 1){
+		throw "Failed deleting fileName";
+	}
+
+	return "Succesfully deleting fileName";
 }
 
 async function getFiles(project: ProjectData): Promise<File[]> {
@@ -125,7 +152,8 @@ const FileDB = {
     deleteProjectFiles,
 	editFileCollaborator,
 	renameFile,
-	getFiles
+	getFiles,
+	deleteFile
 };
 
 export { FileDB };

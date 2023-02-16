@@ -10,6 +10,7 @@ import '../Styles/FileMenu.css'
 
 function FileMenu({currentFile, setCurrentFile}) {
 
+    const username = localStorage.getItem("username");
     const { owner, projectName } = useParams();
     const tempfiles = ([
         {
@@ -55,16 +56,16 @@ function FileMenu({currentFile, setCurrentFile}) {
     ])
 
     useEffect(() => {
-        /*axios.get("http://localhost:8000/api/file/getFiles?owner="+owner+"&projectName="+projectName, {withCredentials: true})
+        axios.get("http://localhost:8000/api/file/getFiles?owner="+owner+"&projectName="+projectName, {withCredentials: true})
         .then((res) => {
             getFileTreeFromFiles(res.data);
             setFiles(res.data);
         })
         .catch((err) => {
             console.log(err)
-        })*/
-        getFileTreeFromFiles(tempfiles);
-        setFiles(tempfiles);
+        })
+        // getFileTreeFromFiles(tempfiles);
+        // setFiles(tempfiles);
     }, [])
 
     const [files, setFiles] = useState();
@@ -118,8 +119,8 @@ function FileMenu({currentFile, setCurrentFile}) {
                             <label className="form-check-label fileName" onClick={(e) => {setCurrentFile(file)}}>{file.fileName}</label>
                         </div>
                         <div className='float-end pr'>
-                            <FontAwesomeIcon data-bs-toggle="modal" data-bs-target="#editFile" icon={faPenToSquare} onClick={(e) => {setFileToEdit(file.fileName)}}/>
-                            <FontAwesomeIcon data-bs-toggle="modal" data-bs-target="#deleteFile" style={{marginLeft: "15px"}} icon={faTrash} onClick={(e) => {setFileToDelete(file.fileName)}}/>
+                            <FontAwesomeIcon data-bs-toggle="modal" data-bs-target="#editFile" icon={faPenToSquare} onClick={(e) => {setFileToEdit(file)}}/>
+                            <FontAwesomeIcon data-bs-toggle="modal" data-bs-target="#deleteFile" style={{marginLeft: "15px"}} icon={faTrash} onClick={(e) => {setFileToDelete(file)}}/>
                         </div>  
                     </MenuItem>
                 ])}
@@ -138,42 +139,100 @@ function FileMenu({currentFile, setCurrentFile}) {
     function handleConfirmFileUploadClick(){
         console.log(inputtedFilePath)
         console.log(selectedFileObject)
-        
-        //request = api call to addFile
-        //response = api call to getFilesList
 
-        //getFileTreeFromFiles(tempfiles);
-        //setFiles(tempfiles);
+        const sp = inputtedFilePath.split("/");
+        const fileName = sp[sp.length-1];
+        let dirPath = sp.slice(0, -1).join("/") + "/"
+        if(dirPath == "/")
+            dirPath = "";
         
+        const fileType = selectedFileObject.type;
+        if(fileType === "image/png" || fileType == "image/jpeg"){
+            const formData = new FormData();
+            formData.append("owner", owner);
+            formData.append("projectName", projectName);
+            formData.append("fullDirPath", dirPath);
+            formData.append("fileName", fileName);
+            formData.append("image", selectedFileObject);
+            axios.post("http://localhost:8000/api/file/uploadImage", formData, {
+              withCredentials: true,
+              headers: {'Content-Type': 'multipart/form-data'}
+            }).then((res) => {
+                getFileTreeFromFiles(res.data);
+                setFiles(res.data);
+            }).catch((error) => {
+              console.error(`Error Adding user to modified`);
+            });
+        } else {
+
+        }
     }
 
     function handleConfirmNewFileClick(){
         console.log(newFileName)
+        const sp = newFileName.split("/");
+        const fileName = sp[sp.length-1];
+        let dirPath = sp.slice(0, -1).join("/") + "/";
+        if(dirPath == "/")
+            dirPath = "";
 
-        //request = api call to addFile
-        //response = api call to getFilesList
-
-        //getFileTreeFromFiles(tempfiles);
-        //setFiles(tempfiles);
+        axios.post("http://localhost:8000/api/file/addFile", {
+            owner: owner,
+            projectName: projectName,
+            fileName: fileName,
+            userName: username,
+            fullDirPath: dirPath
+        }, {
+          withCredentials: true,
+        }).then((res) => {
+            console.log(res.data);
+            getFileTreeFromFiles(res.data);
+            setFiles(res.data);
+        }).catch((error) => {
+          console.error(`Error Adding user to modified`);
+        });
     }
 
     function handleConfirmDeleteClick(){
         console.log(fileToDelete)
 
-        //api calls
+        axios.post("http://localhost:8000/api/file/deleteFile", {
+            owner: owner,
+            projectName: projectName,
+            filePath: fileToDelete.filePath,
+            userName: username,
+        }, {
+          withCredentials: true,
+        }).then((res) => {
+            console.log(res.data);
+            getFileTreeFromFiles(res.data);
+            setFiles(res.data);
+        }).catch((error) => {
+          console.error(`Error Adding user to modified`);
+        });
 
-        //getFileTreeFromFiles(tempfiles);
-        //setFiles(tempfiles);
     }
 
     function handleEditFileConfirm(){
         console.log(fileToEdit)
         console.log(newFileRename)
+        
 
-        //api calls
-
-        //getFileTreeFromFiles(tempfiles);
-        //setFiles(tempfiles);
+        axios.post("http://localhost:8000/api/file/renameFile", {
+            owner: owner,
+            projectName: projectName,
+            filePath: fileToEdit.filePath,
+            fileName: fileToEdit.fileName,
+            userName: username,
+            newFileName: newFileRename
+        }, {
+          withCredentials: true,
+        }).then((res) => {
+            getFileTreeFromFiles(res.data);
+            setFiles(res.data);
+        }).catch((error) => {
+          console.error(`Error Adding user to modified`);
+        });
     }
 
     return (
@@ -198,8 +257,8 @@ function FileMenu({currentFile, setCurrentFile}) {
                                 <label className="form-check-label fileName" onClick={(e) => {setCurrentFile(file)}}>{file.fileName}</label>
                             </div>
                             <div className='float-end pr'>
-                                <FontAwesomeIcon data-bs-toggle="modal" data-bs-target="#editFile" icon={faPenToSquare} onClick={(e) => {setFileToEdit(file.fileName)}}/>
-                                <FontAwesomeIcon data-bs-toggle="modal" data-bs-target="#deleteFile" style={{marginLeft: "15px"}} icon={faTrash} onClick={(e) => {setFileToDelete(file.fileName)}}/>
+                                <FontAwesomeIcon data-bs-toggle="modal" data-bs-target="#editFile" icon={faPenToSquare} onClick={(e) => {setFileToEdit(file)}}/>
+                                <FontAwesomeIcon data-bs-toggle="modal" data-bs-target="#deleteFile" style={{marginLeft: "15px"}} icon={faTrash} onClick={(e) => {setFileToDelete(file)}}/>
                             </div>     
                         </MenuItem>
                     })}
@@ -229,7 +288,7 @@ function FileMenu({currentFile, setCurrentFile}) {
                 </div>
                 <div className="modal-footer my-modal-footer">
                     <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" className="btn btn-dark" onClick={handleConfirmFileUploadClick}>Confirm</button>
+                    <button type="button" className="btn btn-dark" data-bs-dismiss="modal" onClick={handleConfirmFileUploadClick}>Confirm</button>
                 </div>
             </div>
             </div>
@@ -247,13 +306,13 @@ function FileMenu({currentFile, setCurrentFile}) {
                     <div className="input-group">
                     <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3"
                     onChange={(event) => {
-                    setNewFileName(event.target.value);
+                        setNewFileName(event.target.value);
                     }}/>
                 </div>
                 </div>
                 <div className="modal-footer my-modal-footer">
                     <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" className="btn btn-dark" onClick={handleConfirmNewFileClick}>Confirm</button>
+                    <button type="button" className="btn btn-dark" data-bs-dismiss="modal" onClick={handleConfirmNewFileClick}>Confirm</button>
                 </div>
             </div>
             </div>
@@ -270,13 +329,13 @@ function FileMenu({currentFile, setCurrentFile}) {
                     <label className="form-label"> <h6>New File Name:</h6></label>
                     <div className="input-group">
                     <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" onChange={(event) => {
-                    setNewFileRename(event.target.value);
+                        setNewFileRename(event.target.value);
                     }}/>
                 </div>
                 </div>
                 <div className="modal-footer my-modal-footer">
                     <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" className="btn btn-dark" onClick={handleEditFileConfirm}>Confirm</button>
+                    <button type="button" className="btn btn-dark" data-bs-dismiss="modal" onClick={handleEditFileConfirm}>Confirm</button>
                 </div>
             </div>
             </div>
@@ -294,7 +353,7 @@ function FileMenu({currentFile, setCurrentFile}) {
                     </div>
                     <div className="modal-footer my-modal-footer">
                         <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" className="btn btn-dark" onClick={()=>{console.log(fileToDelete)}}>Confirm</button>
+                        <button type="button" className="btn btn-dark" data-bs-dismiss="modal" onClick={handleConfirmDeleteClick}>Confirm</button>
                     </div>
                 </div>
             </div>

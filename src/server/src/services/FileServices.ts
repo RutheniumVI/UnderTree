@@ -20,6 +20,7 @@ router.route("/addFile").post(addFile);
 router.route("/renameFile").post(renameFile);
 router.route("/getFiles").get(getFiles);
 router.route("/fileEdited").post(fileEdited);
+router.route("/deleteFile").post(deleteFile);
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -28,7 +29,7 @@ const storage = multer.diskStorage({
         cb(null, "../file_system/" + dirPath)
     },
     filename: function (req, file, cb) {
-        cb(null, file.originalname);
+        cb(null, req.body.fileName);
     }
 })
   
@@ -84,7 +85,8 @@ async function addFile(req, res){
 
     try {
         await FileDB.addProjectFile(projectD, fileD);
-        res.status(200).json("Successfully added new file");
+        const fileData = await getFileList(projectD);
+        res.send(fileData);
     }
     catch (err) {
         console.log(err);
@@ -97,7 +99,7 @@ async function uploadImage(req, res){
     const projectD: ProjectData = {owner: req.body.owner, projectName: req.body.projectName}
 
     const fileDir = req.body.fullDirPath;
-    const fileName = req.file.filename;
+    const fileName = req.body.fileName;
 
 
     const filePath = projectD.owner + "/" + projectD.projectName + "/" + fileDir + fileName;
@@ -113,7 +115,8 @@ async function uploadImage(req, res){
 
     try {
         await FileDB.addProjectFile(projectD, fileD);
-        res.status(200).json("Successfully added new image");
+        const fileData = await getFileList(projectD);
+        res.send(fileData);
     }
     catch (err) {
         console.log(err);
@@ -125,16 +128,20 @@ async function uploadImage(req, res){
 async function renameFile(req, res){
     const projectD: ProjectData = {owner: req.body.owner, projectName: req.body.projectName}
 
+    const filePath = req.body.filePath;
     const fileName = req.body.fileName;
-    const filePath = projectD.owner + "/" + projectD.projectName + "/" + fileName;
     const extension = fileName.split(".")[1];
-    const fileD: File = {fileName: req.body.fileName, fileType: extension, contributors: [req.body.userName], filePath: filePath};
+    const fileD: File = {fileName: fileName, fileType: extension, contributors: [req.body.userName], filePath: filePath};
 
+    const sp = filePath.split("/");
+    const dirPath = sp.slice(0, -1).join("/") + "/"
     const newFileName = req.body.newFileName;
+    const newFilePath = dirPath + newFileName;
 
     try {
-        await FileDB.renameFile(projectD, fileD, newFileName, req.body.userName);
-        res.status(200).json("Successfully changed name of file");
+        await FileDB.renameFile(projectD, fileD, newFileName, newFilePath, req.body.userName);
+        const fileData = await getFileList(projectD);
+        res.send(fileData);
     }
     catch (err) {
         console.log(err);
@@ -147,16 +154,7 @@ async function getFiles(req, res){
     const projectD: ProjectData = {owner: req.query.owner, projectName: req.query.projectName}
 
     try {
-        const files: File[]  = await FileDB.getFiles(projectD);
-        console.log(files);
-        const fileData = files.map((e)=> {
-            return {
-                filePath: e.filePath,
-                fileName: e.fileName,
-                fileType: e.fileType,
-                selected: false,
-            }}
-        );
+        const fileData = await getFileList(projectD);
         res.send(fileData);
     }
     catch (err) {
@@ -164,6 +162,22 @@ async function getFiles(req, res){
 		res.status(500).json("Failed to change name of file");
     }
     
+}
+
+async function deleteFile(req, res){
+    const projectD: ProjectData = {owner: req.body.owner, projectName: req.body.projectName};
+    const filePath = req.body.filePath;
+    const userName = req.body.userName;
+    console.log("Deleting using", filePath, userName);
+
+    try{
+		await FileDB.deleteFile(projectD, filePath, userName);
+		const fileData = await getFileList(projectD);
+        res.send(fileData);
+	} catch (err) {
+        console.log(err);
+		res.status(500).json("Failed deleting file");
+	}
 }
 
 async function fileEdited(req, res) {
@@ -179,6 +193,19 @@ async function fileEdited(req, res) {
         console.log(err);
 		res.status(500).json("Failed adding user to collaborators");
 	}
+}
+
+async function getFileList(project: ProjectData){
+    const files: File[]  = await FileDB.getFiles(project);
+    const fileData = files.map((e)=> {
+        return {
+            filePath: e.filePath,
+            fileName: e.fileName,
+            fileType: e.fileType,
+            selected: false,
+        }}
+    );
+    return fileData;
 }
 
 export { router };
