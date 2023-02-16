@@ -141,29 +141,31 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
 	});
 
   	for(let i = 0; i < files.length; i++) {
-		let currFile = files[i];
+			let currFile = files[i];
 
-		// Post the new file to GitHub blobs
-		await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/blobs`, {
-		"content": currFile.content,
-		"encoding": "utf-8"
-		}, { 
-		headers: { 
-			Authorization: `Bearer ${accessToken}`, 
-			Accept: "application/vnd.github+json" 
-		}
-		}).then((res) => {
-		console.log("Blob Data: ", res.data);
-		fileBlobs.push({ 
-			"path": currFile.filepath,
-			"mode": "100644",
-			"type": "blob", 
-			"sha": res.data["sha"]
-		})
-		}).catch((error) => {
-		console.error(error);
-		res.status(500).json("Error posting blob to GitHub");
-	});
+			let encoding = files[i]["fileType"] === "tex" ? "utf-8" : "base64";
+
+			// Post the new file to GitHub blobs
+			await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/blobs`, {
+			"content": currFile.content,
+			"encoding": encoding
+			}, { 
+			headers: { 
+				Authorization: `Bearer ${accessToken}`, 
+				Accept: "application/vnd.github+json" 
+			}
+			}).then((res) => {
+			console.log("Blob Data: ", res.data);
+			fileBlobs.push({ 
+				"path": currFile.filepath,
+				"mode": "100644",
+				"type": "blob", 
+				"sha": res.data["sha"]
+			})
+			}).catch((error) => {
+			console.error(error);
+			res.status(500).json("Error posting blob to GitHub");
+		});
   }
 
 	// Get the latest tree in GitHub
