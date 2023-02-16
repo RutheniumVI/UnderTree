@@ -208,11 +208,11 @@ async function deleteFile(req, res){
 async function fileEdited(req, res) {
     const projectName = req.body.projectName;
     const owner = req.body.owner;
-    const fileName = req.body.fileName;
+    const filePath = req.body.filePath;
     const userName = req.body.userName;
 
     try{
-		await FileDB.editFileCollaborator(owner, projectName, fileName, userName);
+		await FileDB.editFileCollaborator(owner, projectName, filePath, userName);
 		res.status(200).json("Added user to file collaborator");
 	} catch (err) {
         console.log(err);
