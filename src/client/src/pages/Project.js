@@ -31,7 +31,7 @@ function Project() {
           <Chat/>
         </div>
         <div className='imageContainer'>
-          {currentFile.fileType === "tex" ? <Editor className="editor" documentID={currentFile.filePath} setCurrentText={setCurrentText}/> : <DisplayImage file={currentFile}/>}
+          {currentFile.fileType === "tex" ? <Editor className="editor" currentFile={currentFile} setCurrentText={setCurrentText}/> : <DisplayImage file={currentFile}/>}
         </div>
           {currentFile.fileType === "tex" && <Compiler className="compiler" documentID={currentFile.filePath} latexText={currentText}/>}
       </Split>

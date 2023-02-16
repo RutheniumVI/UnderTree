@@ -1,4 +1,4 @@
-import express from 'express';
+import express, {Request, Response} from 'express';
 import multer from "multer";
 import { FileDB } from '../database_interface/FileDB.js';
 import { ProjectData } from '../data/ProjectData.js';
@@ -21,6 +21,8 @@ router.route("/renameFile").post(renameFile);
 router.route("/getFiles").get(getFiles);
 router.route("/fileEdited").post(fileEdited);
 router.route("/deleteFile").post(deleteFile);
+router.route("/getContentFromFiles").get(getContentFromFiles);
+router.route("/uploadTexFile").post(uploadTexFile);
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -125,6 +127,30 @@ async function uploadImage(req, res){
     
 }
 
+async function uploadTexFile(req, res){
+    const projectD: ProjectData = {owner: req.body.owner, projectName: req.body.projectName}
+
+    const fileDir = req.body.fullDirPath;
+    const fileName = req.body.fileName;
+    console.log("ddd", req.body)
+    const filePath = projectD.owner + "/" + projectD.projectName + "/" + fileDir + fileName;
+    const extension = fileName.split(".")[1];
+    const fileD: File = {fileName: fileName, fileType: extension, contributors: [req.body.userName], filePath: filePath};
+
+
+    try {
+        await PersistenceUtil.writeDocumentData(filePath, req.body.fileContent);
+        await FileDB.addProjectFile(projectD, fileD);
+        const fileData = await getFileList(projectD);
+        res.send(fileData);
+    }
+    catch (err) {
+        console.log(err);
+		res.status(500).json("Failed to add file");
+    }
+    
+}
+
 async function renameFile(req, res){
     const projectD: ProjectData = {owner: req.body.owner, projectName: req.body.projectName}
 
@@ -183,11 +209,11 @@ async function deleteFile(req, res){
 async function fileEdited(req, res) {
     const projectName = req.body.projectName;
     const owner = req.body.owner;
-    const fileName = req.body.fileName;
+    const filePath = req.body.filePath;
     const userName = req.body.userName;
 
     try{
-		await FileDB.editFileCollaborator(owner, projectName, fileName, userName);
+		await FileDB.editFileCollaborator(owner, projectName, filePath, userName);
 		res.status(200).json("Added user to file collaborator");
 	} catch (err) {
         console.log(err);
@@ -207,5 +233,28 @@ async function getFileList(project: ProjectData){
     );
     return fileData;
 }
+
+async function getContentFromFiles(req: Request, res: Response): Promise<void> {
+    let files = req.query.files;
+    let newFiles = [];
+
+    for(let i = 0; i < files.length; i++){
+        let currPath;
+        let currContent;
+        if (files[i]["fileType"] == "tex"){
+            currPath = files[i]["filePath"].split("/").slice(2).join("/");
+            currContent = await PersistenceUtil.getDocumentData(files[i]["filePath"]);
+            newFiles.push({ filepath: currPath, content: currContent, fileType: "tex" });
+            continue;
+        } else if (files[i]["fileType"] == "image"){
+            currPath = files[i]["filePath"].split("/").slice(2).join("/");
+            currContent = FileUtil.getFileData(files[i]["filePath"]).toString('base64');
+            newFiles.push({ filepath: currPath, content: currContent, fileType: "image" });
+        }
+        console.log(currPath, currContent);
+    }
+    res.status(200).json(newFiles);
+}
+
 
 export { router };
