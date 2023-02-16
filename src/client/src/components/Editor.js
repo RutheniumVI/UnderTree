@@ -116,10 +116,11 @@ function Editor({currentFile, setCurrentText}) {
         console.log("Adding user to modified");    
 
         const fileDetails = documentID.split('/');
+
         axios.post("http://localhost:8000/api/file/fileEdited", {
             owner: fileDetails[0],
             projectName: fileDetails[1],
-            fileName: fileDetails[2],
+            filePath: documentID,
             userName: username
         }, {
           withCredentials: true,

@@ -57,14 +57,14 @@ async function deleteProjectFiles(project: ProjectData): Promise<string> {
 	return "Succesfully deleted project file system";
 }
 
-async function editFileCollaborator(owner: string, projectName: string, fileName: string, userName: string){
+async function editFileCollaborator(owner: string, projectName: string, filePath: string, userName: string){
 	const collection = DBClient.getCollection(collectionName);
 
 	const result = await collection.updateOne(
 		{
 			"projectName": projectName,
 			"owner": owner,
-			"files.fileName": fileName
+			"files.filePath": filePath
 		},
 		{
 			$addToSet: {'files.$.contributors': userName}
