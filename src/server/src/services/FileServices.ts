@@ -22,6 +22,7 @@ router.route("/getFiles").get(getFiles);
 router.route("/fileEdited").post(fileEdited);
 router.route("/deleteFile").post(deleteFile);
 router.route("/getContentFromFiles").get(getContentFromFiles);
+router.route("/uploadTexFile").post(uploadTexFile);
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -122,6 +123,30 @@ async function uploadImage(req, res){
     catch (err) {
         console.log(err);
 		res.status(500).json("Failed to add image");
+    }
+    
+}
+
+async function uploadTexFile(req, res){
+    const projectD: ProjectData = {owner: req.body.owner, projectName: req.body.projectName}
+
+    const fileDir = req.body.fullDirPath;
+    const fileName = req.body.fileName;
+    console.log("ddd", req.body)
+    const filePath = projectD.owner + "/" + projectD.projectName + "/" + fileDir + fileName;
+    const extension = fileName.split(".")[1];
+    const fileD: File = {fileName: fileName, fileType: extension, contributors: [req.body.userName], filePath: filePath};
+
+
+    try {
+        await PersistenceUtil.writeDocumentData(filePath, req.body.fileContent);
+        await FileDB.addProjectFile(projectD, fileD);
+        const fileData = await getFileList(projectD);
+        res.send(fileData);
+    }
+    catch (err) {
+        console.log(err);
+		res.status(500).json("Failed to add file");
     }
     
 }

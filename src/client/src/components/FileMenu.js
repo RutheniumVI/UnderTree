@@ -221,7 +221,29 @@ function FileMenu({currentFile, setCurrentFile}) {
               console.error(`Error Adding user to modified`);
             });
         } else {
-
+            var reader = new FileReader();
+            reader.readAsText(selectedFileObject, "UTF-8");
+            console.log(fileName)
+            reader.onload = function (evt) {
+                axios.post("http://localhost:8000/api/file/uploadTexFile", {
+                    owner: owner,
+                    projectName: projectName,
+                    fileName: fileName,
+                    userName: username,
+                    fullDirPath: dirPath,
+                    fileContent: evt.target.result
+                }, {
+                  withCredentials: true
+                }).then((res) => {
+                    getFileTreeFromFiles(res.data);
+                    setFiles(res.data);
+                }).catch((error) => {
+                  console.error(`Error Adding user to modified`);
+                });
+            }
+            reader.onerror = function (evt) {
+                console.log("Error reading file data");
+            }
         }
     }
 

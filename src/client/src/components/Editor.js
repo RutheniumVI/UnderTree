@@ -64,20 +64,34 @@ const formats = [
     "code-block"
 ];
 
-function Editor({documentID, setCurrentText}) {
+let ydoc = null;
+let provider = null;
+let binding = null
+
+function Editor({currentFile, setCurrentText}) {
     const username = localStorage.getItem("username");
     const [value, setValue] = useState('');
     const [modified, setModified] = useState(false);
+    const documentID = currentFile.filePath;
 
     let quillRef = null;
     let edtRef = null;
 
 
+
+
     // Connect to socket when editor page is opened
     useEffect(() => {
         quillRef = edtRef.getEditor();
-        const ydoc = new Y.Doc();   
-        const provider = new WebsocketProvider('ws://localhost:8000', documentID, ydoc, {params: {jwt: "123"}});
+        if(provider){
+            ydoc.destroy();
+            provider.destroy();
+            binding.destroy();
+        }
+
+        ydoc = new Y.Doc();   
+        provider = new WebsocketProvider('ws://localhost:8000', documentID, ydoc, {params: {jwt: "123"}});
+
         const ytext = ydoc.getText('quill');
 
         const awareness = provider.awareness; 
@@ -88,9 +102,10 @@ function Editor({documentID, setCurrentText}) {
           name: username,
           color: color,
         });
-        new QuillBinding(ytext, edtRef.getEditor(), awareness);
+        binding = new QuillBinding(ytext, edtRef.getEditor(), awareness);
+        
 
-    }, [])
+    }, [currentFile])
     
     useEffect(() => {
         if (typeof edtRef.getEditor !== 'function') return;
