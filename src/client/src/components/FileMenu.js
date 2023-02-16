@@ -64,7 +64,7 @@ function FileMenu() {
                 {tree.files.map((file) => [
                     <MenuItem key={file.filePath} onClick={handleClick} rootStyles={{backgroundColor: '#DEDEDE'}}> 
                         <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" id="inlineCheckbox1" onClick={() => {selectFile(file)}} value="option1"/>
+                            <input className="form-check-input" type="checkbox" id="inlineCheckbox1" onClick={() => {file["selected"] = !file["selected"]}} value="option1"/>
                             <label className="form-check-label">{file.fileName}</label>
                         </div>
                         <i className="bi bi-three-dots-vertical float-end pr fileDropDown" data-bs-toggle="dropdown" aria-expanded="false"></i>
@@ -79,11 +79,43 @@ function FileMenu() {
     }
     
     function selectFile(file){
-        if(selectedFiles.includes(file)){
-            setSelectedFiles(selectedFiles.filter((f) => f !== file));
-        } else {
-            setSelectedFiles([...selectedFiles, file]);
+        // if(selectedFiles.includes(file)){
+        //     file["selected"] = false;
+        //     setSelectedFiles(selectedFiles.filter((f) => f !== file));
+        // } else {
+        //     file["selected"] = true;
+        //     setSelectedFiles([...selectedFiles, file]);
+        // }
+    }
+
+    async function commitFiles(){
+        let filesToCommit = []
+        for(let i = 0; i < files.length; i++){
+            if(files[i].selected){
+                let file = { filepath: files[i]["filePath"], content: "Need to convert file to string" };
+                filesToCommit.push(file);
+            }
         }
+        console.log("committing files", owner, projectName);
+        console.log("files to commit: ", filesToCommit);
+        // for(let i = 0; i < selectedFiles.length; i++){
+        //     const file = selectedFiles[i];
+
+
+        await axios.post("http://localhost:8000/api/github/commitFiles", {
+            projectName: "UnderTree-Test",
+            owner: "KevinRK29",
+            files: [{ filepath: "main.tex", content: "This the content for the main tex file of the repo made by UnderTree" }, 
+                    { filepath: "README.md", content: "This is the content for the README.md file of the repo made by UnderTree" },
+                    { filepath: "test/test.tex", content: "This is the content for the test.tex file of the repo made by UnderTree" }]
+          }, {
+            withCredentials: true,
+          }).then((res) => {
+            console.log(res.data)
+          }).catch((error) => {
+            console.error(`Error making commit`);
+          });
+
     }
 
     // tree.push(  f1.push(f2)
@@ -100,6 +132,7 @@ function FileMenu() {
                 <i className="bi bi-folder-plus fileButton"></i>
                 <i className="bi bi-file-earmark-plus fileButton" data-bs-toggle="modal" data-bs-target="#newFile"></i>
                 <i className="bi bi-cloud-upload fileButton" data-bs-toggle="modal" data-bs-target="#fileUpload"></i>
+                <i className="bi bi-folder-plus fileButton" onClick={commitFiles}></i>
             </div>
             <ProSidebarProvider>
             <Sidebar width='100%' backgroundColor='#DEDEDE' breakPoint='sm'>
