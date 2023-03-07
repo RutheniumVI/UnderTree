@@ -283,7 +283,7 @@ TSWLatexianTemp*
 /.idea
 
 # environment variables
-.env*
+.env
 
 # Database files
 mongodb-data/

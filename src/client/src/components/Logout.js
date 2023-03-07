@@ -4,7 +4,7 @@ import axios from 'axios';
 
 async function handleLogout() {
   console.log("Logging out");
-  await axios.get(process.env.REACT_APP_API_URL+"/auth/logout", {
+  await axios.get("http://localhost:8000/api/auth/logout", {
     withCredentials: true,
     }).then((res) => {
       localStorage.removeItem('username');

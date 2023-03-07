@@ -14,7 +14,7 @@ async function authorizeJWT(req: Request, res: Response, next){
 		if (authResults["token"] != "") {
 			console.log("Renewing cookie");
 			token = authResults["token"];
-            res.cookie("undertree-jwt", token, { httpOnly: true, maxAge: 1000*60*60*24*365 });
+            res.cookie("undertree-jwt", token, { httpOnly: true, maxAge: 1000*60*60*24*365, domain: "localhost" });
 		}
 
 		const username = await AuthServices.getUserPropertyWithToken(token, "username");

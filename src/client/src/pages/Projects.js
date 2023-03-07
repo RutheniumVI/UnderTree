@@ -9,7 +9,7 @@ import '../Styles/Projects.css'
 function Projects() {
 
     useEffect(() => {
-        axios.get(process.env.REACT_APP_API_URL+"/projects/getProjects", {withCredentials: true})
+        axios.get("http://localhost:8000/api/projects/getProjects", {withCredentials: true})
         .then((res) => {
             setProjects(res.data);
         })
@@ -101,7 +101,7 @@ function Projects() {
         } else if (currentProject.collaborators.includes(collaboratorValue)){
             setErrors({...errors, collaborators: "User is already a collaborator in this repository"});
         } else if(errors.collaborators === ""){
-            axios.get(process.env.REACT_APP_API_URL+"/github/userExists",
+            axios.get("http://localhost:8000/api/github/userExists",
                 {params: {name: collaboratorValue}, withCredentials: true}
             ).then((res) => {
                 if(!res.data){
@@ -130,7 +130,7 @@ function Projects() {
     async function getImportProjects(){
         resetModalStates();
 
-        await axios.get(process.env.REACT_APP_API_URL+"/github/getUserReposList", {withCredentials: true})
+        await axios.get("http://localhost:8000/api/github/getUserReposList", {withCredentials: true})
         .then((res) => {
             const filteredProjects = res.data.filter((importProject) => {
                 for(let i = 0; i < projects.length; i++){
@@ -161,9 +161,9 @@ function Projects() {
             currProjects.push(importProjects[i]);
         })
         if(currProjects.length != 0){
-            await axios.post(process.env.REACT_APP_API_URL+"/projects/importProjects", currProjects, {withCredentials: true})
+            await axios.post("http://localhost:8000/api/projects/importProjects", currProjects, {withCredentials: true})
             .then((res) => {
-                axios.get(process.env.REACT_APP_API_URL+"/projects/getProjects", {withCredentials: true})
+                axios.get("http://localhost:8000/api/projects/getProjects", {withCredentials: true})
                 .then((res) => {
                     setProjects(res.data);
                     document.getElementById('importProjectModalClose').click();
@@ -187,7 +187,7 @@ function Projects() {
         if(currentProject.projectName === ""){
             setErrors({...errors, projectName: "GitHub repository name can not be empty"});
         } else if(errors.projectName === "" && errors.collaborators === ""){
-            axios.get(process.env.REACT_APP_API_URL+"/github/repositoryExists",
+            axios.get("http://localhost:8000/api/github/repositoryExists",
                 {params: {name: currentProject.projectName, owner: localStorage.getItem("username")}, withCredentials: true}
             )
             .then((res) => {
@@ -202,7 +202,7 @@ function Projects() {
                         creationDate: new Date()
                     }
         
-                    axios.post(process.env.REACT_APP_API_URL+"/projects/addProject", newProjectData, {withCredentials: true})
+                    axios.post("http://localhost:8000/api/projects/addProject", newProjectData, {withCredentials: true})
                     .then((res) => {
                         setProjects([newProjectData, ...projects]);
                         document.getElementById('newProjectModalClose').click();
@@ -220,7 +220,7 @@ function Projects() {
 
     function editProject(){
         if(errors.collaborators === ""){
-            axios.post(process.env.REACT_APP_API_URL+"/projects/editProject", currentProject, {withCredentials: true})
+            axios.post("http://localhost:8000/api/projects/editProject", currentProject, {withCredentials: true})
             .then((res) => {
                 setProjects([...projects.slice(0, selectedProjectIndex), currentProject, ...projects.slice(selectedProjectIndex + 1)])
                 document.getElementById('editProjectModalClose').click();
@@ -235,7 +235,7 @@ function Projects() {
     }
 
     function deleteProject(){
-        axios.post(process.env.REACT_APP_API_URL+"/projects/deleteProject", currentProject, {withCredentials: true})
+        axios.post("http://localhost:8000/api/projects/deleteProject", currentProject, {withCredentials: true})
         .then((res) => {
             setProjects([...projects.slice(0, selectedProjectIndex), ...projects.slice(selectedProjectIndex + 1)])
             document.getElementById('deleteProjectModalClose').click();

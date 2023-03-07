@@ -17,7 +17,7 @@ function Compiler({latexText, documentID}){
     }, []);
 
     function getPDF(){
-        fetch(process.env.REACT_APP_API_URL+"/file/getPDF?file=" + encodeURIComponent(documentID) + "&owner="+owner+"&projectName="+projectName, {
+        fetch("http://localhost:8000/api/file/getPDF?file=" + encodeURIComponent(documentID) + "&owner="+owner+"&projectName="+projectName, {
             method: "GET",
             credentials: 'include'
         })
@@ -36,7 +36,7 @@ function Compiler({latexText, documentID}){
     }
 
     async function compileLatex(){
-        const response = await axios.post(process.env.REACT_APP_API_URL+"/file/compilePDF", 
+        const response = await axios.post("http://localhost:8000/api/file/compilePDF", 
             {text: latexText, projectName: projectName, owner: owner, documentId: documentID},
             {withCredentials: true}
         );

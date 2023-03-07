@@ -8,13 +8,7 @@ import { useParams } from 'react-router-dom';
 
 import "../Styles/Chat.css";
 
-let socket = null;
-
-if(process.env.NODE_ENV == 'production'){
-  socket = io.connect(process.env.REACT_APP_CHAT_URL, {path: '/chat/socket.io'});
-} else {
-  socket = io.connect(process.env.REACT_APP_CHAT_URL);
-}
+const socket = io.connect("http://localhost:8001");
 
 function NewChat() {
   const { owner, projectName } = useParams();
@@ -31,7 +25,7 @@ function NewChat() {
     console.log("Room Value: ", room);
 
     if (room != null) {
-      await axios.get(process.env.REACT_APP_API_URL+"/chat/getMessages?owner="+owner+"&projectName="+projectName, {
+      await axios.get("http://localhost:8000/api/chat/getMessages?owner="+owner+"&projectName="+projectName, {
         params: { room: room },
         withCredentials: true,
       })
@@ -50,7 +44,7 @@ function NewChat() {
 
   //api calls
   async function getAvatar() {
-    await axios.get(process.env.REACT_APP_API_URL+"/chat/getAvatar?owner="+owner+"&projectName="+projectName, {
+    await axios.get("http://localhost:8000/api/chat/getAvatar?owner="+owner+"&projectName="+projectName, {
       withCredentials: true,
     })
     .then((res) => {
@@ -80,7 +74,7 @@ function NewChat() {
 
       await axios
         .post(
-          process.env.REACT_APP_API_URL+"/chat/sendMessage",
+          "http://localhost:8000/api/chat/sendMessage",
           { message: messageContent, projectName: projectName, owner: owner },
           {
             withCredentials: true,

@@ -3,7 +3,7 @@ import axios from 'axios';
 
 async function handleCreateProject() {
   console.log("Creating Project");      
-  await axios.post(process.env.REACT_APP_API_URL+"/github/createProject", {
+  await axios.post("http://localhost:8000/api/github/createProject", {
     name: "UnderTree-Test",
     description: "This is a repository created by the user in the application UnderTree",
     homepage: "https://undertree.ca",
