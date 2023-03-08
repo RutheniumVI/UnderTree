@@ -1,12 +1,12 @@
 import express, {Request, Response} from 'express';
 import multer from "multer";
-import { FileDB } from '../database_interface/FileDB.js';
-import { ProjectData } from '../data/ProjectData.js';
-import { File } from '../data/FileData.js';
+import { FileDB } from '../database_interface/FileDB';
+import { ProjectData } from '../data/ProjectData';
+import { File } from '../data/FileData';
 
-import { AuthUtil } from '../utils/AuthUtil.js';
-import { FileUtil } from '../utils/FileUtil.js';
-import { PersistenceUtil } from '../utils/PersistenceUtil.js';
+import { AuthUtil } from '../utils/AuthUtil';
+import { FileUtil } from '../utils/FileUtil';
+import { PersistenceUtil } from '../utils/PersistenceUtil';
 
 const router = express.Router();
 

@@ -4,8 +4,8 @@ import querystring from "querystring";
 import axios from "axios";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
-import { GitHubUser, MongoUser } from '../data/AuthData.js';
-import { AuthDB } from '../database_interface/AuthDB.js';
+import { GitHubUser, MongoUser } from '../data/AuthData';
+import { AuthDB } from '../database_interface/AuthDB';
 
 
 dotenv.config();

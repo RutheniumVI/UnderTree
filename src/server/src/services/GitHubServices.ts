@@ -3,14 +3,14 @@ const router = express.Router();
 import cookieParser from "cookie-parser";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { AuthUtil } from '../utils/AuthUtil.js';
-import { AuthServices } from './AuthServices.js';
-import { GitHubUtil } from '../utils/GitHubUtil.js';
+import { AuthUtil } from '../utils/AuthUtil';
+import { AuthServices } from './AuthServices';
+import { GitHubUtil } from '../utils/GitHubUtil';
 import axios from "axios";
-import { ProjectData } from '../data/ProjectData.js';
-import { ProjectDB } from '../database_interface/ProjectDB.js';
-import { AuthDB } from '../database_interface/AuthDB.js';
-import { FileDB } from '../database_interface/FileDB.js';
+import { ProjectData } from '../data/ProjectData';
+import { ProjectDB } from '../database_interface/ProjectDB';
+import { AuthDB } from '../database_interface/AuthDB';
+import { FileDB } from '../database_interface/FileDB';
 
 dotenv.config();
 

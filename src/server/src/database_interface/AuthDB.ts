@@ -1,5 +1,5 @@
-import { DBClient } from '../utils/MongoDBUtil.js';
-import { GitHubUser, MongoUser } from '../data/AuthData.js';
+import { DBClient } from '../utils/MongoDBUtil';
+import { GitHubUser, MongoUser } from '../data/AuthData';
 
 async function addUser(user: GitHubUser, token: string): Promise<void> {
 

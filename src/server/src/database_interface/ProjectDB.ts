@@ -1,5 +1,5 @@
-import { DBClient } from "../utils/MongoDBUtil.js";
-import { ProjectData } from "../data/ProjectData.js";
+import { DBClient } from "../utils/MongoDBUtil";
+import { ProjectData } from "../data/ProjectData";
 
 const collectionName = "projects";
 

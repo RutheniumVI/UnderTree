@@ -1,8 +1,8 @@
 import express, {Request, Response} from 'express';
 const router = express.Router();
-import { AuthServices } from "./AuthServices.js";
-import { AuthUtil } from '../utils/AuthUtil.js';
-import { ChatDB } from '../database_interface/ChatDB.js';
+import { AuthServices } from "./AuthServices";
+import { AuthUtil } from '../utils/AuthUtil';
+import { ChatDB } from '../database_interface/ChatDB';
 
 router.use(AuthUtil.authorizeJWT);
 router.use(AuthUtil.authorizeProjectAccess);

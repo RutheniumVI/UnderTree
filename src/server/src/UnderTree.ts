@@ -4,23 +4,23 @@ import http from 'http';
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 
-import { FileUtil } from './utils/FileUtil.js';
-import { DBClient } from './utils/MongoDBUtil.js';
+import { FileUtil } from './utils/FileUtil';
+import { DBClient } from './utils/MongoDBUtil';
 
-import { router as projectRoutes } from './services/ProjectServices.js';
-import { router as authRoutes } from './services/AuthServices.js';
-import { router as fileRoutes } from './services/FileServices.js';
-import { router as githubRoutes } from './services/GitHubServices.js';
+import { router as projectRoutes } from './services/ProjectServices';
+import { router as authRoutes } from './services/AuthServices';
+import { router as fileRoutes } from './services/FileServices';
+import { router as githubRoutes } from './services/GitHubServices';
 
 import {WebSocketServer } from "ws";
 import * as Y from "yjs";
-import { PersistenceUtil } from "./utils/PersistenceUtil.js"
+import { PersistenceUtil } from "./utils/PersistenceUtil"
 import { MongodbPersistence } from "y-mongodb-provider";
 import yUtils from "y-websocket/bin/utils";
 
 dotenv.config();
-import { router as chatRoutes } from './services/ChatServices.js';
-import runChatServer from './services/ChatSocket.js';
+import { router as chatRoutes } from './services/ChatServices';
+import runChatServer from './services/ChatSocket';
 
 const app = express();
 app.use(cors({
@@ -88,3 +88,5 @@ async function main(){
         console.log('listening on *8000');
     });
 }
+
+export default app;

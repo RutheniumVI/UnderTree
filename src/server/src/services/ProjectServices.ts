@@ -1,14 +1,14 @@
 import express, { Request, RequestHandler, Response } from "express";
 
-import { AuthServices } from "./AuthServices.js";
-import { AuthUtil } from "../utils/AuthUtil.js";
-import { ProjectDB } from "../database_interface/ProjectDB.js";
-import { FileDB } from "../database_interface/FileDB.js";
-import { ProjectData } from "../data/ProjectData.js";
-import { GitHubUtil } from "../utils/GitHubUtil.js";
-import { FileUtil } from "../utils/FileUtil.js";
-import { File, FileData } from "../data/FileData.js";
-import { PersistenceUtil } from "../utils/PersistenceUtil.js";
+import { AuthServices } from "./AuthServices";
+import { AuthUtil } from "../utils/AuthUtil";
+import { ProjectDB } from "../database_interface/ProjectDB";
+import { FileDB } from "../database_interface/FileDB";
+import { ProjectData } from "../data/ProjectData";
+import { GitHubUtil } from "../utils/GitHubUtil";
+import { FileUtil } from "../utils/FileUtil";
+import { File, FileData } from "../data/FileData";
+import { PersistenceUtil } from "../utils/PersistenceUtil";
 
 const router = express.Router();
 

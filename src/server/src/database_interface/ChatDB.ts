@@ -1,5 +1,5 @@
-import { Message } from '../data/ChatData.js';
-import { DBClient } from '../utils/MongoDBUtil.js';
+import { Message } from '../data/ChatData';
+import { DBClient } from '../utils/MongoDBUtil';
 
 async function addMessage(message: Message): Promise<void> {
   let response = await DBClient.collectionExists("chat");

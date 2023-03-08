@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { GitHubFile, GitHubFileContent, GitHubFiles } from '../data/GitHubData.js';
-import { ProjectData } from '../data/ProjectData.js';
-import { AuthServices } from '../services/AuthServices.js';
+import { GitHubFile, GitHubFileContent, GitHubFiles } from '../data/GitHubData';
+import { ProjectData } from '../data/ProjectData';
+import { AuthServices } from '../services/AuthServices';
 
 async function createProject(project: ProjectData, accessToken: string): Promise<string> {
   try{

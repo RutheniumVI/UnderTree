@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 
-import { AuthServices } from "../services/AuthServices.js";
-import { ProjectDB } from "../database_interface/ProjectDB.js";
+import { AuthServices } from "../services/AuthServices";
+import { ProjectDB } from "../database_interface/ProjectDB";
 
 
 async function authorizeJWT(req: Request, res: Response, next){
