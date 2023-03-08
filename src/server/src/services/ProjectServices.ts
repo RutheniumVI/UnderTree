@@ -23,13 +23,13 @@ router.route("/importProjects").post(importProjects);
 
 const latexTemplate = "\\documentclass{article}\n\\begin{document}\nHello World\n\\end{document}"
 
-async function addProject(req: Request, res: Response): Promise<void> {
+async function addProject(req, res): Promise<void> {
 	const data: ProjectData = req.body as ProjectData;
 	const accessToken = res.locals.accessToken;
 
 	try{
-		await GitHubUtil.createProject(data, accessToken);
-		await GitHubUtil.addCollabsToRepo(data, accessToken, data.collaborators);
+		// await GitHubUtil.createProject(data, accessToken);
+		// await GitHubUtil.addCollabsToRepo(data, accessToken, data.collaborators);
 		await ProjectDB.addProject(data);
 		await FileDB.initializeProject(data);
 		const filePath = data.owner+"/"+data.projectName+"/main.tex";
@@ -37,10 +37,10 @@ async function addProject(req: Request, res: Response): Promise<void> {
 		await PersistenceUtil.writeDocumentData(filePath, latexTemplate);
 		await FileDB.addProjectFile(data, mainFile);
 		await FileUtil.createDirectory(data.owner+"/"+data.projectName);
-		res.status(200).json("Succesfully added project");
+		res.status(200).json("Successfully added project");
 	} catch (err) {
 		console.log(err);
-		res.status(500).json("Failed to create project and add collaborators");
+		res.status(500).json(err);
 	}
 }
 
@@ -120,4 +120,4 @@ async function importProjects(req: Request, res: Response): Promise<void>  {
 	}
 }
 
-export { router };
+export { router, addProject, deleteProject };
