@@ -257,4 +257,7 @@ async function getContentFromFiles(req: Request, res: Response): Promise<void> {
 }
 
 
-export { router };
+export {
+    router,
+    getPDF
+ };
