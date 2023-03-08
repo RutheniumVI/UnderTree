@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals';
-import app from "../src/UnderTree"
+import {app} from "../src/UnderTree"
 import request from "supertest"
 
 describe('File Services', () => {
@@ -8,7 +8,7 @@ describe('File Services', () => {
     });
     test('responds to /hello/:name', async () => {
         const req = { params: { name: 'Bob' }  };
-        const response = await request(app).get("/");
+        const response = await request(app).get("/api/file/getFiles");
         // const res = { text: '',
         //     send: function(input) { this.text = input } 
         // };

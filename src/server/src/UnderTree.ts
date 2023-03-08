@@ -20,7 +20,7 @@ import yUtils from "y-websocket/bin/utils";
 
 dotenv.config();
 import { router as chatRoutes } from './services/ChatServices';
-import runChatServer from './services/ChatSocket';
+import runChatServer from './services/ChatSocket.js';
 
 const app = express();
 app.use(cors({
@@ -64,29 +64,37 @@ yUtils.setPersistence({
   }
 })
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use("/api/projects", projectRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/file", fileRoutes);
+app.use("/api/github", githubRoutes);
+app.use("/api/chat", chatRoutes);
+
 
 // server.on('upgrade', function upgrade(request, socket, head) {
 //     console.log(request);
 // });
-main();
+// main();
 
-async function main(){
-    await DBClient.connect();
-    FileUtil.setUpFileSystem();
-    console.log("Connected successfully to database");
+// async function main(){
+//     await DBClient.connect();
+//     FileUtil.setUpFileSystem();
+//     console.log("Connected successfully to database");
 
-    runChatServer();
-    app.use(express.json());
-    app.use(express.urlencoded({ extended: true }));
-    app.use("/api/projects", projectRoutes);
-    app.use("/api/auth", authRoutes);
-    app.use("/api/file", fileRoutes);
-    app.use("/api/github", githubRoutes);
-    app.use("/api/chat", chatRoutes);
+//     runChatServer();
+//     app.use(express.json());
+//     app.use(express.urlencoded({ extended: true }));
+//     app.use("/api/projects", projectRoutes);
+//     app.use("/api/auth", authRoutes);
+//     app.use("/api/file", fileRoutes);
+//     app.use("/api/github", githubRoutes);
+//     app.use("/api/chat", chatRoutes);
 
-    server.listen(8000, () => {
-        console.log('listening on *8000');
-    });
-}
+//     server.listen(8000, () => {
+//         console.log('listening on *8000');
+//     });
+// }
 
-export default app;
+export {app, server};
