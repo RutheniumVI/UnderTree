@@ -23,7 +23,7 @@ router.route("/importProjects").post(importProjects);
 
 const latexTemplate = "\\documentclass{article}\n\\begin{document}\nHello World\n\\end{document}"
 
-async function addProject(req: Request, res: Response): Promise<void> {
+async function addProject(req, res): Promise<void> {
 	const data: ProjectData = req.body as ProjectData;
 	const accessToken = res.locals.accessToken;
 
@@ -37,20 +37,20 @@ async function addProject(req: Request, res: Response): Promise<void> {
 		await PersistenceUtil.writeDocumentData(filePath, latexTemplate);
 		await FileDB.addProjectFile(data, mainFile);
 		await FileUtil.createDirectory(data.owner+"/"+data.projectName);
-		res.status(200).json("Succesfully added project");
+		res.status(200).json("Successfully added project");
 	} catch (err) {
 		console.log(err);
 		res.status(500).json("Failed to create project and add collaborators");
 	}
 }
 
-async function getProjects(req: Request, res: Response): Promise<void>  {
+async function getProjects(req, res): Promise<void>  {
 	const username = res.locals.username;
 	const projects: ProjectData[] = await ProjectDB.getProjects(username);
 	res.status(200).json(projects);
 }
 
-async function editProject(req: Request, res: Response): Promise<void>  {
+async function editProject(req, res): Promise<void>  {
 	const data: ProjectData = req.body as ProjectData;
 	const accessToken = res.locals.accessToken;
 
@@ -73,7 +73,7 @@ async function editProject(req: Request, res: Response): Promise<void>  {
 	}
 }
 
-async function deleteProject(req: Request, res: Response): Promise<void>  {
+async function deleteProject(req, res): Promise<void>  {
 	const data: ProjectData = req.body as ProjectData;
 
 	try{
@@ -86,7 +86,7 @@ async function deleteProject(req: Request, res: Response): Promise<void>  {
 	}
 }
 
-async function importProjects(req: Request, res: Response): Promise<void>  {
+async function importProjects(req, res): Promise<void>  {
 	let data: ProjectData[] = req.body as ProjectData[]
 	const accessToken = res.locals.accessToken;
 
@@ -120,4 +120,4 @@ async function importProjects(req: Request, res: Response): Promise<void>  {
 	}
 }
 
-export { router };
+export { router, addProject, deleteProject, importProjects, getProjects, editProject };
