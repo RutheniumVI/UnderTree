@@ -11,67 +11,17 @@ import randomColor from 'randomcolor';
 
 import ReactQuill, { Quill } from 'react-quill';
 import QuillCursors from 'quill-cursors';
-import 'react-quill/dist/quill.snow.css';
 import '../Styles/Editor.css'
-import "highlight.js/styles/monokai-sublime.css";
 import hljs from 'highlight.js'
+import CodeMirror from 'codemirror'
+import { CodemirrorBinding } from 'y-codemirror'
+import 'codemirror/mode/stex/stex'
 
-Quill.register('modules/cursors', QuillCursors);
-
-hljs.configure({
-    languages: ['tex'],
-    cssSelector: 'div.ql-editor > p'
-})
-
-const bindings = {
-    'code exit': {
-        key: 'Enter',
-        collapsed: true,
-        format: ['code-block'],
-        prefix: /^$/,
-        suffix: /^\s*$/,
-        handler(range) {
-          return true;
-        },
-    }
-};
-
-function highlight(text){
-    // console.log(text);
-    // let mod = hljs.highlightAuto(text).value;
-    // console.log(mod);
-    const functionRegex =  /\\\w+/g;
-    return text.replace(functionRegex, '<span class="hljs-keyword">$&</span>');
-}
-
-const modules = {
-    cursors: true,
-    keyboard: {
-        bindings: bindings
-    }
-}
-
-const formats = [
-    "header",
-    "font",
-    "size",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "blockquote",
-    "list",
-    "bullet",
-    "indent",
-    "link",
-    "image",
-    "video",
-    "code-block"
-];
 
 let ydoc = null;
 let provider = null;
-let binding = null
+let binding = null;
+let editorc = null;
 
 function Editor({currentFile, setCurrentText}) {
     const username = localStorage.getItem("username");
@@ -87,7 +37,7 @@ function Editor({currentFile, setCurrentText}) {
 
     // Connect to socket when editor page is opened
     useEffect(() => {
-        quillRef = edtRef.getEditor();
+        quillRef = edtRef;
         if(provider){
             ydoc.destroy();
             provider.destroy();
@@ -107,15 +57,31 @@ function Editor({currentFile, setCurrentText}) {
           name: username,
           color: color,
         });
-        binding = new QuillBinding(ytext, edtRef.getEditor(), awareness);
+
+        if(!editorc) {
+            editorc = CodeMirror(edtRef, {
+                mode: 'stex',
+                lineNumbers: true
+            })
+            editorc.setSize("100%", "calc(100vh - 73px)");
+        }
+
+        binding = new CodemirrorBinding(ytext, editorc, awareness);
+        // // binding = new QuillBinding(ytext, edtRef.getEditor(), awareness);
+        // return () => {
         
+        //     if (provider) {
+        //       provider.disconnect(); //We destroy doc we created and disconnect 
+        //       ydoc.destroy();  //the provider to stop propagting changes if user leaves editor
+        //     }
+        // };
 
     }, [currentFile])
     
-    useEffect(() => {
-        if (typeof edtRef.getEditor !== 'function') return;
-            quillRef = edtRef.getEditor();
-    })
+    // useEffect(() => {
+    //     if (edtRef) return;
+    //         quillRef = edtRef
+    // })
 
     function addUserToModified(){
         console.log("Adding user to modified");    
@@ -138,21 +104,21 @@ function Editor({currentFile, setCurrentText}) {
         setModified(true);
     }
 
-    function onEditorChanged(content, delta, source, editor){
-        setValue(content);
-        quillRef.formatLine(0, quillRef.getLength(), { 'code-block': true });
-        setCurrentText(editor.getText(content));
-        console.log("this happens this many times");
+    // function onEditorChanged(content, delta, source, editor){
+    //     setValue(content);
+    //     quillRef.formatLine(0, quillRef.getLength(), { 'code-block': true });
+    //     setCurrentText(editor.getText(content));
+    //     console.log("this happens this many times");
 
-        if(!modified && source === "user"){
-            addUserToModified();
-            setModified(true);
-        }
-    }
+    //     if(!modified && source === "user"){
+    //         addUserToModified();
+    //         setModified(true);
+    //     }
+    // }
 
     return ( 
         <div id='container'>
-            <ReactQuill 
+            {/* <ReactQuill 
                 ref={(el) => { edtRef = el; }}
                 theme="bubble"
                 className="editor"
@@ -160,7 +126,10 @@ function Editor({currentFile, setCurrentText}) {
                 formats={formats}
                 value={value} 
                 onChange={onEditorChanged}
-                 />
+                 /> */}
+            <div id='editor' ref={(el) => { edtRef = el; }}>
+
+            </div>
         </div>
     )
 }

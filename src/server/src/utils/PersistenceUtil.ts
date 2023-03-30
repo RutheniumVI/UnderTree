@@ -7,7 +7,7 @@ dotenv.config();
 const mdb = new MongodbPersistence(process.env.MONGODB_URI_D, {
 	collectionName: "transactions",
 	flushSize: 100,
-	multipleCollections: true,
+	multipleCollections: false,
 });
 
 async function getDocumentData(documentId: string){
