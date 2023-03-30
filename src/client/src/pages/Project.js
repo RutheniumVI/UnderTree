@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useEffect } from 'react';
 import { useState } from 'react';
 import Split from 'react-split'
 import FileMenu from '../components/FileMenu'
-import Editor from '../components/Editor';
+import Editor from '../components/Editor2';
 import Compiler from '../components/Compiler';
 import Chat from '../components/Chat'
 import DisplayImage from '../components/DisplayImage';
@@ -30,7 +30,7 @@ function Project() {
           <FileMenu currentFile={currentFile} setCurrentFile={setCurrentFile}/>
           <Chat/>
         </div>
-        <div className='imageContainer'>
+        <div className='mainContainer'>
           {currentFile.fileType === "tex" ? <Editor className="editor" currentFile={currentFile} setCurrentText={setCurrentText}/> : <DisplayImage file={currentFile}/>}
         </div>
           {currentFile.fileType === "tex" && <Compiler className="compiler" documentID={currentFile.filePath} latexText={currentText}/>}

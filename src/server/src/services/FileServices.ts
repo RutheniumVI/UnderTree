@@ -16,6 +16,7 @@ router.use(AuthUtil.authorizeJWT);
 router.route("/compilePDF").post(compilePDF);
 router.route("/getPDF").get(getPDF);
 router.route("/getImage").get(getImage);
+router.route("/addFolder").post(addFolder);
 router.route("/addFile").post(addFile);
 router.route("/renameFile").post(renameFile);
 router.route("/getFiles").get(getFiles);
@@ -73,6 +74,26 @@ async function getImage(req, res) {
         res.set('content-type', "image/jpeg");
     }
     res.send(fileData);
+}
+
+
+async function addFolder(req, res){
+    const projectD: ProjectData = {owner: req.body.owner, projectName: req.body.projectName}
+
+    const fileDir = req.body.fullDirPath;
+
+    const filePath = projectD.owner + "/" + projectD.projectName + "/" + fileDir + "March302023";
+    const fileD: File = {fileName: "March302023", fileType: "tex", contributors: [], filePath: filePath};
+
+    try {
+        await FileDB.addProjectFile(projectD, fileD);
+        const fileData = await getFileList(projectD);
+        res.send(fileData);
+    }
+    catch (err) {
+        console.log(err);
+		res.status(500).json("Failed to add file");
+    }
 }
 
 async function addFile(req, res){
