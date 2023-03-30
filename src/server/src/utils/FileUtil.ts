@@ -70,13 +70,22 @@ function getFileData(file: string){
     }
 }
 
+function fileExists(file: string): boolean {
+    if(fs.existsSync(dataDirectory+"/"+file)){
+        return true;
+    } else {
+        return false;
+    }
+}
+
 const FileUtil = {
     setUpFileSystem,
     createDirectory,
     saveFile,
     deleteProjectDirectory,
     createPDFOutput,
-    getFileData
+    getFileData,
+    fileExists,
 }
 
 export { FileUtil }

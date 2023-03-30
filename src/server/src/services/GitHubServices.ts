@@ -11,6 +11,7 @@ import { ProjectData } from '../data/ProjectData';
 import { ProjectDB } from '../database_interface/ProjectDB';
 import { AuthDB } from '../database_interface/AuthDB';
 import { FileDB } from '../database_interface/FileDB';
+import { FileUtil } from '../utils/FileUtil';
 
 dotenv.config();
 
@@ -104,6 +105,8 @@ async function getGitLogForRepo(req: Request, res: Response): Promise<void> {
 async function commitFiles(req: Request, res: Response): Promise<void> {
 	let project: ProjectData = req.body as ProjectData;
 	let files = req.body.files;
+	const message = req.body.commitMessage;
+	const commitPDF = req.body.commitPDF;
 	let fileBlobs = [];
 
 	let accessToken = res.locals.accessToken;
@@ -143,32 +146,58 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
 	});
 
   	for(let i = 0; i < files.length; i++) {
-			let currFile = files[i];
+		let currFile = files[i];
 
-			let encoding = files[i]["fileType"] === "tex" ? "utf-8" : "base64";
+		let encoding = files[i]["fileType"] === "tex" ? "utf-8" : "base64";
 
-			// Post the new file to GitHub blobs
-			await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/blobs`, {
-			"content": currFile.content,
-			"encoding": encoding
-			}, { 
-			headers: { 
-				Authorization: `Bearer ${accessToken}`, 
-				Accept: "application/vnd.github+json" 
-			}
-			}).then((res) => {
-			console.log("Blob Data: ", res.data);
-			fileBlobs.push({ 
-				"path": currFile.filepath,
-				"mode": "100644",
-				"type": "blob", 
-				"sha": res.data["sha"]
-			})
-			}).catch((error) => {
+		// Post the new file to GitHub blobs
+		await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/blobs`, {
+		"content": currFile.content,
+		"encoding": encoding
+		}, { 
+		headers: { 
+			Authorization: `Bearer ${accessToken}`, 
+			Accept: "application/vnd.github+json" 
+		}
+		}).then((res) => {
+		console.log("Blob Data: ", res.data);
+		fileBlobs.push({ 
+			"path": currFile.filePath,
+			"mode": "100644",
+			"type": "blob", 
+			"sha": res.data["sha"]
+		})
+		}).catch((error) => {
 			console.error(error);
-			res.status(500).json("Error posting blob to GitHub");
+			res.status(500).json("Error posting blob to GitHub")
 		});
-  }
+		
+		if(files[i].fileType == "tex" && files[i].commitPDF){
+			const pdfPath = files[i].split("/").slice(2).join("/").split(".").slice(-1).join(".")+".pdf";
+			if(FileUtil.fileExists(pdfPath)){
+				await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/blobs`, {
+				"content": FileUtil.getFileData(pdfPath).toString("utf-8"),
+				"encoding": "utf-8"
+				}, { 
+					headers: { 
+						Authorization: `Bearer ${accessToken}`, 
+						Accept: "application/vnd.github+json" 
+					}
+				}).then((res) => {
+					console.log("Blob Data: ", res.data);
+					fileBlobs.push({ 
+						"path": currFile.filePath.split(".").slice(-1).join(".")+".pdf",
+						"mode": "100644",
+						"type": "blob", 
+						"sha": res.data["sha"]
+					})
+				}).catch((error) => {
+					console.error(error);
+					res.status(500).json("Error posting blob to GitHub");
+				})
+			}
+		}
+	}
 
 	// Get the latest tree in GitHub
 	await axios.get(latestTreeURL, { 
@@ -191,14 +220,6 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
 	await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/trees`, {
 		"base_tree": latestTreeSHA,
 		"tree": fileBlobs
-		// "tree": [
-		//   {
-		//     "path": fileTest.filepath,
-		//     "mode": "100644",
-		//     "type": "blob",
-		//     "sha": userBlobSHA
-		//   }
-		// ]
 	}, {
 		headers: { 
 		Authorization: `Bearer ${accessToken}`, 
@@ -222,9 +243,9 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
 	let commitParent = latestCommitSHA;
 
 
-	const filePath = project.owner + "/" + project.projectName + "/" + files[0].filepath;
+	const filePath = project.owner + "/" + project.projectName + "/" + files[0].filePath;
 	const contributors = await FileDB.getContributor(project, filePath);
-	let comMessage = "Commit created by UnderTree!\n\n\n";
+	let comMessage = message + "\n\n\n";
 	contributors.forEach((e) => {
 		if (e=="fahmed8383"){
 			comMessage += "Co-authored-by: Name <" + "fahmed4030@gmail.com" + ">\n"

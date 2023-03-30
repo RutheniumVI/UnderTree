@@ -12,48 +12,6 @@ function FileMenu({currentFile, setCurrentFile}) {
 
     const username = localStorage.getItem("username");
     const { owner, projectName } = useParams();
-    const tempfiles = ([
-        {
-            "filePath": "RutheniumVI/veetestrepo/main.tex",
-            "fileName": "main.tex",
-            "fileType": "tex"
-        },
-        {
-            "filePath": "RutheniumVI/veetestrepo/random.tex",
-            "fileName": "rando1.tex",
-            "fileType": "tex"
-        },
-        {
-            "filePath": "RutheniumVI/veetestrepo//sad.png",
-            "fileName": "sad.png",
-            "fileType": "png"
-        },
-        {
-            "filePath": "RutheniumVI/veetestrepo/pihubupload.png",
-            "fileName": "pihubupload.png",
-            "fileType": "png"
-        },
-        {
-            "filePath": "RutheniumVI/veetestrepo/test/v/amazon.jpg",
-            "fileName": "amazon.jpg",
-            "fileType": "jpg"
-        },
-        {
-            "filePath": "RutheniumVI/veetestrepo/test/v/sad.png",
-            "fileName": "sad.png",
-            "fileType": "png"
-        },
-        {
-            "filePath": "RutheniumVI/veetestrepo/test/v/amazon.jpg",
-            "fileName": "amazon.jpg",
-            "fileType": "jpg"
-        },
-        {
-            "filePath": "RutheniumVI/veetestrepo/test/v/sad.png",
-            "fileName": "sad.png",
-            "fileType": "png"
-        }
-    ])
 
     useEffect(() => {
         axios.get(process.env.REACT_APP_API_URL+"/file/getFiles?owner="+owner+"&projectName="+projectName, {withCredentials: true})
@@ -64,8 +22,6 @@ function FileMenu({currentFile, setCurrentFile}) {
         .catch((err) => {
             console.log(err)
         })
-        // getFileTreeFromFiles(tempfiles);
-        // setFiles(tempfiles);
     }, [])
 
     const [files, setFiles] = useState();
@@ -183,7 +139,6 @@ function FileMenu({currentFile, setCurrentFile}) {
           }).catch((error) => {
             console.error(`Error making commit`);
           });
-
     }
 
     // tree.push(  f1.push(f2)

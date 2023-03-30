@@ -228,6 +228,7 @@ async function getFileList(project: ProjectData){
             filePath: e.filePath,
             fileName: e.fileName,
             fileType: e.fileType,
+            isModified: e.contributors.length > 0,
             selected: false,
         }}
     );
@@ -244,12 +245,12 @@ async function getContentFromFiles(req: Request, res: Response): Promise<void> {
         if (files[i]["fileType"] == "tex"){
             currPath = files[i]["filePath"].split("/").slice(2).join("/");
             currContent = await PersistenceUtil.getDocumentData(files[i]["filePath"]);
-            newFiles.push({ filepath: currPath, content: currContent, fileType: "tex" });
+            newFiles.push({ filePath: currPath, content: currContent, fileType: "tex" });
             continue;
         } else {
             currPath = files[i]["filePath"].split("/").slice(2).join("/");
             currContent = FileUtil.getFileData(files[i]["filePath"]).toString('base64');
-            newFiles.push({ filepath: currPath, content: currContent, fileType: files[i].fileType});
+            newFiles.push({ filePath: currPath, content: currContent, fileType: files[i].fileType});
         }
         console.log(currPath, currContent);
     }

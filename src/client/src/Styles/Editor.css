@@ -1,5 +1,7 @@
 #container {
-    height: calc(100vh - 73px);
+    height: calc(100vh - 83px);
+    margin-top: 10px;
+    font-family: 'Open Sans', sans-serif;
     width: 100%;
 }
 
@@ -36,3 +38,14 @@
 .ql-editor.ql-blank{
     min-height: 20vh;
 } */
+
+.modifiedFilesList {
+    max-height: 30vh;
+    overflow: scroll;
+    overflow-x: hidden;
+    font-size: 95%;
+}
+
+.commitFiles {
+    font-size: 95%
+}
