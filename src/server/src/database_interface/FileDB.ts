@@ -70,8 +70,9 @@ async function editFileCollaborator(owner: string, projectName: string, filePath
 			$addToSet: {'files.$.contributors': userName}
 		}
 	);
+	
 
-	if(result.modifiedCount != 1){
+	if(result.modifiedCount != 1 && result.matchedCount == 0){
 		throw "Failed updating collaborators";
 	}
 
