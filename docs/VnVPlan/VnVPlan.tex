@@ -22,6 +22,9 @@
 \newcounter{TESTID}
 \newcommand\TESTNUM{\stepcounter{TESTID}\theTESTID}
 
+\newcounter{UTID}
+\newcommand\UTNUM{\stepcounter{UTID}\theUTID}
+
 \begin{document}
 	
 	\title{Project Title: System Verification and Validation Plan for \progname{}} 
@@ -41,6 +44,8 @@
 		November 1 & 1.1 & Started filling in system tests\\
 		November 2 & 1.2 & Finished system tests\\
 		November 2 & 1.3 & Finished rest of documentation aside from unit tests\\
+		March 1 & 1.4 & Added unit tests\\
+		March 3 & 1.5 & Modified unit tests to remove GitHub integration related features\\
 		\bottomrule
 	\end{tabularx}
 	
@@ -539,7 +544,7 @@
 		
 		Input: User tries to insert, delete and modify the text in the latex file
 		
-		Output: This event of the file being edited should be saved in the client side storage alongside the user who made the change
+		Output: This event of the file being edited should be saved alongside the user who made the change
 		
 		Test Case Derivation: When a user edits a file, this event should be recorded so that it can be used when committing these changes
 		
@@ -560,13 +565,13 @@
 		
 		Initial State: User has the editor screen open
 		
-		Input: User opens the chat-box using appropriate action
+		Input: User opens the project screen containing the chat
 		
-		Output: The chat-box should show up with all the messages during that user session
+		Output: The chat-box should show up with all the messages exchanged in this project
 		
 		Test Case Derivation: When a user opens up the chat box, they should be presented with a chat-box
 		
-		How test will be performed: The tester will open the editor for a project and open the chat-box. The tester will then confirm that the chat-box shows up.
+		How test will be performed: The tester will open the editor for a project and open the chat-box. The tester will then confirm that the chat-box and messages show up.
 		
 		\item{ST-\TESTNUM\\}
 		
@@ -596,13 +601,13 @@
 		
 		Initial State: The user has the create project screen open.
 		
-		Input: The user enters a valid project name into the appropriate form field and clicks the done icon.
+		Input: The user enters a valid project name into the appropriate form field and clicks the create project button.
 		
-		Output: A new blank project with the inputted  name is created in the user's directory. 
+		Output: No error is given for creating the project. 
 		
-		Test Case Derivation: A new project's title should match the title entered by the user.
+		Test Case Derivation: A valid project name should not give any errors.
 		
-		How test will be performed: The tester will open the create project screen, enter a valid name and finish the task, then check to see if a blank project with the entered name exists in their directory.
+		How test will be performed: The tester will open the create project screen, enter a valid name and finish the task, then ensure that no error is displayed.
 		
 		\item{ST-\TESTNUM\\}
 		
@@ -610,7 +615,7 @@
 		
 		Initial State: The user has the create project screen open.
 		
-		Input: The user enters an invalid project name into the appropriate form field and clicks the done icon.
+		Input: The user enters an invalid project name into the appropriate form field and tries to create the project.
 		
 		Output: An error message is displayed indicating that the project was not created due to invalid project name. 
 		
@@ -622,29 +627,29 @@
 		
 		Control: Manual
 		
-		Initial State: The user has a project open on their screen
+		Initial State: The user has a project edit menu open on their screen
 		
-		Input: The user clicks on the add collaborators icon and enters a valid username of the collaborator they want to add into the appropriate form field, selects the read-only access checkbox, then clicks the done icon.
+		Input: The user enters a valid username of the collaborator they want to add into the appropriate form field and clicks the add button.
 		
-		Output: The users that were added are listed as a collaborator to the project and can view the project but can not edit it.
+		Output: The users that were added are listed as a collaborator to the project get an invite to join the project from GitHub and can see the project in their projects menu.
 		
-		Test Case Derivation: Users added as collaborators to a project should be listed as collaborators to the project and should be granted the appropriate level of permission.
+		Test Case Derivation: Users added as collaborators to a project should be listed as collaborators to the project and should be able to access the project
 		
-		How test will be performed: The tester will add a test user as a collaborator with read-only access to a project in their repository. Then they will open the list of collaborators for the project and ensure the test user is listed. Finally they will log into the test user account and ensure that the project they were added to shows up in their repository and also ensure that they are unable to edit the project.
+		How test will be performed: The tester will add a test user as a collaborator to a project in their repository. Then they will open the list of collaborators for the project and ensure the test user is listed. Finally they will log into the test user account and ensure that the project they were added to shows up in their repository.
 		
 		\item{ST-\TESTNUM\\}
 		
 		Control: Manual
 		
-		Initial State: The user has a project open on their screen
+		Initial State: The user has a project open on their screen and a collaborator with the given name already added to the project
 		
-		Input: The user clicks on the add collaborators icon and enters a valid username of the collaborator they want to add into the appropriate form field, selects the read-write access checkbox, then clicks the done icon.
+		Input: The user clicks on the add collaborators icon and enters the username of the collaborator that is already in the project
 		
-		Output: The user that was added is listed as a collaborator to the project and can view and edit the project.
+		Output: The user must be informed that the collaborator already exists in the project.
 		
-		Test Case Derivation: Users added as collaborators to a project should be listed as collaborators to the project and should be granted the appropriate level of permission.
+		Test Case Derivation: User should not be able to add an existing collaborator to the project twice.
 		
-		How test will be performed: The tester will add a test user as a collaborator with read-write access to a project in their repository. Then they will open the list of collaborators for the project and ensure the test user is listed. Finally they will log into the test user account and ensure that the project they were added to shows up in their repository and also ensure that they are able to edit the project.
+		How test will be performed: The tester will try to add a collaborator to the project twice and ensure that an error is given when they try to add the collaborator the second time
 		
 		\item{ST-\TESTNUM\\}
 		
@@ -668,7 +673,7 @@
 		
 		Input: The user creates a new project with an appropriate name then clicks done.
 		
-		Output: A new repository with the appropriate name is created in the user's GitHub account that is linked to their profile. 
+		Output: A new repository with the appropriate name is created in the database and the user's GitHub account that is linked to their profile. 
 		
 		Test Case Derivation: A new project being created must trigger the creation of a corresponding Git repository.
 		
@@ -680,7 +685,7 @@
 		
 		Initial State: The user has the create new project screen open.
 		
-		Input: The user selects import from repository option.
+		Input: The user clicks import from repository option.
 		
 		Output: The screen displays a list of repositories from the user's GitHub directory to choose from.
 		
@@ -696,7 +701,7 @@
 		
 		Input: The user selects import from repository option and chooses a repository to import, then clicks done.
 		
-		Output: A new project is created that lists and contains all the Tex files that are present in the GitHub repository that was imported. No other files are imported.
+		Output: A new project is created that lists and contains all the TeX and image files that are present in the GitHub repository that was imported.
 		
 		Test Case Derivation: When creating a project from a pre-existing repository, all and only the existing Tex files should be imported into the Tex editor.
 		
@@ -736,7 +741,7 @@
 		
 		Initial State: The user has a non-empty directory containing projects they own and projects they have been added as a collaborator to.
 		
-		Input: The user selects the projects option. 
+		Input: The user opens the projects menu. 
 		
 		Output: A list is displayed on the screen of all the projects that the user has created or been added as a collaborator to with their Titles and date modified, in descending order from date modified.
 		
@@ -773,7 +778,7 @@
 		
 		Initial State: Empty latex file
 		
-		Input: User clicks the compile latex button
+		Input: User wants to view a latex file that has not been compiled yet
 		
 		Output: An empty PDF file is displayed
 		
@@ -1125,7 +1130,7 @@
 		
 		Type: Static, Manual
 		
-		How test will be performed: The developers will validate that the system does indeed meet all IEEE standards.
+		How test will be performed: Tester collects all the media on the application that is there by default and confirm all media is copy-right free
 	\end{enumerate}
 	
 	\subsubsection{Health and Safety Requirements}
@@ -1208,121 +1213,347 @@
 		NFR2  & ST-50, ST-51\\
 		NFR3  & ST-50, ST-52\\
 		NFR4  & ST-53\\
-		NFR5  & ST-54\\
-		NFR6  & ST-53\\
 		NFR7  & ST-53\\
 		NFR8  & ST-53\\
-		NFR9  & ST-53\\
 		NFR10  & ST-55\\
 		NFR11  & ST-56\\
-		NFR12  & ST-57\\
-		NFR13  & ST-58\\
-		NFR14  & ST-58\\
-		NFR15  & ST-58\\
 		NFR16  & ST-59\\
-		NFR17  & ST-60\\
-		NFR18  & ST-60\\
-		NFR19  & ST-60\\
 		NFR20  & ST-61\\
 		NFR21  & ST-62\\
 		NFR22  & ST-62\\
 		NFR23  & ST-63\\
-		NFR24  & ST-64\\
-		NFR25  & ST-64\\
 		NFR26  & ST-65\\
-		NFR27  & ST-66\\
 		NFR28  & ST-67\\
 		NFR29  & ST-68\\
-		NFR30  & ST-69\\
-		NFR31  & ST-70\\
-		NFR32  & ST-71\\
-		NFR33  & ST-72\\
 		NFR34  & ST-73\\
-		\hline
-		\newpage
-		\hline
-		NFR35  & ST-74\\
 		NFR36  & ST-75\\
-		NFR37  & ST-75\\
 		NFR38  & ST-76\\
 		NFR39  & ST-77\\
 		NFR40  & ST-78\\
 		% NFR41  & N/A\\
 		% NFR42  & N/A\\
 		% NFR43  & N/A\\
-		NFR44  & ST-79\\
 		\hline
 	\end{longtable}
 	
 	\newpage
 	
-	% \section{Unit Test Description}
+	\section{Unit Test Description}
 	
-	% \wss{Reference your MIS and explain your overall philosophy for test case
-		%   selection.}  
-	% \wss{This section should not be filled in until after the MIS has
-		%   been completed.}
+	Test cases will be selected to cover the core functionality of each module and would be done with boundary unit testing to minimize the number of unit tests required to fully validate the functionality of each module.
 	
-	% \subsection{Unit Testing Scope}
+	\subsection{Unit Testing Scope}
 	
-	% \wss{What modules are outside of the scope.  If there are modules that are
-		%   developed by someone else, then you would say here if you aren't planning on
-		%   verifying them.  There may also be modules that are part of your software, but
-		%   have a lower priority for verification than others.  If this is the case,
-		%   explain your rationale for the ranking of module importance.}
+	The real time editing aspect of the editor module is out of scope since the functionality of this module is mostly provided by libraries, however integration with these libraries will still need to be tested. Many of the GitHub integration are also out of scope as they would require the use of integration tests to ensure that changes happen on GitHub as well when our service makes a specific change, and as a result these can be better tested with manual system tests.
 	
-	% \subsection{Tests for Functional Requirements}
+	\subsection{Tests for Functional Requirements}
 	
-	% \wss{Most of the verification will be through automated unit testing.  If
-		%   appropriate specific modules can be verified by a non-testing based
-		%   technique.  That can also be documented in this section.}
+	\subsubsection{Project Services}
 	
-	% \subsubsection{Module 1}
+	The subsections below covers the Project Services module in the \href{https://github.com/RutheniumVI/UnderTree/blob/main/docs/Design/MIS/MIS.pdf}{MIS} which is where all the logic for the remaining project modules that can be unit tested lies. We will be testing the boundaries for each core functionality of the module, there will be one basic black box test to ensure that the core functionality of the module is working as intended and the remaining test would be white box boundary tests to ensure that the implementation of the module does not have any invalid logic that interferes with its functionality. These tests will be derived to closely follow the functional requirements of the module as well.
 	
-	% \wss{Include a blurb here to explain why the subsections below cover the module.
-		%   References to the MIS would be good.  You will want tests from a black box
-		%   perspective and from a white box perspective.  Explain to the reader how the
-		%   tests were selected.}
+	\begin{enumerate}
+		
+		\item{PS-1\\}
+		
+		Type: Automatic
+		
+		Initial State: User is logged in and has not created a project with selected name
+		
+		Input: User inputs a project name, and no collaborators
+		
+		Output: A project with the given name is saved in the database
+		
+		Test Case Derivation: This test is to verify that a user can create a project and no issues occur from not adding any collaborators to the project
+		
+		How test will be performed: The test will be performed using NodeJS testing framework Jest.
+		
+		\item{PS-2\\}
+		
+		Type: Automatic
+		
+		Initial State: User is logged in and has not created a project with selected name
+		
+		Input: User inputs a project name, and a valid GitHub username as a collaborator
+		
+		Output: A project with the given name and collaborators is saved in the database
+		
+		Test Case Derivation: This test is to verify that a user can create a project and no issues occur from adding a collaborator to the project
+		
+		How test will be performed: The test will be performed using NodeJS testing framework Jest.
+		
+		\item{PS-3\\}
+		
+		Type: Automatic
+		
+		Initial State: User is logged in and has not created a project with the selected name
+		
+		Input: User inputs the name of the existing project to try and recreate it
+		
+		Output: The user gets an error that the project with the given name already exists
+		
+		Test Case Derivation: This test is to verify that a user cannot recreate an existing project
+		
+		How test will be performed: The test will be performed using NodeJS testing framework Jest.
+		
+		\item{PS-4\\}
+		
+		Type: Automatic
+		
+		Initial State: User is logged in and has existing projects in their repository that have not been imported before
+		
+		Input: User imports a project
+		
+		Output: A project with the correct name, collaborators, and files is added to the database
+		
+		Test Case Derivation: This test is to verify that a user can import a project without any issues
+		
+		How test will be performed: The test will be performed using NodeJS testing framework Jest.
+		
+		\item{PS-5\\}
+		
+		Type: Automatic
+		
+		Initial State: User is logged in and wants to delete a project that exists in the database
+		
+		Input: User deletes a project
+		
+		Output: The project no longer exists in the database
+		
+		Test Case Derivation: This test is to verify that a user can delete a project without any issues
+		
+		How test will be performed: The test will be performed using NodeJS testing framework Jest.
+		
+		\item{PS-6\\}
+		
+		Type: Automatic
+		
+		Initial State: User is logged in and wants to delete a project that does not exist in the database
+		
+		Input: User deletes a project
+		
+		Output: The user gets an error stating that the project does not exist
+		
+		Test Case Derivation: This test is to verify that the backend will not behave unexpectedly if we try to delete a project that does not exist.
+		
+		How test will be performed: The test will be performed using NodeJS testing framework Jest.
+		
+		\item{PS-7\\}
+		
+		Type: Automatic
+		
+		Initial State: User is logged in and has created a project and is also a collaborator of a project. Additionally there should be a project that the user is not a part of in any way.
+		
+		Input: User asks to see all their projects
+		
+		Output: The user get both the project that they have created and the project that they are a collaborator of, but not the project that they are not a part of.
+		
+		Test Case Derivation: This test is to verify that the user can access all projects that they are a part of and all projects that they are a collaborator in.
+		
+		How test will be performed: The test will be performed using NodeJS testing framework Jest.
+		
+		\item{PS-8\\}
+		
+		Type: Automatic
+		
+		Initial State: User is logged in and has created a project
+		
+		Input: User adds a collaborator with a valid username to the project
+		
+		Output: The collaborator is added to the project in the database.
+		
+		Test Case Derivation: This test is to verify that the user can add collaborators to their project. We cannot verify that a collaborator is added on GitHub since that would require the collaborator to accept the invitation first. This is not possible with unit tests and thus will be fully tested with system tests.
+		
+		How test will be performed: The test will be performed using NodeJS testing framework Jest.
+		
+		\item{PS-9\\}
+		
+		Type: Automatic
+		
+		Initial State: User is logged in and has created a project
+		
+		Input: User removes an existing collaborator from their project
+		
+		Output: The collaborator is removed from the project in the database.
+		
+		Test Case Derivation: This test is to verify that the user can remove collaborators from their project.
+		
+		How test will be performed: The test will be performed using NodeJS testing framework Jest.
+		
+	\end{enumerate}
 	
-	% \begin{enumerate}
-		
-		% \item{test-id1\\}
-		
-		% Type: \wss{Functional, Dynamic, Manual, Automatic, Static etc. Most will
-			%   be automatic}
-		
-		% Initial State: 
-		
-		% Input: 
-		
-		% Output: \wss{The expected result for the given inputs}
-		
-		% Test Case Derivation: \wss{Justify the expected value given in the Output field}
-		
-		% How test will be performed: 
-		
-		% \item{test-id2\\}
-		
-		% Type: \wss{Functional, Dynamic, Manual, Automatic, Static etc. Most will
-			%   be automatic}
-		
-		% Initial State: 
-		
-		% Input: 
-		
-		% Output: \wss{The expected result for the given inputs}
-		
-		% Test Case Derivation: \wss{Justify the expected value given in the Output field}
-		
-		% How test will be performed: 
-		
-		% \item{...\\}
-		
-		% \end{enumerate}
+	\subsubsection{File Services}
 	
-	% \subsubsection{Module 2}
+	The subsections below covers the File Services module in the \href{https://github.com/RutheniumVI/UnderTree/blob/main/docs/Design/MIS/MIS.pdf}{MIS} which is where all the logic for the remaining file modules that can be unit tested lies. We will be testing the boundaries for each core functionality of the module, there will be one basic black box test to ensure that the core functionality of the module is working as intended and the remaining test would be white box boundary tests to ensure that the implementation of the module does not have any invalid logic that interferes with its functionality. These tests will be derived to closely follow the functional requirements of the module as well.
 	
-	% ...
+	\begin{enumerate}
+		
+		\item{FS-1\\}
+		
+		Type: Automatic
+		
+		Initial State: User is logged in and has an empty TeX file that they want to compile
+		
+		Input: User compiles the TeX file
+		
+		Output: The user should be given an error that the TeX file is empty
+		
+		Test Case Derivation: This test is to verify that the LaTeX compiler can handle and alert the user of errors
+		
+		How test will be performed: The test will be performed using NodeJS testing framework Jest.
+		
+		\item{FS-2\\}
+		
+		Type: Automatic
+		
+		Initial State: User is logged in and has an valid TeX file that they want to compile
+		
+		Input: User compiles the TeX file
+		
+		Output: The user is given a success message for the latex file being successfully compiled
+		
+		Test Case Derivation: This test is to verify that the LaTeX compiler can compiled valid files correctly.
+		
+		How test will be performed: The test will be performed using NodeJS testing framework Jest.
+		
+		\item{FS-3\\}
+		
+		Type: Automatic
+		
+		Initial State: User is logged in and does not have a file compiled with a given name
+		
+		Input: User wants to access the PDF for a file that is not compiled yet
+		
+		Output: The user gets an empty PDF file returned to them
+		
+		Test Case Derivation: This test is to verify that the system returns an empty PDF for non-compiled files as specified in the functional requirements.
+		
+		How test will be performed: The test will be performed using NodeJS testing framework Jest.
+		
+		\item{FS-4\\}
+		
+		Type: Automatic
+		
+		Initial State: User is logged in and has file compiled with a given name
+		
+		Input: User wants to access the PDF for a file that is compiled already
+		
+		Output: The user gets a valid PDF for the compiled file
+		
+		Test Case Derivation: This test is to verify that the system returns the correct PDF file for the compiled LaTeX.
+		
+		How test will be performed: The test will be performed using NodeJS testing framework Jest.		
+		
+	\end{enumerate}
+	
+	\subsubsection{Chat Services}
+	
+	The subsections below covers the Chat Services module in the \href{https://github.com/RutheniumVI/UnderTree/blob/main/docs/Design/MIS/MIS.pdf}{MIS} which is where all the logic for the remaining chat modules that can be unit tested lies. We will be testing the boundaries for each core functionality of the module, there will be one basic black box test to ensure that the core functionality of the module is working as intended and the remaining test would be white box boundary tests to ensure that the implementation of the module does not have any invalid logic that interferes with its functionality. These tests will be derived to closely follow the functional requirements of the module as well.
+	
+	\begin{enumerate}
+		
+		\item{CS-1\\}
+		
+		Type: Automatic
+		
+		Initial State: A project has two collaborators
+		
+		Input: One user types a message and presses Send
+		
+		Output: The message content and metadata (sender, timestamp, UUID) are stored in the database
+		
+		Test Case Derivation: This test is to verify that the chat database service is properly storing the user input in the backend
+		
+		How test will be performed: The test will be performed using NodeJS testing framework Jest.
+		
+		\item{CS-2\\}
+		
+		Type: Automatic
+		
+		Initial State: A project has two collaborators
+		
+		Input: One user types a message and presses Send
+		
+		Output: The user's Github profile picture is displayed next to their message
+		
+		Test Case Derivation: This test is to verify that the chat service is correctly pulling the profile picture images from Github corresponding to the user
+		
+		How test will be performed: The test will be performed using NodeJS testing framework Jest.
+		
+		\item{CS-3\\}
+		
+		Type: Automatic
+		
+		Initial State: A project has two collaborators
+		
+		Input: One user types a message and presses Send
+		
+		Output: The message is displayed in the chat-box
+		
+		Test Case Derivation: This test is to verify that the UI is reflecting the user input and updating accordingly
+		
+		How test will be performed: The test will be performed using NodeJS testing framework Jest.
+		
+	\end{enumerate}
+	
+	\subsubsection{Auth Services}
+	
+	The subsections below covers the Auth Services module in the \href{https://github.com/RutheniumVI/UnderTree/blob/main/docs/Design/MIS/MIS.pdf}{MIS} which is where all the logic for the remaining auth modules that can be unit tested lies. We will be testing the boundaries for each core functionality of the module, there will be one basic black box test to ensure that the core functionality of the module is working as intended and the remaining test would be white box boundary tests to ensure that the implementation of the module does not have any invalid logic that interferes with its functionality. These tests will be derived to closely follow the functional requirements of the module as well.
+	
+	\begin{enumerate}
+		
+		% \hline
+		% AS-1 & FR3 & User clicks the Get Started or Login button, and then is redirected to the GitHub login page to enter credentials to be validated & User is able to view the projects home page in UnderTree once logged in, and their user data is saved into the database & User is redirected back to the UnderTree projects page and their user data is stored in the database &  \textcolor{green}{PASS} \\
+		% \hline
+		% AS-2 & FR4 & User is not authenticated and then tries to enter a restricted route in UnderTree & User is denied access since the user is not logged in, in the database, so the user is redirected to the login page to gain authentication & User is not able to access the restricted route and has to log in & \textcolor{green}{PASS} \\
+		% \hline
+		% AS-3 & FR4 & User is authenticated and then clicks log out & User is redirected back to the UnderTree home page access and the user isn't authenticated in the database & User is taken to the homepage and the database reflects their lack of authentication & \textcolor{green}{PASS} \\
+		% \hline
+		
+		\item{AS-1\\}
+		
+		Type: Automatic
+		
+		Initial State: User is on the homepage and not authenticated
+		
+		Input: User clicks Login
+		
+		Output: The user is redirected to GitHub's login page to enter their credentials and then redirected back to the user's project page
+		
+		Test Case Derivation: This test is to verify that a user is able to access the UnderTree page when successfully authenticated using GitHub
+		
+		How test will be performed: The test will be performed using NodeJS testing framework Jest.
+		
+		\item{AS-2\\}
+		
+		Type: Automatic
+		
+		Initial State: User is not logged in
+		
+		Input: User tries to enter a restricted page using the URL
+		
+		Output: The user is redirected back to the home page to log in
+		
+		Test Case Derivation: This test is to verify that the auth service is correctly verifying users and their authorization when completing an operation or accessing a webpage. 
+		
+		How test will be performed: The test will be performed using NodeJS testing framework Jest.
+		
+		\item{AS-3\\}
+		
+		Type: Automatic
+		
+		Initial State: User is logged in
+		
+		Input: User clicks the log out button
+		
+		Output: The user is redirected back to the home page
+		
+		Test Case Derivation: This test is to verify that the user can successfully exit out of the system and remove any authentication like cookies. 
+		
+		How test will be performed: The test will be performed using NodeJS testing framework Jest.
+		
+	\end{enumerate}
+	...
 	
 	% \subsection{Tests for Nonfunctional Requirements}
 	
@@ -1367,18 +1598,71 @@
 	% \subsubsection{Module ?}
 	
 	% ...
-	% \newpage
+	\newpage
 	
 	% \subsection{Traceability Between Test Cases and Modules}
 	
-	% \wss{Provide evidence that all of the modules have been considered.}
+	% \begin{longtable}{|l|l|}
+		%     \caption{Traceability Matrix between FR \& Unit Test cases}\\
+		%     \hline
+		%     Functional Requirement &  Test Case\\
+		%     \hline
+		%     FR1  & ST-48\\
+		%     FR2  & ST-49\\
+		%     FR3  & ST-7, ST-8, ST-9\\
+		%     FR4  & ST-10, ST-11\\
+		%     FR5  & ST-1, ST-2, ST-31, ST-32\\
+		%     FR6  & ST-1, ST-33, ST-34, ST-35\\
+		%     FR7  & ST-1, ST-36\\
+		%     FR8  & ST-3, ST-37\\
+		%     FR9  & ST-3, ST-38\\
+		%     FR10  & ST-3, ST-39\\
+		%     FR11  & ST-40\\
+		%     FR12  & ST-40\\
+		%     FR13  & ST-41\\
+		%     FR14  & ST-41\\
+		%     FR15  & ST-41\\
+		%     FR16  & ST-33 \\
+		%     FR17  & ST-42\\
+		%     FR18  & ST-12\\
+		%     FR19  & ST-12\\
+		%     FR20  & ST-13\\
+		%     FR21  & ST-16, ST-18, ST-21, ST-24\\
+		%     FR22  & ST-14\\
+		%     FR23  & ST-15\\
+		%     FR24  & ST-22\\
+		%     FR25  & ST-22\\
+		%     FR26  & ST-22, ST-23, ST-24\\
+		%     FR27  & ST-25\\
+		%     FR28  & ST-26\\
+		%     FR29  & ST-17\\
+		%     FR30  & ST-18\\
+		%     FR31  & ST-19\\
+		%     FR32  & ST-19, ST-21\\
+		%     FR33  & ST-20\\
+		%     FR34  & ST-27\\
+		%     FR35  & ST-28\\
+		%     FR36  & ST-43, ST-44, ST-45, ST-46\\
+		%     FR37  & ST-46\\
+		%     FR38  & ST-47\\
+		%     FR39  & ST-43, ST-44, ST-45\\
+		%     FR40  & ST-4\\
+		%     FR41  & ST-4\\
+		%     FR42  & ST-29\\
+		%     FR43  & ST-30\\
+		%     FR44  & ST-30\\
+		%     FR45  & ST-5\\
+		%     FR46  & ST-6\\
+		%     FR47  & ST-6\\
+		%     \hline
+		% \end{longtable}
 	
 	
-	% \bibliographystyle{plainnat}
+	\bibliographystyle{plainnat}
 	
-	% \bibliography{../../refs/References}
+	\bibliography{../../refs/References}
 	
-	% \newpage
+	\newpage
 	
 	\section{Appendix}
 	

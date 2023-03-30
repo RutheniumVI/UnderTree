@@ -60,7 +60,7 @@ async function getUserReposList(req: Request, res: Response): Promise<void>  {
   try{
 	const reposRes = await axios.get("https://api.github.com/user/repos", {
 		headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" },
-		params: { affiliation: "owner,collaborator" },
+		params: { affiliation: "owner,collaborator", per_page: "100" },
 	})
 
 	unfilteredRepos = reposRes.data;

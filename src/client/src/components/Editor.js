@@ -37,13 +37,18 @@ const bindings = {
     }
 };
 
+function highlight(text){
+    // console.log(text);
+    // let mod = hljs.highlightAuto(text).value;
+    // console.log(mod);
+    const functionRegex =  /\\\w+/g;
+    return text.replace(functionRegex, '<span class="hljs-keyword">$&</span>');
+}
+
 const modules = {
     cursors: true,
     keyboard: {
         bindings: bindings
-    },
-    syntax: {
-        highlight: text => hljs.highlightAuto(text).value
     }
 }
 
@@ -141,6 +146,7 @@ function Editor({currentFile, setCurrentText}) {
         setValue(content);
         quillRef.formatLine(0, quillRef.getLength(), { 'code-block': true });
         setCurrentText(editor.getText(content));
+        console.log("this happens this many times");
 
         if(!modified && source === "user"){
             addUserToModified();

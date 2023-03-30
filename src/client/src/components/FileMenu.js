@@ -1,3 +1,5 @@
+// import $ from 'jquery'
+import bootstrap from 'bootstrap'
 import React from 'react'
 import { ProSidebarProvider } from 'react-pro-sidebar';
 import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
@@ -22,6 +24,34 @@ function FileMenu({currentFile, setCurrentFile}) {
         .catch((err) => {
             console.log(err)
         })
+
+        document.addEventListener("click", handleClick);
+        $("#context-menu a").on("click", function() {
+            $(this).parent().removeClass("show").hide();
+        });
+
+        // $('.ps-submenu-content').on('contextmenu', function(e) {
+        //     var top = e.pageY - 10;
+        //     var left = e.pageX - 90;
+        //     $("#context-menu").css({
+        //       display: "block",
+        //       top: top,
+        //       left: left
+        //     }).addClass("show");
+        //     return false; //blocks default Webbrowser right click menu
+        //   }).on("click", function() {
+        //     $("#context-menu").removeClass("show").hide();
+        //   });
+          
+        //   $("#context-menu a").on("click", function() {
+        //     $(this).parent().removeClass("show").hide();
+        //   });
+        return () => {
+            document.removeEventListener("click", handleClick);
+        }
+
+        // getFileTreeFromFiles(tempfiles);
+        // setFiles(tempfiles);
     }, [])
 
     const [files, setFiles] = useState();
@@ -32,6 +62,7 @@ function FileMenu({currentFile, setCurrentFile}) {
     const [fileToDelete, setFileToDelete] = useState();
     const [fileToEdit, setFileToEdit] = useState();
     const [newFileRename, setNewFileRename] = useState();
+    const [selectedFile, setSelectedFile] = useState("");
 
     function getFileTreeFromFiles(files){
         let tree = {folders: [], files: []};
@@ -46,7 +77,8 @@ function FileMenu({currentFile, setCurrentFile}) {
 
     function createFileTreeNode(tree, path, file, currPath){
         if(path.length == 1){
-            tree.files.push(file);
+            if(file.fileName != "March302023")
+                tree.files.push(file);
             return tree
         } else {
             for(let i = 0; i < tree.folders.length; i++){
@@ -62,17 +94,33 @@ function FileMenu({currentFile, setCurrentFile}) {
 
     }
 
+    function handleFolderRightClick(e){
+        e.preventDefault();
+        var top = e.pageY - 10;
+        var left = e.pageX - 90;
+        $("#context-menu").css({
+            display: "block",
+            top: top,
+            left: left
+        }).addClass("show");
+    }
+
     function renderFileMenu(tree, root){
         return(
-            <SubMenu label={tree.name} key={tree.path} rootStyles={{backgroundColor: '#DEDEDE'}}>
+            <SubMenu className="folder" label={tree.name} key={tree.path} rootStyles={selectedFile === tree.path ? {backgroundColor: '#d0d0d0'} : {backgroundColor: "#DEDEDE"}}
+                onContextMenu={(e) => {handleFolderRightClick(e);setSelectedFile(tree.path);return false}}
+                onClick={(e) => {e.stopPropagation();setSelectedFile(tree.path)}}>
                 {tree.folders.map((folder) => {
                     return renderFileMenu(folder);
                 })}
                 {tree.files.map((file) => [
-                    <MenuItem key={file.filePath} onClick={handleClick} rootStyles={currentFile.filePath === file.filePath ? {backgroundColor: '#d0d0d0'} : {backgroundColor: '#DEDEDE'}}> 
+                    <MenuItem key={file.filePath} rootStyles={{backgroundColor: "#DEDEDE"}}> 
                         <div className="form-check form-check-inline">
                             <input className="form-check-input" type="checkbox" id="inlineCheckbox1" onChange={() => {file["selected"] = !file["selected"]}} value="option1"/>
-                            <label className="form-check-label fileName" onClick={(e) => {setCurrentFile(file)}}>{file.fileName}</label>
+                            <label className="form-check-label fileName" 
+                                style={currentFile.filePath === file.filePath ? {color: 'red'} : {color: "blue"}} 
+                                onClick={(e) => {e.stopPropagation(); setCurrentFile(file)}}>{file.fileName}
+                            </label>
                         </div>
                         <div className='float-end pr'>
                             <FontAwesomeIcon data-bs-toggle="modal" data-bs-target="#editFile" icon={faPenToSquare} onClick={(e) => {setFileToEdit(file)}}/>
@@ -144,19 +192,25 @@ function FileMenu({currentFile, setCurrentFile}) {
     // tree.push(  f1.push(f2)
 
     function handleClick(){
-        // setActive(!active)
-        // console.log("clicked")
+        $("#context-menu").removeClass("show").hide();
     }
 
     function handleConfirmFileUploadClick(){
-        console.log(inputtedFilePath)
+        handleModalClose();
+
         console.log(selectedFileObject)
 
-        const sp = inputtedFilePath.split("/");
-        const fileName = sp[sp.length-1];
-        let dirPath = sp.slice(0, -1).join("/") + "/"
-        if(dirPath == "/")
-            dirPath = "";
+        // const sp = inputtedFilePath.split("/");
+        const fileName = selectedFileObject.name;
+
+        // let dirPath = sp.slice(0, -1).join("/") + "/"
+        // if(dirPath == "/")
+        //     dirPath = "";
+
+        let dirPath = ""
+        // Remove leading / and add a / at the end
+        if(selectedFile)
+            dirPath = selectedFile.substring(1) + "/" + fileName; 
         
         const fileType = selectedFileObject.type;
         if(fileType === "image/png" || fileType == "image/jpeg"){
@@ -203,6 +257,8 @@ function FileMenu({currentFile, setCurrentFile}) {
     }
 
     function handleConfirmNewFileClick(){
+        handleModalClose();
+
         console.log(newFileName)
         const sp = newFileName.split("/");
         const fileName = sp[sp.length-1];
@@ -210,11 +266,40 @@ function FileMenu({currentFile, setCurrentFile}) {
         if(dirPath == "/")
             dirPath = "";
 
+        // Remove leading / and add a / at the end
+        if(selectedFile)
+            dirPath = selectedFile.substring(1) + "/" + dirPath; 
+
         axios.post(process.env.REACT_APP_API_URL+"/file/addFile", {
             owner: owner,
             projectName: projectName,
             fileName: fileName,
             userName: username,
+            fullDirPath: dirPath
+        }, {
+          withCredentials: true,
+        }).then((res) => {
+            console.log(res.data);
+            getFileTreeFromFiles(res.data);
+            setFiles(res.data);
+        }).catch((error) => {
+          console.error(`Error Adding user to modified`);
+        });
+    }
+
+    function handleConfirmNewFolderClick(){
+        handleModalClose();
+
+        console.log(newFileName)
+        let dirPath = newFileName + "/";
+
+        // Remove leading / and add a / at the end
+        if(selectedFile)
+            dirPath = selectedFile.substring(1) + "/" + dirPath; 
+
+        axios.post(process.env.REACT_APP_API_URL+"/file/addFolder", {
+            owner: owner,
+            projectName: projectName,
             fullDirPath: dirPath
         }, {
           withCredentials: true,
@@ -269,13 +354,18 @@ function FileMenu({currentFile, setCurrentFile}) {
         });
     }
 
+    function handleModalClose(){
+        $("#fileUpload").find("input").val('').end();
+        $("#newFile").find("input").val('').end();
+    }
+
     return (
         <div>
-        <div className='my-card'>
+        <div className='my-card' onClick={(e)=>{setSelectedFile("")}}>
             <div>
-                <i className="bi bi-folder-plus fileButton"></i>
-                <i className="bi bi-file-earmark-plus fileButton" data-bs-toggle="modal" data-bs-target="#newFile"></i>
-                <i className="bi bi-cloud-upload fileButton" data-bs-toggle="modal" data-bs-target="#fileUpload"></i>
+                <i className="bi bi-folder-plus fileButton" data-bs-toggle="modal" data-bs-target="#newFolder" onClick={(e)=>{e.stopPropagation()}}></i>
+                <i className="bi bi-file-earmark-plus fileButton" data-bs-toggle="modal" data-bs-target="#newFile" onClick={(e)=>{e.stopPropagation()}}></i>
+                <i className="bi bi-cloud-upload fileButton" data-bs-toggle="modal" data-bs-target="#fileUpload" onClick={(e)=>{e.stopPropagation()}}></i>
                 <i className="bi bi-github fileButton" onClick={commitFiles}></i>
             </div>
             <ProSidebarProvider>
@@ -289,7 +379,10 @@ function FileMenu({currentFile, setCurrentFile}) {
                         return <MenuItem key={file.filePath} onClick={handleClick} rootStyles={{backgroundColor: '#DEDEDE'}}> 
                             <div className="form-check form-check-inline">
                                 <input className="form-check-input" type="checkbox" id="inlineCheckbox1" onChange={() => {file["selected"] = !file["selected"]}} value="option1"/>
-                                <label className="form-check-label fileName" onClick={(e) => {setCurrentFile(file)}}>{file.fileName}</label>
+                                <label className="form-check-label fileName" 
+                                    style={currentFile.filePath === file.filePath ? {color: 'red'} : {color: "blue"}} 
+                                    onClick={(e) => {setCurrentFile(file)}}>{file.fileName}
+                                </label>
                             </div>
                             <div className='float-end pr'>
                                 <FontAwesomeIcon data-bs-toggle="modal" data-bs-target="#editFile" icon={faPenToSquare} onClick={(e) => {setFileToEdit(file)}}/>
@@ -307,22 +400,23 @@ function FileMenu({currentFile, setCurrentFile}) {
             <div className="modal-content">
                 <div className="modal-header my-modal-header">
                 <h1 className="modal-title fs-5" id="fileUploadLabel">File Upload</h1>
-                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={(e)=>{handleModalClose()}}></button>
                 </div>
                 <div className="modal-body my-modal-body">
-                <label className="form-label"> <h6>File Name:</h6></label>
-                    <div className="input-group">
-                        <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" 
-                        onChange={(event) => {
-                        setInputtedFilePath(event.target.value);
-                        }}/>      
-                    </div>
+                    {/* <label className="form-label"> <h6>File Name:</h6></label>
+                        <div className="input-group">
+                            <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" 
+                            onChange={(event) => {
+                            setInputtedFilePath(event.target.value);
+                            }}/>      
+                        </div> */
+                    }
                     <div className="input-group" style={{"marginTop" : "5%"}} >
-                    <input type="file" id="input" multiple onChange={(event)=> {setSelectedFileObject(document.getElementById('input').files[0])}}/>
+                        <input type="file" id="input" multiple onChange={(event)=> {setSelectedFileObject(document.getElementById('input').files[0])}}/>
                     </div>
                 </div>
                 <div className="modal-footer my-modal-footer">
-                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={(e)=>{handleModalClose()}}>Close</button>
                     <button type="button" className="btn btn-dark" data-bs-dismiss="modal" onClick={handleConfirmFileUploadClick}>Confirm</button>
                 </div>
             </div>
@@ -334,7 +428,7 @@ function FileMenu({currentFile, setCurrentFile}) {
             <div className="modal-content">
                 <div className="modal-header my-modal-header">
                 <h1 className="modal-title fs-5" id="newFileLabel">New File</h1>
-                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={(e)=>{handleModalClose()}}></button>
                 </div>
                 <div className="modal-body my-modal-body">
                 <label className="form-label"> <h6>File Name:</h6></label>
@@ -346,8 +440,32 @@ function FileMenu({currentFile, setCurrentFile}) {
                 </div>
                 </div>
                 <div className="modal-footer my-modal-footer">
-                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" className="btn btn-dark" data-bs-dismiss="modal" onClick={handleConfirmNewFileClick}>Confirm</button>
+                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={(e)=>{handleModalClose()}}>Close</button>
+                    <button type="button" className="btn btn-dark" data-bs-dismiss="modal" onClick={handleConfirmNewFileClick} >Confirm</button>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <div className="modal fade" id="newFolder" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="newFileLabel" aria-hidden="true">
+            <div className="modal-dialog">
+            <div className="modal-content">
+                <div className="modal-header my-modal-header">
+                <h1 className="modal-title fs-5" id="newFolderLabel">New Folder</h1>
+                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={(e)=>{handleModalClose()}}></button>
+                </div>
+                <div className="modal-body my-modal-body">
+                <label className="form-label"> <h6>Folder Name:</h6></label>
+                    <div className="input-group">
+                    <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3"
+                    onChange={(event) => {
+                        setNewFileName(event.target.value);
+                    }}/>
+                </div>
+                </div>
+                <div className="modal-footer my-modal-footer">
+                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={(e)=>{handleModalClose()}}>Close</button>
+                    <button type="button" className="btn btn-dark" data-bs-dismiss="modal" onClick={handleConfirmNewFolderClick} >Confirm</button>
                 </div>
             </div>
             </div>
@@ -392,6 +510,12 @@ function FileMenu({currentFile, setCurrentFile}) {
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div class="dropdown-menu dropdown-menu-sm" id="context-menu">
+          <a class="dropdown-item" onClick={(e) => {$('#newFile').modal('toggle');}}>New File</a>
+          <a class="dropdown-item" onClick={(e) => {$('#newFolder').modal('toggle');}}>New Folder</a>
+          <a class="dropdown-item">Rename</a>
         </div>
     </div>
     )
