@@ -410,4 +410,14 @@
   /* Help users use markselection to safely style text background */
   span.CodeMirror-selectedtext { background: none; }
 
+.modifiedFilesList {
+    max-height: 30vh;
+    overflow: scroll;
+    overflow-x: hidden;
+    font-size: 95%;
+}
+
+.commitFiles {
+    font-size: 95%
+}
   
