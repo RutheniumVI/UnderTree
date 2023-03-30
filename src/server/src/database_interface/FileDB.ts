@@ -121,7 +121,7 @@ async function deleteFile(project: ProjectData, filePath: string, userName: stri
 			$addToSet: {'deletedFiles': filePath}
 		}
 	);
-	console.log(result);
+
 	if(result.modifiedCount != 1){
 		throw "Failed deleting fileName";
 	}

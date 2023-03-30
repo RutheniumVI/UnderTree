@@ -72,6 +72,7 @@ function Editor({currentFile, setCurrentText}) {
         }
 
         binding = new CodemirrorBinding(ytext, editorc, awareness);
+        binding.on('cursorActivity', (editor)=>{setCurrentText(editorc.getValue())})
         // // binding = new QuillBinding(ytext, edtRef.getEditor(), awareness);
         // return () => {
         
@@ -111,7 +112,6 @@ function Editor({currentFile, setCurrentText}) {
     }
 
     function onEditorChanged(e){
-        setCurrentText(editorc.getValue());
         if(!modified) addUserToModified();
     }
 
