@@ -220,6 +220,7 @@ function FileMenu({currentFile, setCurrentFile}) {
             formData.append("fullDirPath", dirPath);
             formData.append("fileName", fileName);
             formData.append("image", selectedFileObject);
+            formData.append("userName", username);
             axios.post(process.env.REACT_APP_API_URL+"/file/uploadImage", formData, {
               withCredentials: true,
               headers: {'Content-Type': 'multipart/form-data'}
