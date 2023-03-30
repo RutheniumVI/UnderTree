@@ -76,6 +76,8 @@ function NewChat() {
         id: uuidv4(),
       };
 
+      setNewMessage("");
+
       await socket.emit("send_message", messageContent);
 
       await axios
@@ -93,7 +95,6 @@ function NewChat() {
           console.log(err);
         });
     }
-    setNewMessage("");
   };
 
   async function setUpChat(){
@@ -111,80 +112,82 @@ function NewChat() {
   }, [socket]);
 
   return (
-    <div className="chat">
-        {messages.map((messageData) => {
-          if (userName == messageData.username) {
-            return (
-              <div className="row" id="my-message" key={messageData.id}>
-                <div className="col">
-                  <p className="text-end">{messageData.username}</p>
-                  <div className="d-flex justify-content-end">
-                    <p className="text-end messageSent">{messageData.message}</p>
+      <div className="chat" style={{paddingBottom: '0'}}>
+        <div className="chatChild" style={{minHeight: '85%'}}>
+          {messages.map((messageData) => {
+            if (userName == messageData.username) {
+              return (
+                <div className="row" id="my-message" key={messageData.id}>
+                  <div className="col">
+                    <p className="text-end">{messageData.username}</p>
+                    <div className="d-flex justify-content-end">
+                      <p className="text-end messageSent">{messageData.message}</p>
+                    </div>
                   </div>
-                </div>
-                <div className="col imageCol">
-                  <figure className="figure">
-                    <img
-                      src={avatar}
-                      className="figure-img img-fluid rounded-circle profilePicture"
-                      alt="..."
-                    />
-                  </figure>
-                </div>
-              </div>
-            );
-          } else
-            return (
-              <div className="row" id="your-message" key={messageData.id}>
-                <div className="col imageCol">
-                  <figure className="figure">
+                  <div className="col imageCol">
+                    <figure className="figure">
                       <img
                         src={avatar}
                         className="figure-img img-fluid rounded-circle profilePicture"
                         alt="..."
                       />
-                  </figure>
-                </div>
-                <div className="col">
-                  <p>{messageData.username}</p>
-                  <div className="d-flex justify-content-start">
-                    <p className="text-end messageReceived">{messageData.message}</p>
+                    </figure>
                   </div>
                 </div>
-              </div>
-            );
-        })}
-        <div
-          className="footer"
-          style={{ paddingLeft: "5%", paddingRight: "5%" }}
-        >
-          <div className="input-group mb-3">
-            <input
-              className="form-control messageInput"
-              type="text"
-              placeholder="enter message"
-            //   onKeyDown={(e) => {
-            //     if(e.key === "Enter"){
-            //         console.log("hello");
-            //         sendMessage()
-            //     }
-            //   }}
-              onChange={(event) => {
-                setNewMessage(event.target.value);
-              }}
-              value={newMessage}
-            />
-            <button
-              type="button"
-              className="btn btn-dark tiny-btn"
-              id="send-button"
-              onClick={sendMessage}
-            >
-              Send
-            </button>
+              );
+            } else
+              return (
+                <div className="row" id="your-message" key={messageData.id}>
+                  <div className="col imageCol">
+                    <figure className="figure">
+                        <img
+                          src={messageData.avatar}
+                          className="figure-img img-fluid rounded-circle profilePicture"
+                          alt="..."
+                        />
+                    </figure>
+                  </div>
+                  <div className="col">
+                    <p>{messageData.username}</p>
+                    <div className="d-flex justify-content-start">
+                      <p className="text-end messageReceived">{messageData.message}</p>
+                    </div>
+                  </div>
+                </div>
+              );
+          })}
+          </div>
+          <div
+            className="footer"
+            style={{ paddingLeft: "5%", paddingRight: "5%", marginBottom: '0'}}
+          >
+            <div className="input-group mb-3">
+              <input
+                className="form-control messageInput"
+                type="text"
+                placeholder="enter message"
+                 onKeyDown={(e) => {
+                   if(e.key === "Enter"){
+                       console.log("hello");
+                       sendMessage()
+                   }
+                 }}
+                onChange={(event) => {
+                  setNewMessage(event.target.value);
+                }}
+                value={newMessage}
+              />
+              <button
+                type="button"
+                className="btn btn-dark tiny-btn"
+                id="send-button"
+                onClick={() => sendMessage()}
+              >
+                Send
+              </button>
+          </div>
         </div>
       </div>
-    </div>
   );
 }
 
