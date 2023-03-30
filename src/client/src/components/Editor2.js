@@ -61,7 +61,8 @@ function Editor({currentFile, setCurrentText}) {
         if(!editorc) {
             editorc = CodeMirror(edtRef, {
                 mode: 'stex',
-                lineNumbers: true
+                lineNumbers: true,
+                lineWrapping: true
             })
             editorc.setSize("100%", "calc(100vh - 73px)");
         }
@@ -84,6 +85,7 @@ function Editor({currentFile, setCurrentText}) {
     // })
 
     function addUserToModified(){
+
         console.log("Adding user to modified");    
 
         const fileDetails = documentID.split('/');
@@ -104,17 +106,10 @@ function Editor({currentFile, setCurrentText}) {
         setModified(true);
     }
 
-    // function onEditorChanged(content, delta, source, editor){
-    //     setValue(content);
-    //     quillRef.formatLine(0, quillRef.getLength(), { 'code-block': true });
-    //     setCurrentText(editor.getText(content));
-    //     console.log("this happens this many times");
-
-    //     if(!modified && source === "user"){
-    //         addUserToModified();
-    //         setModified(true);
-    //     }
-    // }
+    function onEditorChanged(e){
+        setCurrentText(editorc.getValue());
+        if(!modified) addUserToModified();
+    }
 
     return ( 
         <div id='container'>
@@ -127,7 +122,7 @@ function Editor({currentFile, setCurrentText}) {
                 value={value} 
                 onChange={onEditorChanged}
                  /> */}
-            <div id='editor' ref={(el) => { edtRef = el; }}>
+            <div id='editor' ref={(el) => { edtRef = el; }} onKeyUp={onEditorChanged}>
 
             </div>
         </div>
