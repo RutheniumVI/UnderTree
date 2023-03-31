@@ -177,7 +177,7 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
 		
 		if(currFile.fileType == "tex" && commitPDF){
 			console.log("\n\n\n");
-			const pdfPath = project.owner+"/"+project.projectName+"/"+currFile.filePath.split(".")[0]+".pdf";
+			const pdfPath = owner+"/"+repo+"/"+currFile.filePath.split(".")[0]+".pdf";
 			console.log(pdfPath);
 			if(FileUtil.fileExists(pdfPath)){
 				console.log("exists");
@@ -203,7 +203,10 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
 				})
 			}
 		}
+
+		FileDB.resetFileCollaborator(owner, repo, owner+"/"+repo+"/"+currFile.filePath);
 	}
+
 
 	// Get the latest tree in GitHub
 	await axios.get(latestTreeURL, { 
