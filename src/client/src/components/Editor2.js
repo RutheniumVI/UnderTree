@@ -46,6 +46,8 @@ function Editor({currentFile, setCurrentText}) {
 
     // Connect to socket when editor page is opened
     useEffect(() => {
+        console.log("editor open");
+        console.log(documentID);
         quillRef = edtRef;
         if(provider){
             ydoc.destroy();

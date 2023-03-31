@@ -150,7 +150,7 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
   	for(let i = 0; i < files.length; i++) {
 		let currFile = files[i];
 
-		let encoding = files[i]["fileType"] === "tex" ? "utf-8" : "base64";
+		let encoding = (files[i]["fileType"] === "tex" || files[i]["fileType"] === "bib") ? "utf-8" : "base64";
 
 		// Post the new file to GitHub blobs
 		await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/blobs`, {
