@@ -11,6 +11,7 @@ import { ProjectData } from '../data/ProjectData';
 import { ProjectDB } from '../database_interface/ProjectDB';
 import { AuthDB } from '../database_interface/AuthDB';
 import { FileDB } from '../database_interface/FileDB';
+import { FileUtil } from '../utils/FileUtil';
 
 dotenv.config();
 
@@ -102,8 +103,12 @@ async function getGitLogForRepo(req: Request, res: Response): Promise<void> {
 }
 
 async function commitFiles(req: Request, res: Response): Promise<void> {
+	console.log("\n\ncommiting\n\n");
+	console.log(req.body);
 	let project: ProjectData = req.body as ProjectData;
 	let files = req.body.files;
+	const message = req.body.commitMessage;
+	const commitPDF = req.body.commitPDF;
 	let fileBlobs = [];
 
 	let accessToken = res.locals.accessToken;
@@ -118,7 +123,7 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
 	await axios.get(`https://api.github.com/repos/${owner}/${repo}/git/ref/heads/main`, {
 		headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
 		}).then((res) => {
-		console.log("Main Branch Data: ", res.data);
+		//console.log("Main Branch Data: ", res.data);
 		latestCommitSHA = res.data["object"]["sha"];
 		latestCommitURL = res.data["object"]["url"];
 		}).catch((error) => {
@@ -133,7 +138,7 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
 	await axios.get(latestCommitURL, {
 		headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
 	}).then((res) => {
-		console.log("Commit Data: ", res.data);
+		//console.log("Commit Data: ", res.data);
 		// latestCommitSHA = res.data["sha"];
 		latestTreeSHA = res.data["tree"]["sha"];
 		latestTreeURL = res.data["tree"]["url"];
@@ -143,32 +148,65 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
 	});
 
   	for(let i = 0; i < files.length; i++) {
-			let currFile = files[i];
+		let currFile = files[i];
 
-			let encoding = files[i]["fileType"] === "tex" ? "utf-8" : "base64";
+		let encoding = files[i]["fileType"] === "tex" ? "utf-8" : "base64";
 
-			// Post the new file to GitHub blobs
-			await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/blobs`, {
-			"content": currFile.content,
-			"encoding": encoding
-			}, { 
-			headers: { 
-				Authorization: `Bearer ${accessToken}`, 
-				Accept: "application/vnd.github+json" 
-			}
-			}).then((res) => {
-			console.log("Blob Data: ", res.data);
-			fileBlobs.push({ 
-				"path": currFile.filepath,
-				"mode": "100644",
-				"type": "blob", 
-				"sha": res.data["sha"]
-			})
-			}).catch((error) => {
+		// Post the new file to GitHub blobs
+		await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/blobs`, {
+		"content": currFile.content,
+		"encoding": encoding
+		}, { 
+		headers: { 
+			Authorization: `Bearer ${accessToken}`, 
+			Accept: "application/vnd.github+json" 
+		}
+		}).then((res) => {
+		//console.log("Blob Data: ", res.data);
+		fileBlobs.push({ 
+			"path": currFile.filePath,
+			"mode": "100644",
+			"type": "blob", 
+			"sha": res.data["sha"]
+		})
+		}).catch((error) => {
 			console.error(error);
-			res.status(500).json("Error posting blob to GitHub");
+			res.status(500).json("Error posting blob to GitHub")
+			return;
 		});
-  }
+		
+		if(currFile.fileType == "tex" && commitPDF){
+			console.log("\n\n\n");
+			const pdfPath = owner+"/"+repo+"/"+currFile.filePath.split(".")[0]+".pdf";
+			console.log(pdfPath);
+			if(FileUtil.fileExists(pdfPath)){
+				console.log("exists");
+				await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/blobs`, {
+				"content": FileUtil.getFileData(pdfPath).toString('base64'),
+				"encoding": "base64"
+				}, { 
+					headers: { 
+						Authorization: `Bearer ${accessToken}`, 
+						Accept: "application/vnd.github+json" 
+					}
+				}).then((res) => {
+					fileBlobs.push({ 
+						"path": currFile.filePath.split(".")[0]+".pdf",
+						"mode": "100644",
+						"type": "blob", 
+						"sha": res.data["sha"]
+					})
+				}).catch((error) => {
+					console.error(error);
+					res.status(500).json("Error posting blob to GitHub");
+					return;
+				})
+			}
+		}
+
+		FileDB.resetFileCollaborator(owner, repo, owner+"/"+repo+"/"+currFile.filePath);
+	}
+
 
 	// Get the latest tree in GitHub
 	await axios.get(latestTreeURL, { 
@@ -177,7 +215,7 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
 			Accept: "application/vnd.github+json" 
 		}
 		}).then((res) => {
-		console.log("Old Tree Data: ", res.data);
+		//console.log("Old Tree Data: ", res.data);
 		// latestTreeSHA = res.data["sha"];
 		}).catch((error) => {
 		console.error(error);
@@ -191,21 +229,13 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
 	await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/trees`, {
 		"base_tree": latestTreeSHA,
 		"tree": fileBlobs
-		// "tree": [
-		//   {
-		//     "path": fileTest.filepath,
-		//     "mode": "100644",
-		//     "type": "blob",
-		//     "sha": userBlobSHA
-		//   }
-		// ]
 	}, {
 		headers: { 
 		Authorization: `Bearer ${accessToken}`, 
 		Accept: "application/vnd.github+json" 
 		} 
 	}).then((res) => {
-		console.log("New Tree Data: ", res.data);
+		//console.log("New Tree Data: ", res.data);
 		userTreeSHA = res.data["sha"];
 		userTreeURL = res.data["url"];
 	}).catch((error) => {
@@ -222,9 +252,9 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
 	let commitParent = latestCommitSHA;
 
 
-	const filePath = project.owner + "/" + project.projectName + "/" + files[0].filepath;
+	const filePath = project.owner + "/" + project.projectName + "/" + files[0].filePath;
 	const contributors = await FileDB.getContributor(project, filePath);
-	let comMessage = "Commit created by UnderTree!\n\n\n";
+	let comMessage = message + "\n\n\n";
 	contributors.forEach((e) => {
 		if (e=="fahmed8383"){
 			comMessage += "Co-authored-by: Name <" + "fahmed4030@gmail.com" + ">\n"
@@ -253,7 +283,7 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
 		Accept: "application/vnd.github+json"
 		}
 	}).then((res) => {
-		console.log("New Commit Data: ", res.data);
+		//console.log("New Commit Data: ", res.data);
 		userCommitSHA = res.data["sha"];
 		userCommitURL = res.data["url"];
 	}).catch((error) => {
@@ -276,6 +306,8 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
 		console.error(error);
 		res.status(500).json("Error updating main branch with new commit");
 	});
+
+	res.status(200).json("success");
 
 }
 
