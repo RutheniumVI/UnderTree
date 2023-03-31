@@ -33,7 +33,9 @@ function Project() {
         <div className='mainContainer'>
           {currentFile.fileType === "tex" || currentFile.fileType === "bib" ? <Editor className="editor" currentFile={currentFile} setCurrentText={setCurrentText}/> : <DisplayImage file={currentFile}/>}
         </div>
+        <div>
           {currentFile.fileType === "tex" && <Compiler className="compiler" documentID={currentFile.filePath} latexText={currentText}/>}
+        </div>
       </Split>
     </div>
   );
