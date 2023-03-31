@@ -27,8 +27,14 @@ function Project() {
           className="split"
       >
         <div className='sidebar'>
-          <FileMenu currentFile={currentFile} setCurrentFile={setCurrentFile}/>
-          <Chat/>
+          <Split
+            sizes={[50,50]} 
+            direction="vertical" 
+            style={{ height: `calc(100vh - 5rem)` }}
+          >
+            <FileMenu currentFile={currentFile} setCurrentFile={setCurrentFile}/>
+            <Chat/>
+          </Split>
         </div>
         <div className='mainContainer'>
           {currentFile.fileType === "tex" || currentFile.fileType === "bib" ? <Editor className="editor" currentFile={currentFile} setCurrentText={setCurrentText}/> : <DisplayImage file={currentFile}/>}
