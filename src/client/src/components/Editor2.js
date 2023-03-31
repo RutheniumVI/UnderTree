@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 
 import { useEffect } from 'react';
 import { useState } from 'react';
@@ -29,7 +29,7 @@ function Editor({currentFile, setCurrentText}) {
     const { owner, projectName } = useParams();
     const [value, setValue] = useState('');
     const [modified, setModified] = useState(false);
-    const documentID = currentFile.filePath;
+    let documentID = currentFile.filePath;
 
     const [commitInfo, setCommitInfo] = useState({projectName: projectName, owner: owner, commitMessage: "", commitPDF: false, files: []});
     const [commitError, setCommitError] = useState("");
@@ -38,6 +38,11 @@ function Editor({currentFile, setCurrentText}) {
 
     let quillRef = null;
     let edtRef = null;
+
+    useLayoutEffect(() => {
+        editorc = null;
+    }, [])
+
 
     // Connect to socket when editor page is opened
     useEffect(() => {
@@ -156,6 +161,7 @@ function Editor({currentFile, setCurrentText}) {
                 withCredentials: true,
             }).then((res) => {
                 document.getElementById('commitModalClose').click();
+                setModified(false);
             }).catch((error) => {
                 console.error(`Error making commit`);
             });

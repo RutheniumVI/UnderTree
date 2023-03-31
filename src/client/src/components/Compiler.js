@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import axios from 'axios';
 import { useState, useLayoutEffect } from 'react';
 import { useParams } from 'react-router-dom';
@@ -12,9 +12,13 @@ function Compiler({latexText, documentID}){
 
     const [pdf, setPdf] = useState("");
 
-    useLayoutEffect(() => {
-        getPDF()
-    }, []);
+    // useLayoutEffect(() => {
+    //     getPDF()
+    // }, []);
+
+    useEffect(() => {
+        getPDF();
+    }, [documentID])
 
     function getPDF(){
         fetch(process.env.REACT_APP_API_URL+"/file/getPDF?file=" + encodeURIComponent(documentID) + "&owner="+owner+"&projectName="+projectName, {
