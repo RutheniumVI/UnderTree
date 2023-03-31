@@ -80,7 +80,26 @@ async function getGitHubUser({ code }: { code: string }): Promise<GitHubUser> {
       .get("https://api.github.com/user", {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
-      .then((res) => {
+      .then(async (res) => {
+        if (res.data.email == null) {
+          console.log("No email found for user, getting email from GitHub Emails API");
+          let userEmail = await axios.get("https://api.github.com/user/emails", {
+            headers: { Authorization: `Bearer ${accessToken}` },
+            }).then((res) => {
+              console.log("Emails: ", res.data[0].email);
+              return res.data[0].email;
+            })
+            .catch((error) => {
+              console.error(`Error getting user email from GitHub`);
+              return null;
+            });
+
+          if (userEmail == null) {
+            console.error("No email found for user");
+            return null;
+          }
+          res.data.email = userEmail;
+        }
         return { 
           login: res.data.login, 
           name: res.data.name, 
