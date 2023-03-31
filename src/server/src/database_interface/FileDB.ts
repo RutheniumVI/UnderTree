@@ -80,6 +80,29 @@ async function editFileCollaborator(owner: string, projectName: string, filePath
 
 }
 
+async function resetFileCollaborator(owner: string, projectName: string, filePath: string){
+	const collection = DBClient.getCollection(collectionName);
+
+	const result = await collection.updateOne(
+		{
+			"projectName": projectName,
+			"owner": owner,
+			"files.filePath": filePath
+		},
+		{
+			$set: {'files.$.contributors': []}
+		}
+	);
+	
+
+	if(result.modifiedCount != 1 && result.matchedCount == 0){
+		throw "Failed updating collaborators";
+	}
+
+	return "Succesfully update contributors";
+
+}
+
 async function renameFile(project: ProjectData, file: File, newFileName: string, newFilePath: string, userName: string): Promise<string> {
 	const collection = DBClient.getCollection(collectionName);
 
@@ -172,6 +195,7 @@ const FileDB = {
 	addProjectFile,
     deleteProjectFiles,
 	editFileCollaborator,
+	resetFileCollaborator,
 	renameFile,
 	getFiles,
 	deleteFile,

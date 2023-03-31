@@ -5,7 +5,6 @@ import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Project from './pages/Project';
 import Projects from './pages/Projects';
-import Dev from './pages/Dev';
 
 function App() {
   return (
@@ -16,7 +15,6 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="projects" element={<Projects />} />
           <Route path='project/:owner/:projectName' element={<Project />}/>
-          <Route path="/dev" element={<Dev />} />
         </Routes>  
       </BrowserRouter>
     </div>
