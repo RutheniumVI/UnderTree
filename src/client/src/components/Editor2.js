@@ -68,7 +68,7 @@ function Editor({currentFile, setCurrentText}) {
                 lineNumbers: true,
                 lineWrapping: true
             })
-            editorc.setSize("100%", "calc(100vh - 83px)");
+            editorc.setSize("100%", "calc(100vh - 135px)");
         }
 
         binding = new CodemirrorBinding(ytext, editorc, awareness);
