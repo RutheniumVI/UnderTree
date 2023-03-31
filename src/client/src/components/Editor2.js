@@ -29,7 +29,7 @@ function Editor({currentFile, setCurrentText}) {
     const { owner, projectName } = useParams();
     const [value, setValue] = useState('');
     const [modified, setModified] = useState(false);
-    const documentID = currentFile.filePath;
+    let documentID = currentFile.filePath;
 
     const [commitInfo, setCommitInfo] = useState({projectName: projectName, owner: owner, commitMessage: "", commitPDF: false, files: []});
     const [commitError, setCommitError] = useState("");
@@ -41,6 +41,8 @@ function Editor({currentFile, setCurrentText}) {
 
     // Connect to socket when editor page is opened
     useEffect(() => {
+        console.log("editor open");
+        console.log(documentID);
         quillRef = edtRef;
         if(provider){
             ydoc.destroy();

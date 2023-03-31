@@ -63,7 +63,7 @@ async function getFilesFromPath(path: string, project: ProjectData, accessToken:
         continue;
       }
       const ext = filename.split('.').pop();
-      if (ext === "tex" || ext === "jpg" || ext === "jpeg" || ext === "png") {
+      if (ext === "tex" || ext === "bib" || ext === "jpg" || ext === "jpeg" || ext === "png") {
         const currFile: GitHubFile = { 
           name: res.data[i]["name"],
           path: res.data[i]["path"], 
@@ -71,7 +71,7 @@ async function getFilesFromPath(path: string, project: ProjectData, accessToken:
           url: res.data[i]["url"] 
         };
 
-        if(ext === "tex"){
+        if(ext === "tex" || ext === "bib"){
           texFiles.push(currFile);
         } else {
           imageFiles.push(currFile);

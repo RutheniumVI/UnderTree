@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import { useState, useLayoutEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import '../Styles/Compiler.css'
@@ -12,9 +12,9 @@ function Compiler({latexText, documentID}){
 
     const [pdf, setPdf] = useState("");
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         getPDF()
-    }, []);
+    }, [documentID]);
 
     function getPDF(){
         fetch(process.env.REACT_APP_API_URL+"/file/getPDF?file=" + encodeURIComponent(documentID) + "&owner="+owner+"&projectName="+projectName, {
@@ -28,6 +28,7 @@ function Compiler({latexText, documentID}){
             } else {
                 const blob = await res.blob()
                 setPdf(URL.createObjectURL(blob))
+                setErr("");
             }
         })
         .catch((err) => {

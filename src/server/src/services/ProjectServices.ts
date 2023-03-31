@@ -107,7 +107,8 @@ async function importProjects(req, res): Promise<void>  {
 				const fileContent = await GitHubUtil.getContentFromBlob(accessToken, project, file);
 				console.log(fileContent.content);
 				const filePath = project.owner+"/"+project.projectName+"/"+file.path;
-				const fileInfo: File = {fileName: file.name, fileType: "tex", filePath: filePath, contributors: project.collaborators, documentID: file.path};
+				const ext = file.path.split(".")[1] === "tex" ? "tex" : "bib";
+				const fileInfo: File = {fileName: file.name, fileType: ext, filePath: filePath, contributors: project.collaborators, documentID: file.path};
 				await PersistenceUtil.writeDocumentData(filePath, Buffer.from(fileContent.content, fileContent.encoding as BufferEncoding).toString());
 				FileDB.addProjectFile(project, fileInfo);
 			})

@@ -1,6 +1,8 @@
 import { execSync } from 'child_process';
 import fs from 'fs';
 
+import { PersistenceUtil } from "../utils/PersistenceUtil";
+
 const dataDirectory = "../file_system";
 
 function setUpFileSystem(): void{
@@ -52,9 +54,33 @@ function deleteProjectDirectory(projectName: string, owner: string): void {
 function createPDFOutput(file: string, dir: string, content: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
         try{
+            const containsBib = content.match(/\\bibliography{.+}/g);
+            if(containsBib !== null){
+                const bibFile = containsBib[0].substring(14,containsBib[0].length-1);
+
+                const bibRelPath = bibFile.split("/");
+                let i = 0;
+                for(i = 0; i < bibRelPath.length; i++){
+                    if(bibRelPath[i] === ".."){
+                        bibRelPath.shift();
+                    } else {
+                        break;
+                    }
+                }
+
+                const filePath = file.split("/");
+                const bibFilePath = dir + filePath.slice(0, filePath.length-i-1).concat(bibRelPath).join("/")+".bib";
+
+                fs.writeFileSync(dataDirectory + "/" + bibFilePath, await PersistenceUtil.getDocumentData(bibFilePath));
+            }
             fs.writeFileSync(dataDirectory + "/" + dir + file, content);
+            const latexCommand = "&& pdflatex " + file;
             
-            execSync("cd " + dataDirectory + "/" + dir + "&& pdflatex "+ file);
+            if(containsBib !== null){
+                execSync("cd " + dataDirectory + "/" + dir + latexCommand + "&& bibtex " + file.split(".")[0] + latexCommand + latexCommand);
+            } else {
+                execSync("cd " + dataDirectory + "/" + dir + latexCommand);
+            }
             resolve("Success");
         } catch (err) {
             reject(err.stdout.toString());

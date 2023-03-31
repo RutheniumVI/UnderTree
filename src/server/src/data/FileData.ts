@@ -7,7 +7,7 @@ interface FileData {
 
 interface File {
     fileName: string,
-    fileType: "tex"|"image",
+    fileType: "tex"|"image"|"bib",
     filePath: string,
     contributors: string[],
     documentID?: string,
