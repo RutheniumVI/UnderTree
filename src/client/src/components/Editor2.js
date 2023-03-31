@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 
 import { useEffect } from 'react';
 import { useState } from 'react';
@@ -38,6 +38,11 @@ function Editor({currentFile, setCurrentText}) {
 
     let quillRef = null;
     let edtRef = null;
+
+    useLayoutEffect(() => {
+        editorc = null;
+    }, [])
+
 
     // Connect to socket when editor page is opened
     useEffect(() => {
@@ -158,6 +163,7 @@ function Editor({currentFile, setCurrentText}) {
                 withCredentials: true,
             }).then((res) => {
                 document.getElementById('commitModalClose').click();
+                setModified(false);
             }).catch((error) => {
                 console.error(`Error making commit`);
             });
