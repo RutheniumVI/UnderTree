@@ -3,7 +3,6 @@ import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 async function signIn() {  
-  // const urlParams = new URLSearchParams(window.location.search);
   let username = localStorage.getItem("username");
 
   if (username === null) {
@@ -13,7 +12,6 @@ async function signIn() {
         console.log("Username: ", res.data);
         username = res.data
         localStorage.setItem('username', username);
-        // window.location.reload();
       }).catch((error) => {
         console.error(`Error getting user from GitHub`);
       });
@@ -27,7 +25,6 @@ function Login() {
     signIn();
   }, [location]);
 
-  const client_id = "79279cb46a338e30112e";
   return (
     <div> 
       <h2>Login</h2>
