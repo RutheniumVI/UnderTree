@@ -114,12 +114,12 @@ function FileMenu({currentFile, setCurrentFile}) {
                     return renderFileMenu(folder);
                 })}
                 {tree.files.map((file) => [
-                    <MenuItem key={file.filePath} rootStyles={{backgroundColor: "#DEDEDE"}}> 
+                    <MenuItem key={file.filePath} rootStyles={{backgroundColor: "#DEDEDE"}} onClick={(e) => {e.stopPropagation(); setCurrentFile(file)}}> 
                         <div className="form-check form-check-inline">
                             <input className="form-check-input" type="checkbox" id="inlineCheckbox1" onChange={() => {file["selected"] = !file["selected"]}} value="option1"/>
                             <label className="form-check-label fileName" 
                                 style={currentFile.filePath === file.filePath ? {color: 'red'} : {color: "blue"}} 
-                                onClick={(e) => {e.stopPropagation(); setCurrentFile(file)}}>{file.fileName}
+                                >{file.fileName}
                             </label>
                         </div>
                         <div className='float-end pr'>
@@ -131,66 +131,6 @@ function FileMenu({currentFile, setCurrentFile}) {
             </SubMenu>
         );
     }
-    
-    function selectFile(file){
-        // if(selectedFiles.includes(file)){
-        //     file["selected"] = false;
-        //     setSelectedFiles(selectedFiles.filter((f) => f !== file));
-        // } else {
-        //     file["selected"] = true;
-        //     setSelectedFiles([...selectedFiles, file]);
-        // }
-    }
-
-    async function commitFiles(){
-        console.log("Files in the application: ", files);
-        let selectedFiles = files.filter((file) => file.selected);
-        if (selectedFiles.length == 0){
-            console.log("No files were selected");
-            return;
-        }
-        let filesToCommit = []
-        await axios.get(process.env.REACT_APP_API_URL+"/file/getContentFromFiles", {
-            params: { 
-                files: selectedFiles,
-                owner: owner,
-                projectName: projectName
-            },
-            withCredentials: true
-        }).then((res) => {
-            console.log(res.data);
-            filesToCommit = res.data;
-        }).catch((err) => {
-            console.log(err);
-        });
-
-        // for(let i = 0; i < files.length; i++){
-        //     if(files[i].selected){
-        //         // let file = { filepath: files[i]["filePath"], content: "Need to convert file to string" };
-        //         filesToCommit.push(files[i]);
-        //     }
-        // }
-        console.log("committing files", owner, projectName);
-        console.log("files to commit: ", filesToCommit);
-        // for(let i = 0; i < selectedFiles.length; i++){
-        //     const file = selectedFiles[i];
-
-
-        await axios.post(process.env.REACT_APP_API_URL+"/github/commitFiles", {
-            projectName: projectName,
-            owner: owner,
-            files: filesToCommit,
-          }, {
-            withCredentials: true,
-          }).then((res) => {
-            console.log(res.data)
-          }).catch((error) => {
-            console.error(`Error making commit`);
-          });
-
-    }
-
-    // tree.push(  f1.push(f2)
 
     function handleClick(){
         $("#context-menu").removeClass("show").hide();
@@ -221,6 +161,7 @@ function FileMenu({currentFile, setCurrentFile}) {
             formData.append("fullDirPath", dirPath);
             formData.append("fileName", fileName);
             formData.append("image", selectedFileObject);
+            formData.append("userName", username);
             axios.post(process.env.REACT_APP_API_URL+"/file/uploadImage", formData, {
               withCredentials: true,
               headers: {'Content-Type': 'multipart/form-data'}
@@ -367,7 +308,6 @@ function FileMenu({currentFile, setCurrentFile}) {
                 <i className="bi bi-folder-plus fileButton" data-bs-toggle="modal" data-bs-target="#newFolder" onClick={(e)=>{e.stopPropagation()}}></i>
                 <i className="bi bi-file-earmark-plus fileButton" data-bs-toggle="modal" data-bs-target="#newFile" onClick={(e)=>{e.stopPropagation()}}></i>
                 <i className="bi bi-cloud-upload fileButton" data-bs-toggle="modal" data-bs-target="#fileUpload" onClick={(e)=>{e.stopPropagation()}}></i>
-                <i className="bi bi-github fileButton" onClick={commitFiles}></i>
             </div>
             <ProSidebarProvider>
             <Sidebar width='100%' backgroundColor='#DEDEDE' breakPoint='sm'>
@@ -377,12 +317,12 @@ function FileMenu({currentFile, setCurrentFile}) {
                     })}
                    
                     {fileTree.files.map((file) => {
-                        return <MenuItem key={file.filePath} onClick={handleClick} rootStyles={{backgroundColor: '#DEDEDE'}}> 
+                        return <MenuItem key={file.filePath} onClick={(e) => {handleClick; setCurrentFile(file)}} rootStyles={{backgroundColor: '#DEDEDE'}}> 
                             <div className="form-check form-check-inline">
                                 <input className="form-check-input" type="checkbox" id="inlineCheckbox1" onChange={() => {file["selected"] = !file["selected"]}} value="option1"/>
                                 <label className="form-check-label fileName" 
                                     style={currentFile.filePath === file.filePath ? {color: 'red'} : {color: "blue"}} 
-                                    onClick={(e) => {setCurrentFile(file)}}>{file.fileName}
+                                    >{file.fileName}
                                 </label>
                             </div>
                             <div className='float-end pr'>

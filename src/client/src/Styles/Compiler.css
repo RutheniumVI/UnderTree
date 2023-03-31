@@ -9,7 +9,7 @@
 
 .pdfRenderer {
     width: 100% !important;
-    height: 90vh !important;
+    height: calc(100vh - 135px);
 }
 
 .compilerInfo {
@@ -19,7 +19,7 @@
 
 .errMessage {
     overflow-y: scroll;
-    height: 90vh;
+    height: calc(100vh - 135px);
     margin-top: 10px;
     color: red;
 }

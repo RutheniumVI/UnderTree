@@ -292,3 +292,5 @@ mongodb-data/
 node_modules/
 dist/
 file_system/
+
+deploy-files
