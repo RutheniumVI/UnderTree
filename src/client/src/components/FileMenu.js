@@ -114,12 +114,12 @@ function FileMenu({currentFile, setCurrentFile}) {
                     return renderFileMenu(folder);
                 })}
                 {tree.files.map((file) => [
-                    <MenuItem key={file.filePath} rootStyles={{backgroundColor: "#DEDEDE"}}> 
+                    <MenuItem key={file.filePath} rootStyles={{backgroundColor: "#DEDEDE"}} onClick={(e) => {e.stopPropagation(); setCurrentFile(file)}}> 
                         <div className="form-check form-check-inline">
                             <input className="form-check-input" type="checkbox" id="inlineCheckbox1" onChange={() => {file["selected"] = !file["selected"]}} value="option1"/>
                             <label className="form-check-label fileName" 
                                 style={currentFile.filePath === file.filePath ? {color: 'red'} : {color: "blue"}} 
-                                onClick={(e) => {e.stopPropagation(); setCurrentFile(file)}}>{file.fileName}
+                                >{file.fileName}
                             </label>
                         </div>
                         <div className='float-end pr'>
@@ -377,12 +377,12 @@ function FileMenu({currentFile, setCurrentFile}) {
                     })}
                    
                     {fileTree.files.map((file) => {
-                        return <MenuItem key={file.filePath} onClick={handleClick} rootStyles={{backgroundColor: '#DEDEDE'}}> 
+                        return <MenuItem key={file.filePath} onClick={handleClick} rootStyles={{backgroundColor: '#DEDEDE'}} onClick={(e) => {setCurrentFile(file)}}> 
                             <div className="form-check form-check-inline">
                                 <input className="form-check-input" type="checkbox" id="inlineCheckbox1" onChange={() => {file["selected"] = !file["selected"]}} value="option1"/>
                                 <label className="form-check-label fileName" 
                                     style={currentFile.filePath === file.filePath ? {color: 'red'} : {color: "blue"}} 
-                                    onClick={(e) => {setCurrentFile(file)}}>{file.fileName}
+                                    >{file.fileName}
                                 </label>
                             </div>
                             <div className='float-end pr'>

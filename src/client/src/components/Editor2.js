@@ -68,7 +68,7 @@ function Editor({currentFile, setCurrentText}) {
                 lineNumbers: true,
                 lineWrapping: true
             })
-            editorc.setSize("100%", "calc(100vh - 73px)");
+            editorc.setSize("100%", "calc(100vh - 83px)");
         }
 
         binding = new CodemirrorBinding(ytext, editorc, awareness);
@@ -164,7 +164,7 @@ function Editor({currentFile, setCurrentText}) {
 
     return ( 
         <div id='container'>
-            <button className="btn btn-dark" onClick={openCommitModal} data-bs-toggle="modal" data-bs-target="#commitModal">Commit Files</button>
+            <button className="btn btn-dark float-end me-2" onClick={openCommitModal} data-bs-toggle="modal" data-bs-target="#commitModal">Commit Files</button>
             {/* <ReactQuill 
                 ref={(el) => { edtRef = el; }}
                 theme="bubble"
