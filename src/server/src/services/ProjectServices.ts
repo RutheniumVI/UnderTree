@@ -99,7 +99,7 @@ async function importProjects(req, res): Promise<void>  {
 				const fileContent = await GitHubUtil.getContentFromBlob(accessToken, project, file);
 				const filePath = project.owner+"/"+project.projectName+"/"+file.path;
 				FileUtil.saveFile(filePath, Buffer.from(fileContent.content, fileContent.encoding as BufferEncoding));
-				const fileInfo: File = {fileName: file.name, fileType: "image", filePath: filePath, contributors: [project.owner, ...project.collaborators]}
+				const fileInfo: File = {fileName: file.name, fileType: "image", filePath: filePath, contributors: []}
 				FileDB.addProjectFile(project, fileInfo);
 			})
 
@@ -107,7 +107,7 @@ async function importProjects(req, res): Promise<void>  {
 				const fileContent = await GitHubUtil.getContentFromBlob(accessToken, project, file);
 				console.log(fileContent.content);
 				const filePath = project.owner+"/"+project.projectName+"/"+file.path;
-				const fileInfo: File = {fileName: file.name, fileType: "tex", filePath: filePath, contributors: project.collaborators, documentID: file.path};
+				const fileInfo: File = {fileName: file.name, fileType: "tex", filePath: filePath, contributors: [], documentID: file.path};
 				await PersistenceUtil.writeDocumentData(filePath, Buffer.from(fileContent.content, fileContent.encoding as BufferEncoding).toString());
 				FileDB.addProjectFile(project, fileInfo);
 			})
