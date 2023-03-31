@@ -263,10 +263,11 @@ async function getContentFromFiles(req: Request, res: Response): Promise<void> {
     for(let i = 0; i < files.length; i++){
         let currPath;
         let currContent;
-        if (files[i]["fileType"] == "tex"){
+
+        if (files[i]["fileType"] === "tex" || files[i]["fileType"] === "bib"){
             currPath = files[i]["filePath"].split("/").slice(2).join("/");
             currContent = await PersistenceUtil.getDocumentData(files[i]["filePath"]);
-            newFiles.push({ filePath: currPath, content: currContent, fileType: "tex" });
+            newFiles.push({ filePath: currPath, content: currContent, fileType: files[i]["fileType"]});
             continue;
         } else {
             currPath = files[i]["filePath"].split("/").slice(2).join("/");
