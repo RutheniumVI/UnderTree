@@ -46,12 +46,12 @@ function Editor({socket, currentFile, setCurrentText}) {
         editorc = null;
     }, [])
 
-    useEffect(() => {
-        socket.emit("join_room", documentID);
-        socket.on("clear_modified", (data) => {
-            modified = false;
-        });
-    }, [socket]);
+    // useEffect(() => {
+    //     socket.emit("join_room", documentID);
+    //     socket.on("clear_modified", (data) => {
+    //         modified = false;
+    //     });
+    // }, [socket]);
 
 
     // Connect to socket when editor page is opened
@@ -186,7 +186,7 @@ function Editor({socket, currentFile, setCurrentText}) {
                 console.error(`Error making commit`);
             });
 
-            await socket.emit("clear_modified", {room: documentID});
+            // await socket.emit("clear_modified", {room: documentID});
         }
     }
 
