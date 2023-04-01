@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import * as Y from "yjs";
 import { WebsocketProvider } from 'y-websocket'
+import io from "socket.io-client";
 import { QuillBinding } from 'y-quill'
 
 import randomColor from 'randomcolor';
@@ -23,12 +24,13 @@ let ydoc = null;
 let provider = null;
 let binding = null;
 let editorc = null;
+let modified = false;
 
-function Editor({currentFile, setCurrentText}) {
+function Editor({socket, currentFile, setCurrentText}) {
     const username = localStorage.getItem("username");
     const { owner, projectName } = useParams();
     const [value, setValue] = useState('');
-    const [modified, setModified] = useState(false);
+    // const [modified, setModified] = useState(false);
     let documentID = currentFile.filePath;
 
     const [commitInfo, setCommitInfo] = useState({projectName: projectName, owner: owner, commitMessage: "", commitPDF: false, files: []});
@@ -42,6 +44,13 @@ function Editor({currentFile, setCurrentText}) {
     useLayoutEffect(() => {
         editorc = null;
     }, [])
+
+    useEffect(() => {
+        socket.emit("join_room", documentID);
+        socket.on("clear_modified", (data) => {
+            modified = false;
+        });
+    }, [socket]);
 
 
     // Connect to socket when editor page is opened
@@ -76,6 +85,11 @@ function Editor({currentFile, setCurrentText}) {
                 lineWrapping: true
             })
             editorc.setSize("100%", "calc(100vh - 135px)");
+            editorc.on("change", (instance, changeObject)=>{
+                if(changeObject.origin === "+input" || changeObject.origin === "+delete"){
+                    onEditorChanged();
+                }
+            })
         }
 
         binding = new CodemirrorBinding(ytext, editorc, awareness);
@@ -115,16 +129,19 @@ function Editor({currentFile, setCurrentText}) {
           console.error(`Error Adding user to modified`);
         });
 
-        setModified(true);
+        modified = true;
     }
 
-    function onEditorChanged(e){
-        if(!modified) addUserToModified();
+    function onEditorChanged(setMod){
+        if(!modified) {
+            addUserToModified(); 
+        }
+        
     }
 
     function openCommitModal(){
         setCommitError("");
-        setCommitInfo({projectName: projectName, owner: owner, commitMessage: "", commitPDF: false});
+        setCommitInfo({projectName: projectName, owner: owner, username:  username, commitMessage: "", commitPDF: false});
         axios.get(process.env.REACT_APP_API_URL+"/file/getFiles?owner="+owner+"&projectName="+projectName, {withCredentials: true})
         .then((res) => {
             console.log(res.data);
@@ -163,10 +180,12 @@ function Editor({currentFile, setCurrentText}) {
                 withCredentials: true,
             }).then((res) => {
                 document.getElementById('commitModalClose').click();
-                setModified(false);
+                modified = false;
             }).catch((error) => {
                 console.error(`Error making commit`);
             });
+
+            await socket.emit("clear_modified", {room: documentID});
         }
     }
 
@@ -182,7 +201,7 @@ function Editor({currentFile, setCurrentText}) {
                 value={value} 
                 onChange={onEditorChanged}
                  /> */}
-            <div id='editor' ref={(el) => { edtRef = el; }} onKeyUp={onEditorChanged}>
+            <div id='editor' ref={(el) => { edtRef = el; }}>
 
             </div>
             <div className="modal fade" id="commitModal" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="commitModalLabel" aria-hidden="true">
