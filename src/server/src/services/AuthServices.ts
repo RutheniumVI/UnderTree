@@ -120,13 +120,13 @@ async function getGitHubCode(req: Request, res: Response): Promise<void> {
     let code = req.query.code as string;
 
     if (!code) {
-         throw new Error("No code provided");
+         throw "No code provided";
     }
     
     const gitHubUser = await getGitHubUser({ code });
 
     if (gitHubUser == null) {
-        throw new Error("No user found");
+        throw "No user found";
     }
 
     const token = jwt.sign({ username: gitHubUser.login }, JWT_SECRET, { expiresIn: "7d" });
