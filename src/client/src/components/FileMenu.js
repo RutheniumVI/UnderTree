@@ -143,7 +143,7 @@ function FileMenu({currentFile, setCurrentFile}) {
 
         // const sp = inputtedFilePath.split("/");
         const fileName = selectedFileObject.name;
-
+        console.log(fileName)
         // let dirPath = sp.slice(0, -1).join("/") + "/"
         // if(dirPath == "/")
         //     dirPath = "";
@@ -151,8 +151,8 @@ function FileMenu({currentFile, setCurrentFile}) {
         let dirPath = ""
         // Remove leading / and add a / at the end
         if(selectedFile)
-            dirPath = selectedFile.substring(1) + "/" + fileName; 
-        
+            dirPath = selectedFile.substring(1) + "/"; 
+        console.log(dirPath)
         const fileType = selectedFileObject.type;
         if(fileType === "image/png" || fileType == "image/jpeg"){
             const formData = new FormData();
@@ -456,7 +456,7 @@ function FileMenu({currentFile, setCurrentFile}) {
         <div class="dropdown-menu dropdown-menu-sm" id="context-menu">
           <a class="dropdown-item" onClick={(e) => {$('#newFile').modal('toggle');}}>New File</a>
           <a class="dropdown-item" onClick={(e) => {$('#newFolder').modal('toggle');}}>New Folder</a>
-          <a class="dropdown-item">Rename</a>
+          <a class="dropdown-item" onClick={(e) => {$('#fileUpload').modal('toggle');}}>Upload File</a>
         </div>
     </div>
     )
