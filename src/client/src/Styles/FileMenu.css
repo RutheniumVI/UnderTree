@@ -1,6 +1,11 @@
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css");
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
 
+.ps-sidebar-root {
+    overflow-y: scroll;
+    max-height: 60vh;
+}
+
 .my-card{
     font-family: 'Open Sans', sans-serif;
     background-color: #DEDEDE;
