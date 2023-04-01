@@ -24,6 +24,7 @@ let ydoc = null;
 let provider = null;
 let binding = null;
 let editorc = null;
+let documentID = null;
 let modified = false;
 
 function Editor({socket, currentFile, setCurrentText}) {
@@ -31,7 +32,7 @@ function Editor({socket, currentFile, setCurrentText}) {
     const { owner, projectName } = useParams();
     const [value, setValue] = useState('');
     // const [modified, setModified] = useState(false);
-    let documentID = currentFile.filePath;
+    documentID = currentFile.filePath;
 
     const [commitInfo, setCommitInfo] = useState({projectName: projectName, owner: owner, commitMessage: "", commitPDF: false, files: []});
     const [commitError, setCommitError] = useState("");
