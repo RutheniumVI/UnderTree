@@ -26,6 +26,10 @@ function runChatServer(){
       io.to(data.room).emit("receive_message", data);
     })
 
+    socket.on("clear_modified", (data) => {
+      io.to(data.room).emit("clear_modified", data);
+    })
+
     socket.on("disconnect", ()=> {
       console.log("User Disconnected", socket.id);
     });

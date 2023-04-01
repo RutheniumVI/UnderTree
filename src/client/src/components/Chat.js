@@ -8,15 +8,7 @@ import { useParams } from 'react-router-dom';
 
 import "../Styles/Chat.css";
 
-let socket = null;
-
-if(process.env.NODE_ENV == 'production'){
-  socket = io.connect(process.env.REACT_APP_CHAT_URL, {path: '/chat/socket.io'});
-} else {
-  socket = io.connect(process.env.REACT_APP_CHAT_URL);
-}
-
-function NewChat() {
+function NewChat({socket}) {
   const { owner, projectName } = useParams();
   const userName = localStorage.getItem("username");
   const room = owner + "/" + projectName;
@@ -168,7 +160,6 @@ function NewChat() {
                 placeholder="enter message"
                  onKeyDown={(e) => {
                    if(e.key === "Enter"){
-                       console.log("hello");
                        sendMessage()
                    }
                  }}

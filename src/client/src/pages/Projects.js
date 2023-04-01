@@ -75,7 +75,7 @@ function Projects() {
         const value = e.target.value;
         setCurrentProject({...currentProject, projectName: value});
         if (value.split(" ").length != 1){
-            setErrors({...errors, projectName: "GitHub repository name can not have spaces in it"});
+            setErrors({...errors, projectName: "GitHub repository name cannot have spaces in it"});
         } else {
             setErrors({...errors, projectName: ""})
         }
@@ -85,7 +85,7 @@ function Projects() {
         const value = e.target.value;
         setCollaboratorValue(value);
         if (value.split(" ").length != 1){
-            setErrors({...errors, collaborators: "User name can not have spaces in it"});
+            setErrors({...errors, collaborators: "User name cannot have spaces in it"});
         }
         else if (value === localStorage.getItem("username")){
             setErrors({...errors, collaborators: "Cannot add yourself as a collaborator"});
@@ -97,7 +97,7 @@ function Projects() {
 
     function addProjectCollaborator(){
         if(collaboratorValue.length == 0){
-            setErrors({...errors, collaborators: "User name can not be empty"});
+            setErrors({...errors, collaborators: "User name cannot be empty"});
         } else if (currentProject.collaborators.includes(collaboratorValue)){
             setErrors({...errors, collaborators: "User is already a collaborator in this repository"});
         } else if(errors.collaborators === ""){
@@ -185,7 +185,7 @@ function Projects() {
 
     async function addProject(){
         if(currentProject.projectName === ""){
-            setErrors({...errors, projectName: "GitHub repository name can not be empty"});
+            setErrors({...errors, projectName: "GitHub repository name cannot be empty"});
         } else if(errors.projectName === "" && errors.collaborators === ""){
             axios.get(process.env.REACT_APP_API_URL+"/github/repositoryExists",
                 {params: {name: currentProject.projectName, owner: localStorage.getItem("username")}, withCredentials: true}
@@ -308,7 +308,7 @@ function Projects() {
                             <div className="errorMessage">{errors.projectName}</div>
                         </div>
                         <div className="mb-3">
-                            <label className="form-label">Collaborators:</label>
+                            <label className="form-label">Collaborator Username:</label>
                             <div className="row justify-content-start">
                                 <div className="col-7">
                                     <input type="text" className="form-control" onChange={(e) => {updateCollaboratorValue(e)}} value={collaboratorValue}/>
@@ -373,7 +373,7 @@ function Projects() {
                     </div>
                     <div className="modal-body">
                         <div className="mb-3">
-                            <label className="form-label">Collaborators:</label>
+                            <label className="form-label">Collaborator Username:</label>
                             <div className="row justify-content-start">
                                 <div className="col-7">
                                     <input type="text" className="form-control" onChange={(e) => {updateCollaboratorValue(e)}} value={collaboratorValue}/>
