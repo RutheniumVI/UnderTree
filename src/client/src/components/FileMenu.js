@@ -143,7 +143,6 @@ function FileMenu({currentFile, setCurrentFile}) {
 
         // const sp = inputtedFilePath.split("/");
         const fileName = selectedFileObject.name;
-        console.log(fileName)
         // let dirPath = sp.slice(0, -1).join("/") + "/"
         // if(dirPath == "/")
         //     dirPath = "";
@@ -152,7 +151,6 @@ function FileMenu({currentFile, setCurrentFile}) {
         // Remove leading / and add a / at the end
         if(selectedFile)
             dirPath = selectedFile.substring(1) + "/"; 
-        console.log(dirPath)
         const fileType = selectedFileObject.type;
         if(fileType === "image/png" || fileType == "image/jpeg"){
             const formData = new FormData();
