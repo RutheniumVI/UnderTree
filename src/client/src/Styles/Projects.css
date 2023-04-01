@@ -60,6 +60,10 @@
     margin: 0px 2px;
 }
 
+.collaboratorsList:hover {
+    background-color: red;
+}
+
 .importProjectsList {
     max-height: 80vh;
     overflow: scroll;
