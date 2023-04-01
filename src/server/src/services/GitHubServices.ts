@@ -109,6 +109,7 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
 	let files = req.body.files;
 	const message = req.body.commitMessage;
 	const commitPDF = req.body.commitPDF;
+	const username = req.body.username;
 	let fileBlobs = [];
 
 	let accessToken = res.locals.accessToken;
@@ -118,6 +119,7 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
 
 	let latestCommitSHA = "";
 	let latestCommitURL = "";
+	let contributorList = [];
 
   	// Get reference to the Main branch
 	await axios.get(`https://api.github.com/repos/${owner}/${repo}/git/ref/heads/main`, {
@@ -203,8 +205,18 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
 				})
 			}
 		}
+		
+		const filePath = owner + "/" + repo + "/" + currFile.filePath;
+		const contributors = await FileDB.getContributor(project, filePath);
+		console.log(contributors)
+		for(const contributor of contributors){
+			console.log(contributor)
+			if(contributor!=username)
+				contributorList.push({"name": contributor, "email": await AuthDB.getUserEmail(contributor)})
+		}
 
-		FileDB.resetFileCollaborator(owner, repo, owner+"/"+repo+"/"+currFile.filePath);
+
+		FileDB.resetFileCollaborator(owner, repo, filePath);
 	}
 
 
@@ -252,22 +264,9 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
 	let commitParent = latestCommitSHA;
 
 
-	const filePath = project.owner + "/" + project.projectName + "/" + files[0].filePath;
-	const contributors = await FileDB.getContributor(project, filePath);
 	let comMessage = message + "\n\n\n";
-	contributors.forEach((e) => {
-		if (e=="fahmed8383"){
-			comMessage += "Co-authored-by: Name <" + "fahmed4030@gmail.com" + ">\n"
-		}
-		if(e == "RutheniumVI"){
-			comMessage += "Co-authored-by: Name <" + "veeresh.532000@gmail.com" + ">\n"
-		}
-		if(e == "KevinRK29"){
-			comMessage += "Co-authored-by: Name <" + "kevinrk2000@gmail.com" + ">\n"
-		}
-		if(e == "quresh00"){
-			comMessage += "Co-authored-by: Name <" + "qureshe@mcmaster.ca" + ">\n"
-		}
+	contributorList.forEach((e) => {
+			comMessage += "Co-authored-by: " +  e.name + " <" + e.email + ">\n"
 	})
 
 	// Create a new commit with the new tree data
