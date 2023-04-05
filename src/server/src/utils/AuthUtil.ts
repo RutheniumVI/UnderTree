@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import { Request, Response } from "express";
 
 import { AuthServices } from "../services/AuthServices";
 import { ProjectDB } from "../database_interface/ProjectDB";
@@ -14,12 +14,11 @@ async function authorizeJWT(req: Request, res: Response, next){
 		if (authResults["token"] != "") {
 			console.log("Renewing cookie");
 			token = authResults["token"];
-            res.cookie("undertree-jwt", token, { httpOnly: true, maxAge: 1000*60*60*24*365 });
+			res.cookie("undertree-jwt", token, { httpOnly: true, maxAge: 1000*60*60*24*365 });
 		}
-
-		const username = await AuthServices.getUserPropertyWithToken(token, "username");
+		
 		res.locals.token = token;
-		res.locals.accessToken = await AuthServices.getUserPropertyWithToken(token, "access_token")
+		res.locals.accessToken = await AuthServices.getUserPropertyWithToken(token, "access_token");
 		res.locals.username = await AuthServices.getUserPropertyWithToken(token, "username");
 		next();
 	}
@@ -28,7 +27,7 @@ async function authorizeJWT(req: Request, res: Response, next){
 async function authorizeProjectAccess(req: Request, res: Response, next){
 	let project = undefined;
 	let owner = undefined;
-	const username = res.locals.username
+	const username = res.locals.username;
 
 	if(req.method === "GET"){
 		project = req.query.projectName;

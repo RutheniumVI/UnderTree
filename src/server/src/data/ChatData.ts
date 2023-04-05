@@ -5,4 +5,4 @@ export interface Message {
     time: Date,
     avatar: string,
     id: string,
-};
+}

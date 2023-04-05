@@ -1,13 +1,12 @@
-import express, { Request, RequestHandler, Response } from "express";
+import express from "express";
 
-import { AuthServices } from "./AuthServices";
 import { AuthUtil } from "../utils/AuthUtil";
 import { ProjectDB } from "../database_interface/ProjectDB";
 import { FileDB } from "../database_interface/FileDB";
 import { ProjectData } from "../data/ProjectData";
 import { GitHubUtil } from "../utils/GitHubUtil";
 import { FileUtil } from "../utils/FileUtil";
-import { File, FileData } from "../data/FileData";
+import { File } from "../data/FileData";
 import { PersistenceUtil } from "../utils/PersistenceUtil";
 
 const router = express.Router();
@@ -21,7 +20,7 @@ router.route("/editProject").post(editProject);
 router.route("/deleteProject").post(deleteProject);
 router.route("/importProjects").post(importProjects);
 
-const latexTemplate = "\\documentclass{article}\n\\begin{document}\nHello World\n\\end{document}"
+const latexTemplate = "\\documentclass{article}\n\\begin{document}\nHello World\n\\end{document}";
 
 async function addProject(req, res): Promise<void> {
 	const data: ProjectData = req.body as ProjectData;
@@ -33,7 +32,7 @@ async function addProject(req, res): Promise<void> {
 		await ProjectDB.addProject(data);
 		await FileDB.initializeProject(data);
 		const filePath = data.owner+"/"+data.projectName+"/main.tex";
-		const mainFile: File = {fileName: "main.tex", fileType: "tex", filePath: filePath, contributors: [res.locals.username], documentID: filePath}
+		const mainFile: File = {fileName: "main.tex", fileType: "tex", filePath: filePath, contributors: [res.locals.username], documentID: filePath};
 		await PersistenceUtil.writeDocumentData(filePath, latexTemplate);
 		await FileDB.addProjectFile(data, mainFile);
 		await FileUtil.createDirectory(data.owner+"/"+data.projectName);
@@ -87,7 +86,7 @@ async function deleteProject(req, res): Promise<void>  {
 }
 
 async function importProjects(req, res): Promise<void>  {
-	let data: ProjectData[] = req.body as ProjectData[]
+	const data: ProjectData[] = req.body as ProjectData[];
 	const accessToken = res.locals.accessToken;
 
 	try{
@@ -99,9 +98,9 @@ async function importProjects(req, res): Promise<void>  {
 				const fileContent = await GitHubUtil.getContentFromBlob(accessToken, project, file);
 				const filePath = project.owner+"/"+project.projectName+"/"+file.path;
 				FileUtil.saveFile(filePath, Buffer.from(fileContent.content, fileContent.encoding as BufferEncoding));
-				const fileInfo: File = {fileName: file.name, fileType: "image", filePath: filePath, contributors: []}
+				const fileInfo: File = {fileName: file.name, fileType: "image", filePath: filePath, contributors: []};
 				FileDB.addProjectFile(project, fileInfo);
-			})
+			});
 
 			files.texFiles.forEach(async (file) => {
 				const fileContent = await GitHubUtil.getContentFromBlob(accessToken, project, file);
@@ -111,7 +110,7 @@ async function importProjects(req, res): Promise<void>  {
 				const fileInfo: File = {fileName: file.name, fileType: ext, filePath: filePath, contributors: [], documentID: file.path};
 				await PersistenceUtil.writeDocumentData(filePath, Buffer.from(fileContent.content, fileContent.encoding as BufferEncoding).toString());
 				FileDB.addProjectFile(project, fileInfo);
-			})
+			});
 			await ProjectDB.addProject(project);
 		}
 		res.status(200).json("Successfully imported project");

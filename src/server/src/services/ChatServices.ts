@@ -1,8 +1,8 @@
-import express, {Request, Response} from 'express';
+import express, {Request, Response} from "express";
 const router = express.Router();
 import { AuthServices } from "./AuthServices";
-import { AuthUtil } from '../utils/AuthUtil';
-import { ChatDB } from '../database_interface/ChatDB';
+import { AuthUtil } from "../utils/AuthUtil";
+import { ChatDB } from "../database_interface/ChatDB";
 
 router.use(AuthUtil.authorizeJWT);
 router.use(AuthUtil.authorizeProjectAccess);
@@ -11,28 +11,28 @@ router.route("/sendMessage").post(saveMessageToDB);
 router.route("/getMessages").get(getMessagesFromDB);
 
 async function getUserAvatar(req: Request, res: Response): Promise<void> {
-  const avatar_url = await AuthServices.getUserPropertyWithToken(res.locals.token, "avatar_url");
-  res.status(200).json({ "avatar": avatar_url });
+	const avatar_url = await AuthServices.getUserPropertyWithToken(res.locals.token, "avatar_url");
+	res.status(200).json({ "avatar": avatar_url });
 }
 
 async function saveMessageToDB(req: Request, res: Response): Promise<void> {
-  const message = req.body.message;
-  try {
-    await ChatDB.addMessage(message);
-  } catch (err) {
-    console.log(err);
-  }
+	const message = req.body.message;
+	try {
+		await ChatDB.addMessage(message);
+	} catch (err) {
+		console.log(err);
+	}
 }
 
 async function getMessagesFromDB(req: Request, res: Response): Promise<void> {
-  const room = req.query.room as string;  
-  try {
-    const messages = await ChatDB.getMessages(room);
-    res.status(200).json({ messages: messages });
-  } catch (err) {
-    console.log(err);
-  }
+	const room = req.query.room as string;  
+	try {
+		const messages = await ChatDB.getMessages(room);
+		res.status(200).json({ messages: messages });
+	} catch (err) {
+		console.log(err);
+	}
 }
 
-export { router }
+export { router };
 

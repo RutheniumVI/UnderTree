@@ -12,7 +12,7 @@ async function initializeProject(project: ProjectData): Promise<string> {
 		throw "File system corresponding to the project already exists in the database";
 	}
 	try{
-        const fileData: FileData = {projectName: project.projectName, owner: project.owner, files: [], deletedFiles: []};
+		const fileData: FileData = {projectName: project.projectName, owner: project.owner, files: [], deletedFiles: []};
 		await collection.insertOne(fileData);
 	}
 	catch (err) {
@@ -31,7 +31,7 @@ async function addProjectFile(project: ProjectData, file: File): Promise<string>
 		throw "File system corresponding to the project does not exist in the database";
 	}
 	try{
-        await collection.updateOne({"projectName": project.projectName, "owner": project.owner},
+		await collection.updateOne({"projectName": project.projectName, "owner": project.owner},
 			{
 				$push: {files: file}
 			}
@@ -67,7 +67,7 @@ async function editFileCollaborator(owner: string, projectName: string, filePath
 			"files.filePath": filePath
 		},
 		{
-			$addToSet: {'files.$.contributors': userName}
+			$addToSet: {"files.$.contributors": userName}
 		}
 	);
 	
@@ -90,7 +90,7 @@ async function resetFileCollaborator(owner: string, projectName: string, filePat
 			"files.filePath": filePath
 		},
 		{
-			$set: {'files.$.contributors': []}
+			$set: {"files.$.contributors": []}
 		}
 	);
 	
@@ -114,10 +114,10 @@ async function renameFile(project: ProjectData, file: File, newFileName: string,
 		},
 		{
 			$set: {
-				'files.$.fileName': newFileName,
-				'files.$.filePath': newFilePath
+				"files.$.fileName": newFileName,
+				"files.$.filePath": newFilePath
 			},
-			$addToSet: {'files.$.contributors': userName}
+			$addToSet: {"files.$.contributors": userName}
 		}
 	);
 
@@ -141,7 +141,7 @@ async function deleteFile(project: ProjectData, filePath: string, userName: stri
 			$pull: {
 				"files": {"filePath": filePath}
 			},
-			$addToSet: {'deletedFiles': filePath}
+			$addToSet: {"deletedFiles": filePath}
 		}
 	);
 
@@ -185,7 +185,7 @@ async function getContributor(project: ProjectData, filePath: string) {
 			console.log(ele);
 			contributor = ele.contributors;
 		}
-	})
+	});
 	return contributor;
 }
 
@@ -193,7 +193,7 @@ async function getContributor(project: ProjectData, filePath: string) {
 const FileDB = {
 	initializeProject,
 	addProjectFile,
-    deleteProjectFiles,
+	deleteProjectFiles,
 	editFileCollaborator,
 	resetFileCollaborator,
 	renameFile,

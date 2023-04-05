@@ -51,8 +51,6 @@ async function getProject(projectName: string, owner: string): Promise<ProjectDa
 }
 
 async function getProjects(userName: string): Promise<ProjectData[]> {
-	const projects: ProjectData[] = [];
-
 	const collection = DBClient.getCollection(collectionName);
 	const cursor = await collection.find(
 		{ $or: [
