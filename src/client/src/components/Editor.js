@@ -1,85 +1,31 @@
-import React from 'react';
-
+import React, { useLayoutEffect } from 'react';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import * as Y from "yjs";
 import { WebsocketProvider } from 'y-websocket'
-import { QuillBinding } from 'y-quill'
+import io from "socket.io-client";
 
 import randomColor from 'randomcolor';
-
-import ReactQuill, { Quill } from 'react-quill';
-import QuillCursors from 'quill-cursors';
-import 'react-quill/dist/quill.snow.css';
 import '../Styles/Editor.css'
-import "highlight.js/styles/monokai-sublime.css";
-import hljs from 'highlight.js'
+import CodeMirror from 'codemirror'
+import { CodemirrorBinding } from 'y-codemirror'
+import 'codemirror/mode/stex/stex'
 
-Quill.register('modules/cursors', QuillCursors);
 
-hljs.configure({
-    languages: ['tex'],
-    cssSelector: 'div.ql-editor > p'
-})
-
-const bindings = {
-    'code exit': {
-        key: 'Enter',
-        collapsed: true,
-        format: ['code-block'],
-        prefix: /^$/,
-        suffix: /^\s*$/,
-        handler(range) {
-          return true;
-        },
-    }
-};
-
-function highlight(text){
-    // console.log(text);
-    // let mod = hljs.highlightAuto(text).value;
-    // console.log(mod);
-    const functionRegex =  /\\\w+/g;
-    return text.replace(functionRegex, '<span class="hljs-keyword">$&</span>');
-}
-
-const modules = {
-    cursors: true,
-    keyboard: {
-        bindings: bindings
-    }
-}
-
-const formats = [
-    "header",
-    "font",
-    "size",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "blockquote",
-    "list",
-    "bullet",
-    "indent",
-    "link",
-    "image",
-    "video",
-    "code-block"
-];
-
+// Define editor-related variables globally so they can be reused when editor is reopened
 let ydoc = null;
 let provider = null;
-let binding = null
+let binding = null;
+let editorc = null;
+let documentID = null;
+let modified = false;
 
-function Editor({currentFile, setCurrentText}) {
+function Editor({socket, currentFile, setCurrentText}) {
     const username = localStorage.getItem("username");
     const { owner, projectName } = useParams();
-    const [value, setValue] = useState('');
-    const [modified, setModified] = useState(false);
-    const documentID = currentFile.filePath;
+    documentID = currentFile.filePath; //documentID for synchronization is going to be the file full path
 
     const [commitInfo, setCommitInfo] = useState({projectName: projectName, owner: owner, commitMessage: "", commitPDF: false, files: []});
     const [commitError, setCommitError] = useState("");
@@ -89,39 +35,60 @@ function Editor({currentFile, setCurrentText}) {
     let quillRef = null;
     let edtRef = null;
 
-    // Connect to socket when editor page is opened
+    useLayoutEffect(() => {
+        editorc = null;
+    }, [])
+
     useEffect(() => {
-        quillRef = edtRef.getEditor();
-        if(provider){
+        quillRef = edtRef;
+
+        // if previous instance of editor exists, destroy variables associated to previous instance of editor
+        if(provider){ 
             ydoc.destroy();
             provider.destroy();
             binding.destroy();
         }
 
-        ydoc = new Y.Doc();   
+        ydoc = new Y.Doc();
+        // authentication is not setup for websocketprovider   
         provider = new WebsocketProvider(process.env.REACT_APP_SOCKET_URL, documentID, ydoc, {params: {jwt: "123"}});
 
         const ytext = ydoc.getText('quill');
-
+        // awareness handles cursor postion
         const awareness = provider.awareness; 
-        
         const color = randomColor(); 
         
         awareness.setLocalStateField("user", {
           name: username,
           color: color,
         });
-        binding = new QuillBinding(ytext, edtRef.getEditor(), awareness);
-        
+
+        //making sure previous instance of editor does not exist
+        if(!editorc) {
+            editorc = CodeMirror(edtRef, {
+                mode: 'stex',
+                lineNumbers: true,
+                lineWrapping: true
+            })
+            editorc.setSize("100%", "calc(100vh - 135px)");
+            editorc.on("change", (instance, changeObject)=>{
+                if(changeObject.origin === "+input" || changeObject.origin === "+delete"){
+                    onEditorChanged();
+                }
+            })
+        }
+
+        binding = new CodemirrorBinding(ytext, editorc, awareness);
+        binding.on('cursorActivity', (editor)=>{setCurrentText(editorc.getValue())})
 
     }, [currentFile])
     
-    useEffect(() => {
-        if (typeof edtRef.getEditor !== 'function') return;
-            quillRef = edtRef.getEditor();
-    })
 
+    /**
+     * This function calls the API to add user to the files contributor list
+     */
     function addUserToModified(){
+
         console.log("Adding user to modified");    
 
         const fileDetails = documentID.split('/');
@@ -139,24 +106,25 @@ function Editor({currentFile, setCurrentText}) {
           console.error(`Error Adding user to modified`);
         });
 
-        setModified(true);
+        modified = true;
     }
 
-    function onEditorChanged(content, delta, source, editor){
-        setValue(content);
-        quillRef.formatLine(0, quillRef.getLength(), { 'code-block': true });
-        setCurrentText(editor.getText(content));
-        console.log("this happens this many times");
-
-        if(!modified && source === "user"){
-            addUserToModified();
-            setModified(true);
+    /**
+     * This is triggered when the editor content is changed by the user
+     */
+    function onEditorChanged(setMod){
+        if(!modified) {
+            addUserToModified(); 
         }
+        
     }
 
+    /**
+     * This function will get the list of file changed using an API call to display in the modal
+     */
     function openCommitModal(){
         setCommitError("");
-        setCommitInfo({projectName: projectName, owner: owner, commitMessage: "", commitPDF: false});
+        setCommitInfo({projectName: projectName, owner: owner, username:  username, commitMessage: "", commitPDF: false});
         axios.get(process.env.REACT_APP_API_URL+"/file/getFiles?owner="+owner+"&projectName="+projectName, {withCredentials: true})
         .then((res) => {
             console.log(res.data);
@@ -168,20 +136,37 @@ function Editor({currentFile, setCurrentText}) {
         })
     }
 
-    function commitFiles(){
+    /**
+     * This function is a handler for when the commit button is pressed
+     */
+    async function commitFiles(){
+        const selectedFiles = modifiedFiles.filter((file) => {return file.selected});
         const info = {...commitInfo};
-        info.files = modifiedFiles.filter((file) => {return file.selected});
         if(info.commitMessage.length == 0){
             setCommitError("Commit message can not be empty");
-        } else if(info.files.length == 0){
+        } else if(selectedFiles == 0){
             setCommitError("Atleast one file must be selected to commit");
         } else {
-            axios.post(process.env.REACT_APP_API_URL+"/github/commitFiles", {
-                info
-            }, {
+            let filesToCommit = []
+            await axios.get(process.env.REACT_APP_API_URL+"/file/getContentFromFiles", {
+                params: { 
+                    files: modifiedFiles.filter((file) => {return file.selected}),
+                    owner: owner,
+                    projectName: projectName
+                },
+                withCredentials: true
+            }).then((res) => {
+                filesToCommit = res.data;
+            }).catch((err) => {
+                console.log(err);
+            });
+            info.files = filesToCommit;
+
+            await axios.post(process.env.REACT_APP_API_URL+"/github/commitFiles", info, {
                 withCredentials: true,
             }).then((res) => {
-                console.log(res.data)
+                document.getElementById('commitModalClose').click();
+                modified = false;
             }).catch((error) => {
                 console.error(`Error making commit`);
             });
@@ -190,15 +175,10 @@ function Editor({currentFile, setCurrentText}) {
 
     return ( 
         <div id='container'>
-            <ReactQuill 
-                ref={(el) => { edtRef = el; }}
-                theme="bubble"
-                className="editor"
-                modules={modules}
-                formats={formats}
-                value={value} 
-                onChange={onEditorChanged}
-                />
+            <button className="btn btn-dark float-end me-2" onClick={openCommitModal} data-bs-toggle="modal" data-bs-target="#commitModal">Commit Files</button>
+            <div id='editor' ref={(el) => { edtRef = el; }}>
+
+            </div>
             <div className="modal fade" id="commitModal" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="commitModalLabel" aria-hidden="true">
                 <div className="modal-dialog modal-dialog-scrollable">
                     <div className="modal-content">
