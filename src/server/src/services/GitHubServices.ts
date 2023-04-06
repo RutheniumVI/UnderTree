@@ -1,3 +1,9 @@
+/*
+Author: Kevin Kannammalil
+Date: March 28, 2023
+Purpose: GitHub Service Module, responsible for handling all logic associated with the GitHub API that is transmitted from the frontend.
+*/
+
 import express, { Request, Response } from "express";
 const router = express.Router();
 import cookieParser from "cookie-parser";
@@ -12,15 +18,18 @@ import { FileUtil } from "../utils/FileUtil";
 
 dotenv.config();
 
+// Add middleware to validate the user sending the API request before the request is processed
 router.use(cookieParser());
 router.use(AuthUtil.authorizeJWT);
 
+// Set up routes for the api calls that the frontend can use to communicate with each function
 router.route("/repositoryExists").get(repositoryExists);
 router.route("/userExists").get(userExists);
 router.route("/getUserReposList").get(getUserReposList);
 router.route("/commitFiles").post(commitFiles);
 router.route("/getGitLog").get(getGitLogForRepo);
 
+// Check if a repository with a given name and owner already exists on GitHub
 async function repositoryExists(req: Request, res: Response): Promise<void> {
 	const accessToken = await AuthServices.getUserPropertyWithToken(res.locals.token, "access_token");
 	const owner = req.query.owner;
@@ -35,6 +44,7 @@ async function repositoryExists(req: Request, res: Response): Promise<void> {
 	}
 }
 
+// Check if a user with a given name exists on GitHub
 async function userExists(req: Request, res: Response): Promise<void> {
 	const accessToken = await AuthServices.getUserPropertyWithToken(res.locals.token, "access_token");
 	const name = req.query.name;
@@ -48,6 +58,7 @@ async function userExists(req: Request, res: Response): Promise<void> {
 	}
 }
 
+// Get the list of all repositories that a user is a contributor or owner off from GitHub
 async function getUserReposList(req: Request, res: Response): Promise<void>  {
 	const accessToken = res.locals.accessToken;
 
@@ -77,6 +88,7 @@ async function getUserReposList(req: Request, res: Response): Promise<void>  {
 	}
 }
 
+// Get all logs for a repository in GitHub
 async function getGitLogForRepo(req: Request, res: Response): Promise<void> {
 	console.log("Route Called: /getGitLog");
 	const accessToken = res.locals.accessToken;
@@ -99,6 +111,7 @@ async function getGitLogForRepo(req: Request, res: Response): Promise<void> {
 	}
 }
 
+// Commit all selected files to a repository
 async function commitFiles(req: Request, res: Response): Promise<void> {
 	console.log("\n\ncommiting\n\n");
 	console.log(req.body);

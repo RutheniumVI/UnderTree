@@ -1,5 +1,5 @@
 /*
-Author: Kevin Kannamalil
+Author: Kevin Kannammalil
 Date: May 10, 2023
 Purpose: Handler for the logout button in the navbar
 */

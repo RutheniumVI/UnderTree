@@ -1,3 +1,9 @@
+/*
+Author: Kevin Kannammalil
+Date: March 20, 2023
+Purpose: GitHub Data module, contains the data types for all github related functionality that are used throughout the project
+*/
+
 interface GitHubFiles {
     texFiles: GitHubFile[],
     imageFiles: GitHubFile[]

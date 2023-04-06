@@ -1,3 +1,9 @@
+/*
+Author: Faiq Ahmed
+Date: March 28, 2023
+Purpose: Project Service Module, responsible for handling all logic associated with the projects that is transmitted from the frontend.
+*/
+
 import express from "express";
 
 import { AuthUtil } from "../utils/AuthUtil";
@@ -11,17 +17,21 @@ import { PersistenceUtil } from "../utils/PersistenceUtil";
 
 const router = express.Router();
 
+// Add middleware to validate the user sending the API request before the request is processed
 router.use(AuthUtil.authorizeJWT);
 router.use(["/deleteProject","/editProject"], AuthUtil.authorizeProjectAccess);
 
+// Set up routes for the api calls that the frontend can use to communicate with each function
 router.route("/addProject").post(addProject);
 router.route("/getProjects").get(getProjects);
 router.route("/editProject").post(editProject);
 router.route("/deleteProject").post(deleteProject);
 router.route("/importProjects").post(importProjects);
 
+// Basic content of a new LaTeX document
 const latexTemplate = "\\documentclass{article}\n\\begin{document}\nHello World\n\\end{document}";
 
+// Add a new project to the system and let the user know whether the operation was successful or not
 async function addProject(req, res): Promise<void> {
 	const data: ProjectData = req.body as ProjectData;
 	const accessToken = res.locals.accessToken;
@@ -43,12 +53,14 @@ async function addProject(req, res): Promise<void> {
 	}
 }
 
+// Return all projects that a user is a part of
 async function getProjects(req, res): Promise<void>  {
 	const username = res.locals.username;
 	const projects: ProjectData[] = await ProjectDB.getProjects(username);
 	res.status(200).json(projects);
 }
 
+// Update information about a given project in the syste and return whether the operation was successful or not
 async function editProject(req, res): Promise<void>  {
 	const data: ProjectData = req.body as ProjectData;
 	const accessToken = res.locals.accessToken;
@@ -72,6 +84,7 @@ async function editProject(req, res): Promise<void>  {
 	}
 }
 
+// Delete a project from the system and return whether the operation was successful or not
 async function deleteProject(req, res): Promise<void>  {
 	const data: ProjectData = req.body as ProjectData;
 
@@ -85,6 +98,7 @@ async function deleteProject(req, res): Promise<void>  {
 	}
 }
 
+// Import a project into the system and return whether the operation was successful or not
 async function importProjects(req, res): Promise<void>  {
 	const data: ProjectData[] = req.body as ProjectData[];
 	const accessToken = res.locals.accessToken;

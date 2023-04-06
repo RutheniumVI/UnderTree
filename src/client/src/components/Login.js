@@ -1,5 +1,5 @@
 /*
-Author: Kevin
+Author: Kevin Kannammalil
 Date: March 23, 2023
 Purpose: Login handler to allow users to log in using GitHub
 */

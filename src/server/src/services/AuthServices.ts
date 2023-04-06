@@ -1,3 +1,9 @@
+/*
+Author: Kevin Kannammalil
+Date: March 16, 2023
+Purpose: Auth Service Module, responsible for handling all logic associated with authorization that is transmitted from the frontend.
+*/
+
 import express, { Request, Response } from "express";
 const router = express.Router();
 import querystring from "querystring";
@@ -10,6 +16,7 @@ import { AuthDB } from "../database_interface/AuthDB";
 
 dotenv.config();
 
+// Set up routes for the api calls that the frontend can use to communicate with each function
 router.route("/github").get(getGitHubCode);
 router.route("/getUsername").get(getUsername);
 router.route("/logout").get(logout);
@@ -18,6 +25,7 @@ const CLIENT_ID = process.env.GITHUB_CI;
 const CLIENT_SECRET = process.env.GITHUB_CS;
 const JWT_SECRET = process.env.JWT_SECRET;
 
+// Check if a user's token is valid to see if they really are who they say they are
 async function validateUserAuth(token: string): Promise<Object> {
 	let newToken = "";
 	try{

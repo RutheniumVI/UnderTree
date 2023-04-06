@@ -1,3 +1,9 @@
+/*
+Author: Veerash Palanichamy, Faiq Ahmed
+Date: March 25, 2023
+Purpose: File Service Module, responsible for handling all logic associated with files that is transmitted from the frontend.
+*/
+
 import express, {Request, Response} from "express";
 import multer from "multer";
 import { FileDB } from "../database_interface/FileDB";
@@ -10,8 +16,10 @@ import { PersistenceUtil } from "../utils/PersistenceUtil";
 
 const router = express.Router();
 
+// Add middleware to validate the user sending the API request before the request is processed
 router.use(AuthUtil.authorizeJWT);
 
+// Set up routes for the api calls that the frontend can use to communicate with each function
 router.route("/compilePDF").post(compilePDF);
 router.route("/getPDF").get(getPDF);
 router.route("/getImage").get(getImage);
@@ -24,6 +32,7 @@ router.route("/deleteFile").post(deleteFile);
 router.route("/getContentFromFiles").get(getContentFromFiles);
 router.route("/uploadTexFile").post(uploadTexFile);
 
+// Set up multer to handle file transfer between the frontend and backend
 const storage = multer.diskStorage({
 	destination: function (req, file, cb) {
 		const dirPath = req.body.owner + "/" + req.body.projectName + "/" + req.body.fullDirPath;
@@ -38,6 +47,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 router.route("/uploadImage").post(upload.single("image"), uploadImage);
 
+// Given a document id of a LaTeX file, compile the file into a PDF with the same name
 async function compilePDF(req, res){
 	const documentId = req.body.documentId;
 	console.log(documentId);
@@ -56,6 +66,7 @@ async function compilePDF(req, res){
 	}
 }
 
+// Get the PDF file associated with a LaTeX file
 async function getPDF(req, res) {
 	const outputFile = req.query.file.replace(".tex", ".pdf");
 	const fileData = FileUtil.getFileData("../file_system/" +  outputFile);
@@ -63,6 +74,7 @@ async function getPDF(req, res) {
 	res.send(fileData);
 }
 
+// Get an image from the server given the image name
 async function getImage(req, res) {
 	const fileData = FileUtil.getFileData("../file_system/" +  req.query.file);
 	const fileType = req.query.file.split(".")[1];
@@ -74,7 +86,7 @@ async function getImage(req, res) {
 	res.send(fileData);
 }
 
-
+// Add a new folder to the file system for the project
 async function addFolder(req, res){
 	const projectD: ProjectData = {owner: req.body.owner, projectName: req.body.projectName};
 
@@ -94,6 +106,7 @@ async function addFolder(req, res){
 	}
 }
 
+// Add the given file to the file system for the project
 async function addFile(req, res){
 	const projectD: ProjectData = {owner: req.body.owner, projectName: req.body.projectName};
 
@@ -116,6 +129,7 @@ async function addFile(req, res){
     
 }
 
+// Upload an image and add it to the file system for the project
 async function uploadImage(req, res){
 	const projectD: ProjectData = {owner: req.body.owner, projectName: req.body.projectName};
 
@@ -143,6 +157,7 @@ async function uploadImage(req, res){
     
 }
 
+// Upload a Tex or bib file to the file system of a project
 async function uploadTexFile(req, res){
 	const projectD: ProjectData = {owner: req.body.owner, projectName: req.body.projectName};
 
@@ -167,6 +182,7 @@ async function uploadTexFile(req, res){
     
 }
 
+// Rename a file in a given project
 async function renameFile(req, res){
 	const projectD: ProjectData = {owner: req.body.owner, projectName: req.body.projectName};
 
@@ -192,6 +208,7 @@ async function renameFile(req, res){
     
 }
 
+// Get all files from the file system for a specific project
 async function getFiles(req, res){
 	const projectD: ProjectData = {owner: req.query.owner, projectName: req.query.projectName};
 
@@ -206,6 +223,7 @@ async function getFiles(req, res){
     
 }
 
+// Delete a specified file from a project
 async function deleteFile(req, res){
 	const projectD: ProjectData = {owner: req.body.owner, projectName: req.body.projectName};
 	const filePath = req.body.filePath;
@@ -222,6 +240,7 @@ async function deleteFile(req, res){
 	}
 }
 
+// Mark a file as being edited so it can be chosen for a commit. Files that have not been edited cannot be commit
 async function fileEdited(req, res) {
 	const projectName = req.body.projectName;
 	const owner = req.body.owner;
@@ -237,6 +256,7 @@ async function fileEdited(req, res) {
 	}
 }
 
+// Auxialliary function for getFiles
 async function getFileList(project: ProjectData){
 	const files: File[]  = await FileDB.getFiles(project);
 	const fileData = files.map((e)=> {
@@ -251,6 +271,7 @@ async function getFileList(project: ProjectData){
 	return fileData;
 }
 
+// Get the bytes or text from a given file and return it to the frontend
 async function getContentFromFiles(req: Request, res: Response): Promise<void> {
 	const files = req.query.files;
 	const newFiles = [];
