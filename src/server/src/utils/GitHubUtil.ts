@@ -1,7 +1,14 @@
+/*
+Author: Kevin Kannammalil
+Date: February 20, 2023
+Purpose: GitHub Util Module, contains the utility functions for all GitHub related functionality that are used throughout the project
+*/
+
 import axios from "axios";
 import { GitHubFile, GitHubFileContent, GitHubFiles } from "../data/GitHubData";
 import { ProjectData } from "../data/ProjectData";
 
+// Function that is used to create a new GitHub repository
 async function createProject(project: ProjectData, accessToken: string): Promise<string> {
 	try{
 		await axios.post("https://api.github.com/user/repos", { 
@@ -20,6 +27,7 @@ async function createProject(project: ProjectData, accessToken: string): Promise
 	return "Successfully created repo";
 }
 
+// Function that is used to retrieve the list of collaborators for a GitHub repository
 async function getRepoCollaborators(accessToken: string, project: ProjectData): Promise<ProjectData> {
 	const collabs = [];
 
@@ -27,6 +35,7 @@ async function getRepoCollaborators(accessToken: string, project: ProjectData): 
 		headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
 	}).then((res) => {
 		for (let j = 0; j < res.data.length; j++) {
+			// Skip the owner of the repository
 			if (res.data[j]["login"] == project.owner) {
 				continue;
 			}
@@ -43,11 +52,13 @@ async function getRepoCollaborators(accessToken: string, project: ProjectData): 
 	return project;
 }
 
+// Function that is used to retrieve the list of files for a GitHub repository
 async function getRepoContent(accessToken: string, project: ProjectData): Promise<GitHubFiles> {
 	const files: GitHubFiles = await getFilesFromPath("", project, accessToken);
 	return files;
 }
 
+// Function used to retrieve the list of files for a given path in a GitHub repository
 async function getFilesFromPath(path: string, project: ProjectData, accessToken: string): Promise<GitHubFiles> {
 	let imageFiles: GitHubFile[] = [];
 	let texFiles: GitHubFile[] = [];
@@ -57,6 +68,7 @@ async function getFilesFromPath(path: string, project: ProjectData, accessToken:
 	}).then((res) => {
 		for (let i = 0; i < res.data.length; i++) {
 			const filename = res.data[i]["name"];
+			// If the file is a directory, add it to the list of directories to be processed
 			if (res.data[i]["type"] == "dir") {
 				dirs.push(res.data[i]);
 				continue;
@@ -82,6 +94,7 @@ async function getFilesFromPath(path: string, project: ProjectData, accessToken:
 		throw "Error getting file from GitHub";
 	});
 
+	// Process the directories and add the corresponding files to the list of tex/image files
 	for(let i = 0; i < dirs.length; i++) {
 		const subFiles = await getFilesFromPath(dirs[i]["path"], project, accessToken);
 		texFiles = texFiles.concat(subFiles.texFiles);
@@ -92,6 +105,7 @@ async function getFilesFromPath(path: string, project: ProjectData, accessToken:
 	return files;
 }
 
+// Function used to retrieve the content from a GitHub blob
 async function getContentFromBlob(accessToken: string, project: ProjectData, file: GitHubFile): Promise<GitHubFileContent> {
 	const fileContent: GitHubFileContent = {content: "", encoding: ""};
 	const file_sha = file.sha;
@@ -111,6 +125,7 @@ async function getContentFromBlob(accessToken: string, project: ProjectData, fil
 	return fileContent;
 }
 
+// Function used to add collaborators to a GitHub repository
 async function addCollabsToRepo(project: ProjectData, accessToken: string, usersToAdd: string[]): Promise<string> {
 	const promises = [];
 
@@ -129,6 +144,7 @@ async function addCollabsToRepo(project: ProjectData, accessToken: string, users
 	}
 }
 
+// Function used to remove collaborators from a GitHub repository
 async function removeCollabsFromRepo(project: ProjectData, accessToken: string, usersToRemove: string[]): Promise<string> {
 	const promises = [];
 
