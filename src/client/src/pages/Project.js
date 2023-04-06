@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useEffect } from 'react';
 import { useState } from 'react';
 import Split from 'react-split'
 import FileMenu from '../components/FileMenu'
-import Editor from '../components/Editor2';
+import Editor from '../components/Editor';
 import Compiler from '../components/Compiler';
 import Chat from '../components/Chat'
 import DisplayImage from '../components/DisplayImage';
