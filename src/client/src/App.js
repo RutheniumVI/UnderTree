@@ -9,13 +9,13 @@ import Projects from './pages/Projects';
 function App() {
   return (
     <div className="App">
-      <Navbar/>
+      <Navbar />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="projects" element={<Projects />} />
-          <Route path='project/:owner/:projectName' element={<Project />}/>
-        </Routes>  
+          <Route path='project/:owner/:projectName' element={<Project />} />
+        </Routes>
       </BrowserRouter>
     </div>
   );

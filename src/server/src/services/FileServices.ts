@@ -11,7 +11,6 @@ import { PersistenceUtil } from "../utils/PersistenceUtil";
 const router = express.Router();
 
 router.use(AuthUtil.authorizeJWT);
-// router.use(AuthUtil.authorizeProjectAccess);
 
 router.route("/compilePDF").post(compilePDF);
 router.route("/getPDF").get(getPDF);
@@ -50,7 +49,6 @@ async function compilePDF(req, res){
 	try {
 		await FileUtil.createDirectory(dirPath);
 		await FileUtil.createPDFOutput(fileName, dirPath, req.body.text);
-		// const fileData = FileUtil.getFileData("../file_system/" + dirPath + outputFileName);
 		res.json("Successfully compiled PDF");
 	}
 	catch (err) {
@@ -128,9 +126,6 @@ async function uploadImage(req, res){
 	const filePath = projectD.owner + "/" + projectD.projectName + "/" + fileDir + fileName;
 	const extension = fileName.split(".")[1];
 	const fileD: File = {fileName: fileName, fileType: extension, contributors: [req.body.userName], filePath: filePath};
-
-	//TODO: check image type
-
 
 	console.log(req.file.filename);
 	console.log(fileD);

@@ -132,15 +132,10 @@ async function getGitHubCode(req: Request, res: Response): Promise<void> {
 	const token = jwt.sign({ username: gitHubUser.login }, JWT_SECRET, { expiresIn: "7d" });
 	res.cookie("undertree-jwt", token, { httpOnly: true, maxAge: 1000*60*60*24*365 });
 
-	// For Production:
-	// res.cookie("undertree-jwt", token, { httpOnly: true, secure: true, maxAge: 1000*60*60*24*365 });
-
 	try{
 		await AuthDB.addUser(gitHubUser, token);
 	} catch (err) {
-		// FIX THIS LATER
 		console.log("User already logged in");
-		// res.status(401).send({ ok: false, message: "User already is logged in" });
 	}
 
 	const result = await AuthDB.getUserWithToken(token);
@@ -154,8 +149,6 @@ async function getUsername(req: Request, res: Response): Promise<void> {
 
 	if (!token) {
 		console.log("Token not found when trying to get username");
-		// res.sendStatus(401);
-		// res.send({ ok: false, user: null });
 	} else {
 		try{
 			const authResult = await validateUserAuth(token);
@@ -173,8 +166,6 @@ async function getUsername(req: Request, res: Response): Promise<void> {
 		} catch (err) {
 			console.log(err);
 			console.log("Token not valid when trying to get username");
-			// res.sendStatus(403);
-			// res.send({ ok: false, user: null });
 		}
 	}
 }
@@ -183,21 +174,16 @@ async function logout(req: Request, res: Response): Promise<void> {
 	const token = req.cookies["undertree-jwt"];
 	if (!token) {
 		console.log("User already logged out");
-		// res.sendStatus(401).send({ ok: false, user: null });
 	} else {
 		try{
-			// const decoded = jwt.verify(token, JWT_SECRET);
 			await AuthDB.deleteUserWithToken(token);
 			res.clearCookie("undertree-jwt");
 			res.sendStatus(200);
 		} catch (err) {
 			console.log(err);
 			res.sendStatus(401);
-			// res.sendStatus(403).send({ ok: false, user: null });
 		}
 	}
-	// res.end();
-	// res.redirect('http://localhost:3000');
 }
 
 const AuthServices = {

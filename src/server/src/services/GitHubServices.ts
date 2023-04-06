@@ -122,7 +122,6 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
 	await axios.get(`https://api.github.com/repos/${owner}/${repo}/git/ref/heads/main`, {
 		headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
 	}).then((res) => {
-		//console.log("Main Branch Data: ", res.data);
 		latestCommitSHA = res.data["object"]["sha"];
 		latestCommitURL = res.data["object"]["url"];
 	}).catch((error) => {
@@ -137,8 +136,6 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
 	await axios.get(latestCommitURL, {
 		headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/vnd.github+json" }
 	}).then((res) => {
-		//console.log("Commit Data: ", res.data);
-		// latestCommitSHA = res.data["sha"];
 		latestTreeSHA = res.data["tree"]["sha"];
 		latestTreeURL = res.data["tree"]["url"];
 	}).catch((error) => {
@@ -161,7 +158,6 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
 				Accept: "application/vnd.github+json" 
 			}
 		}).then((res) => {
-		//console.log("Blob Data: ", res.data);
 			fileBlobs.push({ 
 				"path": currFile.filePath,
 				"mode": "100644",
@@ -224,8 +220,6 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
 			Accept: "application/vnd.github+json" 
 		}
 	}).then((res) => {
-		//console.log("Old Tree Data: ", res.data);
-		// latestTreeSHA = res.data["sha"];
 	}).catch((error) => {
 		console.error(error);
 		res.status(500).json("Error getting latest tree from GitHub");
@@ -244,7 +238,6 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
 			Accept: "application/vnd.github+json" 
 		} 
 	}).then((res) => {
-		//console.log("New Tree Data: ", res.data);
 		userTreeSHA = res.data["sha"];
 		userTreeURL = res.data["url"];
 	}).catch((error) => {
@@ -279,7 +272,6 @@ async function commitFiles(req: Request, res: Response): Promise<void> {
 			Accept: "application/vnd.github+json"
 		}
 	}).then((res) => {
-		//console.log("New Commit Data: ", res.data);
 		userCommitSHA = res.data["sha"];
 		userCommitURL = res.data["url"];
 	}).catch((error) => {
