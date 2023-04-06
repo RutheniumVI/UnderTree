@@ -10,8 +10,6 @@ The folders and files for this project are as follows:
 
 - docs - Documentation for the project
 
-- refs - Reference material used for the project, including papers
-
 - src - Source code. The source code is split into three folders, the client for all the frontend code, server for all the backend code, and deployment for all docker and Caddy code neccesary for deploying the project
 
 - src/backend/tst - Test cases
