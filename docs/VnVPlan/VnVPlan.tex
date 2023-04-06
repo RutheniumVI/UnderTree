@@ -71,12 +71,12 @@
 	
 	\subsection{Summary}
 	
-	This document covers the test plan for UnderTree, a collaborative \textbf{LaTex} editing and compiling software that supports version control with\textbf{ Git }integration. The software will allow for multiple members of a team to view, edit and compile the same \textbf{tex} files at the same time while seeing the changes made by others in real time. This is especially useful for teams preparing project documentation where multiple members need to contribute to the documents in parallel, however it is widely intended for the development of any \textbf{LaTex} document by any number of contributors for any reason.\\
-	\\The \textbf{LaTex} editor will support version control management through\textbf{ Git }integration so that the version history of any document created will be easily accessible. This is especially useful for documents that are likely to change over time due to revisions, such as software documentation and release notes
+	This document covers the test plan for UnderTree, a collaborative LaTeX editing and compiling software that supports version control with Git integration. The software will allow for multiple members of a team to view, edit and compile the same \textbf{tex} files at the same time while seeing the changes made by others in real time. This is especially useful for teams preparing project documentation where multiple members need to contribute to the documents in parallel, however it is widely intended for the development of any LaTeX document by any number of contributors for any reason.\\
+	\\The LaTeX editor will support version control management through Git integration so that the version history of any document created will be easily accessible. This is especially useful for documents that are likely to change over time due to revisions, such as software documentation and release notes
 	
 	\subsection{Objectives}
 	
-	The objective of this test plan is to outline the test cases that will build confidence in the correctness of the software and verify that the intended requirements are met as defined in the SRS.
+	The objective of this test plan is to outline the test cases that will build confidence in the correctness of the software and verify that the intended requirements are met as defined in the SRS, as well as to ensure that the requirements to be followed are correct..
 	
 	\subsection{Relevant Documentation}
 	
@@ -95,11 +95,11 @@
 	
 	\subsection{Verification and Validation Team}
 	
-	The verification and validation team for this projects consists of the developers Kevin Kannammallil, Veerash Palanichamy, Eesha Qureshi and Faiq Ahmed as well as the Capstone course instructor Dr.Spencer Smith and his instructional assistant Samuel Crawford.The developers will be in charge of the quality assurance engineering of the software and will develop, implement and verify test suites that cover the functional and non-functional requirements outlined in the SRS. The instructors will be responsible for providing feedback and ensuring that standards and expectations are met by the project. Additionally, potential users will provide feedback about the functionality and quality of the software to validate the product. Finally colleagues and peers will provide regular feedback towards to the documentation and design which will be taken into account.  
+	The verification and validation team for this projects consists of the developers Kevin Kannammallil, Veerash Palanichamy, Eesha Qureshi and Faiq Ahmed as well as the Capstone course instructor Dr.Spencer Smith and his instructional assistant Samuel Crawford.The developers will be in charge of the quality assurance engineering of the software and will develop, implement and verify test suites that cover the functional and non-functional requirements outlined in the SRS. The instructors will be responsible for providing feedback and ensuring that standards and expectations are met by the project. Additionally, potential users will provide feedback about the functionality and quality of the software to validate the product. Finally colleagues and peers will provide regular feedback towards to the documentation and design which will be taken into account.  More specifically, the testing will be broken down into both front-end and back-end testing, as well as integrated testing and manual testing. All four team members will be responsible for end to end testing from the back-end to the front-end for certain features of the project. Back-end testing will include data validation, testing queries and API testing while front-end tests will include content rendering testing, flow testing, input validation testing and so on. 
 	
 	\subsection{SRS Verification Plan}
 	
-	The SRS will be verified through peer reviews, stakeholder feedback and by using the SRS checklist as well the the learning objectives.
+	The SRS will be verified through peer reviews, stakeholder feedback and by using the SRS checklist as well the the learning objectives. The peer reviews will be taken in the form of surveys from a sample population whose results will then be aggregated, charted and incorporated into the next revision. Surveys will ask questions regarding visual design, usability, and overall impressions. Peers will also be asked to walk-through tasks and provide feedback. Other stakeholders who will be surveyed include potential users of the product (i.e people who use LaTeX editors) and the Capstone Supervisor, Dr.Spencer Smith as well as Samuel Crawford.
 	
 	\subsection{Design Verification Plan}
 	
@@ -144,13 +144,13 @@
 		
 		Initial State: The user has already logged into the system using the GitHub auth and is connected to their Git account. 
 		
-		Input: The user creates a project through the system, adds collaborators and provides an valid name. 
+		Input: The user creates a project through the system, adds collaborators and provides an valid name, "New Project". 
 		
-		Output: A new project is created and displayed on the system which is connected to a new git repository. 
+		Output: A new project is created and displayed on the system which is connected to a new Git repository, with the name "New Project". 
 		
-		Test Case Derivation: When a user creates a project, the git repository is also created in their GitHub account which should be visible by the user. 
+		Test Case Derivation: When a user creates a project, the Git repository is also created in their GitHub account which should be visible by the user. 
 		
-		How test will be performed: The tester will press the button to create a project, add collaborators and then create a name for the project that is not already being used on their account. They will then validate that the project shows up on their homepage and the corresponding git repository is on GitHub as well.
+		How test will be performed: The tester will press the button to create a project, add collaborators and then create a name for the project that is not already being used on their account. They will then validate that the project shows up on their homepage and the corresponding Git repository is on GitHub as well.
 		
 		% Create Git Repository from system
 		\item{ST-\TESTNUM\\}
@@ -161,24 +161,24 @@
 		
 		Input: The user creates a project through the system, adds collaborators and provides an invalid name. 
 		
-		Output: An error pops up indicating that the user tried to enter a name for the project which is already taken in a previous git repository of theirs. 
+		Output: An error pops up indicating that the user tried to enter a name for the project which is already taken in a previous Git repository of theirs. 
 		
 		Test Case Derivation: When a user creates a project with an invalid name, the process should end and they should encounter an error.
 		
-		How test will be performed: The tester will press the button to create a project, add collaborators, and then add a name that already exists in their GitHub and submit. They will validate that the process ends there and an error comes up. They will also validate that the project wasn't created on their homepage along with the git repository on their GitHub.
+		How test will be performed: The tester will press the button to create a project, add collaborators, and then add a name that already exists in their GitHub and submit. They will validate that the process ends there and an error comes up. They will also validate that the project wasn't created on their homepage along with the Git repository on their GitHub.
 		
 		% Choose a repository to import
 		\item{ST-\TESTNUM\\}
 		
 		Control: Manual
 		
-		Initial State: The user has already logged into the system using the GitHub auth and is connected to their Git account. The user has a preexisting git repository in their GitHub to import.
+		Initial State: The user has already logged into the system using the GitHub auth and is connected to their Git account. The user has a preexisting Git repository in their GitHub to import.
 		
-		Input: The user clicks the button to import a project using the interface and selects among the available existing git repositories in their GitHub to import. 
+		Input: The user clicks the button to import a project using the interface and selects among the available existing Git repositories in their GitHub to import. 
 		
 		Output: The user sees a new project on their homepage with all the tex files in it, along with the collaborators added.
 		
-		Test Case Derivation: The new project created will be the imported git repository data that the user requested.
+		Test Case Derivation: The new project created will be the imported Git repository data that the user requested.
 		
 		How test will be performed: The tester will create a repository in GitHub with collaborators and add a tex file with some dummy data. The tester will then log into the system with GitHub auth and then press import to transfer the tex files from the GitHub repository to the system. The tester will then validate if the system has all the correct tex files and collaborators.
 		
@@ -195,7 +195,7 @@
 		
 		Test Case Derivation: The user will be able to see all the latest commit history by clicking the button, which tells the system to pull all the latest commits from GitHub 
 		
-		How test will be performed: The tester will press the revision history button on a preexisting project in the system and view the current commits. Then the tester will create a commit in the GitHub repository and then navigate back to the system and click on the revision history button again to validate that the system does pull all commits from the git repository.
+		How test will be performed: The tester will press the revision history button on a preexisting project in the system and view the current commits. Then the tester will create a commit in the GitHub repository and then navigate back to the system and click on the revision history button again to validate that the system does pull all commits from the Git repository.
 		
 		% Commit changes
 		\item{ST-\TESTNUM\\}
@@ -204,9 +204,9 @@
 		
 		Initial State: The user has already logged into the system using the GitHub auth and is connected to their Git account. The user has a preexisting project in the system.
 		
-		Input: The user has made some changes to the tex file in a project and then starts the process to commit the changes. 
+		Input: The user has made some changes to the tex file in a project and then enters a commit message, then clicks commit.
 		
-		Output: The user is able to choose a commit message for the commit that is going to be made
+		Output: The commit message is displayed with the changes in Github. 
 		
 		Test Case Derivation: Any committed changes should have a commit message that can be modified by the user
 		
@@ -312,6 +312,20 @@
 	
 	\begin{enumerate}
 		
+		\item{ST-83\\}
+		
+		Control: Manual
+		
+		Initial State: User has a file open in a project
+		
+		Input: A different user deletes the project from the project menu
+		
+		Output: The editor page should be redirected to the projects menu page with a message stating the current project no longer exists
+		
+		Test Case Derivation: Deleting a project should be reflected for all collaborators.
+		
+		How test will be performed: A user will create a project and add a collaborator, then open the project, create a file and open the file. The collaborator will then delete the project while the other user still has it open.
+		
 		\item{ST-\TESTNUM\\}
 		
 		Control: Automated
@@ -330,13 +344,13 @@
 		
 		Control: Manual
 		
-		Initial State: Multiple users have the same latex file open in the editor
+		Initial State: Multiple users have the same LaTeX file open in the editor
 		
 		Input: All the users click some text position to move their cursor
 		
 		Output: All the users cursor's current position should be shown
 		
-		Test Case Derivation: When multiple users are editing a latex file, it is necessary to see where each user's text cursor position is located
+		Test Case Derivation: When multiple users are editing a LaTeX file, it is necessary to see where each user's text cursor position is located
 		
 		How test will be performed: The tester will have to log into different testing accounts using different web browsers. The tester will then move the text cursor from each different session to a different location. At the end, the tester will observe that all the text cursor positions are show in each session
 		
@@ -344,29 +358,29 @@
 		
 		Control: Manual
 		
-		Initial State: User opens a latex file in the editor
+		Initial State: User opens a LaTeX file in the editor
 		
-		Input: User types latex specific code
+		Input: User types LaTeX specific code
 		
-		Output: The latex code should be highlighted accordingly
+		Output: The LaTeX code should be highlighted accordingly
 		
-		Test Case Derivation: When a user types latex specific code, the system should highlight its such that it helps the user understand the latex file
+		Test Case Derivation: When a user types LaTeX specific code, the system should highlight its such that it helps the user understand the LaTeX file
 		
-		How test will be performed: The tester will open a latex file, and type latex functions and environments. The tester will then confirm that the latex functions are highlighted such that they can be differentiated from normal text
+		How test will be performed: The tester will open a LaTeX file, and type LaTeX functions and environments. The tester will then confirm that the LaTeX functions are highlighted such that they can be differentiated from normal text
 		
 		\item{ST-\TESTNUM\\}
 		
 		Control: Manual
 		
-		Initial State: User opens a latex file in the editor
+		Initial State: User opens a LaTeX file in the editor
 		
-		Input: User types normal text with some spelling errors
+		Input: User types normal text with some spelling errors, "Hkello there"
 		
-		Output: The words with the spelling error should be highlighted
+		Output: The words with the spelling error, "Hkello", should be highlighted
 		
 		Test Case Derivation: When a user does a spelling error, the system should highlight the error so that the user can fix it
 		
-		How test will be performed: The tester will open a latex file in the editor, and types text with some spelling error . The tester will then confirm that the words with the spelling errors are highlighted
+		How test will be performed: The tester will open a LaTeX file in the editor, and types text with some spelling error . The tester will then confirm that the words with the spelling errors are highlighted
 		
 		\item{ST-\TESTNUM\\}
 		
@@ -378,7 +392,7 @@
 		
 		Output: The updated file should have all those changes and should be the same for all the users
 		
-		Test Case Derivation: When multiple users make changes to a Latex file, those changes need to be synchronized for all the users to see
+		Test Case Derivation: When multiple users make changes to a LaTeX file, those changes need to be synchronized for all the users to see
 		
 		How test will be performed: The tester will have to log into different testing accounts using different web browsers. The tester will then make a change from each of the open sessions. At the end, the tester will observe that all the files are the same and have all the changes made
 		
@@ -394,7 +408,7 @@
 		
 		Test Case Derivation: When a user tries to delete a file, there should be a confirmation screen to make sure they want to delete the file.
 		
-		How test will be performed: An automated scrip will open the editor with a file to delete, the scrip will then attempt to delete the file. It will then confirm that a confirmation dialog confriming the choice of the user to delete the file shows up.
+		How test will be performed: An automated scrip will open the editor with a file to delete, the scrip will then attempt to delete the file. It will then confirm that a confirmation dialog confirming the choice of the user to delete the file shows up.
 		
 		\item{ST-\TESTNUM\\}
 		
@@ -416,9 +430,9 @@
 		
 		Initial State: User has a project open in the editor with a file to rename
 		
-		Input: User selects the option to rename one of the file from the file list
+		Input: User clicks the edit icon and enters a new name for the file
 		
-		Output: The user is allowed to enter the new name for the file
+		Output: The file is displayed with the new name
 		
 		Test Case Derivation: When a user renames a file, they should be allowed to input the new name
 		
@@ -526,23 +540,23 @@
 		
 		Control: Manual
 		
-		Initial State: User has a latex file open in the editor
+		Initial State: User has a LaTeX file open in the editor
 		
-		Input: User tries to insert, delete and modify the text in the latex file
+		Input: User tries to insert, delete and modify the text in the LaTeX file
 		
 		Output: Each action should be carried out without any issues
 		
 		Test Case Derivation: This test case makes sure the basic functionality of the editor to insert, delete and modify test works without any issues.
 		
-		How test will be performed: The tester will open a latex file in the editor , and try editing it by inserting, deleting and modifying text. The tester will confirm all those functionalities work without any issues.
+		How test will be performed: The tester will open a LaTeX file in the editor , and try editing it by inserting, deleting and modifying text. The tester will confirm all those functionalities work without any issues.
 		
 		\item{ST-\TESTNUM\\}
 		
 		Control: Manual
 		
-		Initial State: User has a latex file open in the editor
+		Initial State: User has a LaTeX file open in the editor
 		
-		Input: User tries to insert, delete and modify the text in the latex file
+		Input: User tries to insert, delete and modify the text in the LaTeX file
 		
 		Output: This event of the file being edited should be saved alongside the user who made the change
 		
@@ -608,6 +622,20 @@
 		Test Case Derivation: A valid project name should not give any errors.
 		
 		How test will be performed: The tester will open the create project screen, enter a valid name and finish the task, then ensure that no error is displayed.
+		
+		\item{ST-84\\}
+		
+		Control: Manual
+		
+		Initial State: The user has the create project screen open.
+		
+		Input: The user enters a project name with Arabic letters into the project name form field and clicks the create project button.
+		
+		Output: An error is given stating project names must be English alpha-numeric characters. 
+		
+		Test Case Derivation: An invalid project name should give an errors.
+		
+		How test will be performed: The tester will open the create project screen, enter the invalid name and ensure the process could not be completed.
 		
 		\item{ST-\TESTNUM\\}
 		
@@ -766,9 +794,9 @@
 		
 	\end{enumerate}
 	
-	\subsubsection{Latex Compilation}
+	\subsubsection{LaTeX Compilation}
 	
-	The following section covers all system tests related to latex compilation, these would encompass are functional requirements covered by business events 15 and 16 in the \href{https://github.com/RutheniumVI/UnderTree/blob/main/docs/SRS/SRS.pdf}{SRS}.
+	The following section covers all system tests related to LaTeX compilation, these would encompass are functional requirements covered by business events 15 and 16 in the \href{https://github.com/RutheniumVI/UnderTree/blob/main/docs/SRS/SRS.pdf}{SRS}.
 	
 	\begin{enumerate}
 		
@@ -776,55 +804,55 @@
 		
 		Control: Manual
 		
-		Initial State: Empty latex file
+		Initial State: Empty LaTeX file
 		
-		Input: User wants to view a latex file that has not been compiled yet
+		Input: User wants to view a LaTeX file that has not been compiled yet
 		
 		Output: An empty PDF file is displayed
 		
-		Test Case Derivation: An empty latex file should map to an empty PDF file
+		Test Case Derivation: An empty LaTeX file should map to an empty PDF file
 		
-		How test will be performed: The tester will log in to a testing account and manually click the compile button after opening an empty latex file. The tester will then verify that an empty PDF file is displayed.
-		
-		\item{ST-\TESTNUM\\}
-		
-		Control: Manual
-		
-		Initial State: A valid latex file with data in it
-		
-		Input: User clicks the compile latex button
-		
-		Output: A successfully compiled PDF file with the correct corresponding data that maps to the latex code is displayed
-		
-		Test Case Derivation: A valid latex file should not give any errors and should display the correct corresponding pdf
-		
-		How test will be performed: The tester will log in to a testing account and manually click the compile button on a latex file that contains valid latex data. The tester will then verify that a valid and corresponding PDF file is displayed.
+		How test will be performed: The tester will log in to a testing account and manually click the compile button after opening an empty LaTeX file. The tester will then verify that an empty PDF file is displayed.
 		
 		\item{ST-\TESTNUM\\}
 		
 		Control: Manual
 		
-		Initial State: A valid latex file with data in it that has already been compiled and is being displayed as a PDF
+		Initial State: A valid LaTeX file with data in it
 		
-		Input: User updates the latex file to a different valid file and clicks the compile latex button
+		Input: User clicks the compile LaTeX button
+		
+		Output: A successfully compiled PDF file with the correct corresponding data that maps to the LaTeX code is displayed
+		
+		Test Case Derivation: A valid LaTeX file should not give any errors and should display the correct corresponding pdf
+		
+		How test will be performed: The tester will log in to a testing account and manually click the compile button on a LaTeX file that contains valid LaTeX data. The tester will then verify that a valid and corresponding PDF file is displayed.
+		
+		\item{ST-\TESTNUM\\}
+		
+		Control: Manual
+		
+		Initial State: A valid LaTeX file with data in it that has already been compiled and is being displayed as a PDF
+		
+		Input: User updates the LaTeX file to a different valid file and clicks the compile LaTeX button
 		
 		Output: A successfully compiled PDF file with the correct corresponding and different data from the previous PDF file should be displayed
 		
-		Test Case Derivation: This test is to confirm that the latex file updates to the latest version of the compiled PDF.
+		Test Case Derivation: This test is to confirm that the LaTeX file updates to the latest version of the compiled PDF.
 		
-		How test will be performed: The tester will log in to a testing account, verify that a PDF is displayed for the current valid latex file, update the latex file to a different valid file and compile it. The tester will then verify that a valid and corresponding PDF file that is different from the previous PDF is displayed.
+		How test will be performed: The tester will log in to a testing account, verify that a PDF is displayed for the current valid LaTeX file, update the LaTeX file to a different valid file and compile it. The tester will then verify that a valid and corresponding PDF file that is different from the previous PDF is displayed.
 		
 		\item{ST-\TESTNUM\\}
 		
 		Control: Automated
 		
-		Initial State: A latex file with invalid data in it
+		Initial State: A LaTeX file with invalid data in it
 		
 		Input: User clicks the compile button
 		
-		Output: A correct and corresponding error that points to the specific issue with the latex file that prevented it from compiling is displayed.
+		Output: A correct and corresponding error that points to the specific issue with the LaTeX file that prevented it from compiling is displayed.
 		
-		Test Case Derivation: An invalid latex file should not be compiled and instead display an error that points to the issue.
+		Test Case Derivation: An invalid LaTeX file should not be compiled and instead display an error that points to the issue.
 		
 		How test will be performed: This test can be performed with a front-end testing framework such as Selenium or Jest which can click the compile button and verify that an error is displayed as text in the correct place on the user interface.
 		
@@ -832,15 +860,15 @@
 		
 		Control: Automated
 		
-		Initial State: A latex file with valid data in it
+		Initial State: A LaTeX file with valid data in it
 		
 		Input: The function to compile the PDF is triggered
 		
-		Output: A PDF corresponding to the latex file and sharing the name of the latex file is created and saved in the system
+		Output: A PDF corresponding to the LaTeX file and sharing the name of the LaTeX file is created and saved in the system
 		
-		Test Case Derivation: A valid latex should successfully compile and a PDF should be saved in the system with the same name as the latex file.
+		Test Case Derivation: A valid LaTeX should successfully compile and a PDF should be saved in the system with the same name as the LaTeX file.
 		
-		How test will be performed: This test can performed using unit testing frameworks that input a valid latex input and trigger the function responsible for compiling it, then verify that a PDF with the correct name and data in the s 
+		How test will be performed: This test can performed using unit testing frameworks that input a valid LaTeX input and trigger the function responsible for compiling it, then verify that a PDF with the correct name and data in the s 
 		
 	\end{enumerate}
 	
@@ -897,13 +925,13 @@
 		
 		\item{ST-\TESTNUM\\}
 		
-		Type: Static, Manual
+		Type: Dynamic, Manual
 		
 		How test will be performed: Users will be asked a question in a server to rate how minimalist the design is. The average rating given by the users must be greater than the simplicity\_rating symbolitic parameter that is defined in the \href{https://github.com/RutheniumVI/UnderTree/blob/main/docs/SRS/SRS.pdf}{SRS}.
 		
 		\item{ST-\TESTNUM\\}
 		
-		Type: Static, Manual
+		Type: Dynamic, Manual
 		
 		How test will be performed: The code responsible for the styling of the website will be reviewed by all developers to ensure that it follows the specified color scheme. The total amount of distinct colors used in the design must be less than the num\_colors symbolitic parameter that is defined in the \href{https://github.com/RutheniumVI/UnderTree/blob/main/docs/SRS/SRS.pdf}{SRS}.
 		
@@ -924,7 +952,7 @@
 		
 		Type: Static, Manual
 		
-		How test will be performed: Users will be asked a series of questions about how long it took them to be able to effectively use the system, if they are already familiar with latex, and how easy the material was to understand. Only submissions for users who claim they are familiar with latex will be considered as this application is targeted towards such users, the average learning\_time that is taken must be less than and the easiness\_rating must be greater than their respective symbolic parameters in the \href{https://github.com/RutheniumVI/UnderTree/blob/main/docs/SRS/SRS.pdf}{SRS}.
+		How test will be performed: Users will be asked a series of questions about how long it took them to be able to effectively use the system, if they are already familiar with LaTeX, and how easy the material was to understand. Only submissions for users who claim they are familiar with LaTeX will be considered as this application is targeted towards such users, the average learning\_time that is taken must be less than and the easiness\_rating must be greater than their respective symbolic parameters in the \href{https://github.com/RutheniumVI/UnderTree/blob/main/docs/SRS/SRS.pdf}{SRS}.
 		
 		\item{ST-\TESTNUM\\}
 		
@@ -956,7 +984,7 @@
 		
 		Control: Automatic
 		
-		Initial State: A latex file with valid input is ready to be compiled 
+		Initial State: A LaTeX file with valid input is ready to be compiled 
 		
 		Input: The compilation button is triggered multiple times
 		
@@ -1030,7 +1058,7 @@
 		
 		Type: Static, Manual
 		
-		How test will be performed: The developers will validate and confirm that the source code for the system and the git repository is only view-able to the public and limits manipulation of source code to only maintainers.
+		How test will be performed: The developers will validate and confirm that the source code for the system and the Git repository is only view-able to the public and limits manipulation of source code to only maintainers.
 		
 		\item{ST-\TESTNUM\\}
 		
@@ -1119,12 +1147,25 @@
 	\end{enumerate}
 	
 	\subsubsection{Cultural Requirements}
-	
-	N/A
+	\begin{enumerate}
+		\stepcounter{TESTID}
+		\item{ST-\TESTNUM\\}
+		
+		Type: Static, Manual
+		
+		How test will be performed: A culture review will be performed on the product by taking a sample population from various demographics and recording their feedback 
+		
+	\end{enumerate}
 	
 	\subsubsection{Legal Requirements}
 	
 	\begin{enumerate}
+		
+		\item{ST-\TESTNUM\\}
+		
+		Type: Static, Manual
+		
+		How test will be performed: The validity of the user agreement will be assessed by a legal professional
 		
 		\item{ST-\TESTNUM\\}
 		
@@ -1230,9 +1271,9 @@
 		NFR38  & ST-76\\
 		NFR39  & ST-77\\
 		NFR40  & ST-78\\
-		% NFR41  & N/A\\
-		% NFR42  & N/A\\
-		% NFR43  & N/A\\
+		NFR41  & ST-80\\
+		NFR42  & ST-81\\
+		NFR43  & ST-82\\
 		\hline
 	\end{longtable}
 	
@@ -1410,7 +1451,7 @@
 		
 		Input: User compiles the TeX file
 		
-		Output: The user is given a success message for the latex file being successfully compiled
+		Output: The user is given a success message for the LaTeX file being successfully compiled
 		
 		Test Case Derivation: This test is to verify that the LaTeX compiler can compiled valid files correctly.
 		
@@ -1672,19 +1713,19 @@
 	
 	Reference the Symbolic parameters section in the \href{https://github.com/RutheniumVI/UnderTree/blob/main/docs/SRS/SRS.pdf}{SRS}. 
 	
-	\subsection{Usability Survey Questions?}
+	\subsection{Usability Survey Questions}
 	
 	%\wss{This is a section that would be appropriate for some projects.}
 	
 	The Usability Survey contains the following questions:
 	\begin{itemize}
-		\item On a scale of 1 to 10, how minimalist and simplistic would you rate the design to be?
-		\item Are you familiar with Latex? (Yes or No question)
+		\item On a scale of 1 to 10, how minimalist and simplistic would you rate the design to be? (1 being very convoluted and 10 being very simple)
+		\item Are you familiar with LaTeX? (Yes or No question)
 		\item Approximately how long in minutes did it take you to learn the system?
-		\item On a scale of 1 to 10, how easy would you say the system material was to understand?
-		\item On a scale of 1 to 10, how responsive would you say the system is?
-		\item On a scale of 1 to 10, how appropriate and informative were the errors you seen
-		\item Are there any errors you seem important that the system doesn't have
+		\item On a scale of 1 to 10, how easy would you say the system material was to understand? (1 being difficult and 10 being very easy to understand)
+		\item On a scale of 1 to 10, how responsive would you say the system is? (1 being unresponsive and 10 being very responsive)
+		\item On a scale of 1 to 10, how appropriate and informative were the errors you seen? (1 being very little and 10 being very much)
+		\item Are there any errors you think of as important that the system does not notify?
 	\end{itemize}
 	
 	

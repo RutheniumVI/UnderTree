@@ -26,7 +26,7 @@
 	\author{\authname}
 	\date{\today}
 	
-	 \maketitle
+	% \maketitle
 	
 	\pagenumbering{roman}
 	
@@ -54,8 +54,6 @@
 		\textbf{symbol} & \textbf{description}\\
 		\midrule 
 		T & Test\\
-		LaTeX, TeX & A professional document writing software and compiler\\
-		GitHub & A version control software hosted by Microsoft\\
 		\bottomrule
 	\end{tabular}\\
 	
@@ -73,7 +71,7 @@
 	
 	\pagenumbering{arabic}
 	
-	This document ...
+	This document outlines the results of the testing plan discussed in the VnV report. It outlines the functional requirements and non-functional requirements evaluation, unit tests, survey results, code coverage metrics and changes due to testing.
 	
 	\section{Functional Requirements Evaluation}
 	
@@ -148,25 +146,27 @@
 			\hline
 			ST-18 & FR21, FR30 & One of the user deletes a file that multiple users have open & All of the users should not longer be able to see the file in the editor & The users are only unable to see the file after reloading the page & \textcolor{green}{PASS} \\
 			\hline
-			ST-19 & FR31, FR32 & User selects the option to rename one of the file from the file list & he user is allowed to enter the new name for the file & A modal appears asking the user to enter a new name for the file & \textcolor{green}{PASS} \\
+			ST-19 & FR31, FR32 & User selects the option to rename one of the file from the file list & The user is allowed to enter the new name for the file & A modal appears asking the user to enter a new name for the file & \textcolor{green}{PASS} \\
 			\hline
 			ST-20 & FR33 & User selects the option to rename one of the file from the file list, and renames it to a different name & This event of the file being renamed should be recorded in the client side storage alongside the user who made the change & The event is stored in the local storage & \textcolor{green}{PASS}  \\
 			\hline
 			ST-21 & FR21, FR32 & One of the user renames a file that multiple users have open & All of the users should should see the updated file name in the editor & he users are only unable to see the updated file after reloading the page & \textcolor{green}{PASS} \\
 			\hline
-			ST-22 & FR24, FR25, FR26 & User selects the option to create a new file & he system should present the user with modal that prompts the user for the name and the extension of the file, with default name and .tex extension filled in & The modal presents an empty input field &  \textcolor{red}{FAIL} \\
+			ST-22 & FR24, FR25, FR26 & User selects the option to create a new file & The system should present the user with modal that prompts the user for the name and the extension of the file, with default name and .tex extension filled in & The modal presents an empty input field &  \textcolor{red}{FAIL} \\
 			\hline
 			ST-23 & FR26 & User selects confirm on the new file creation modal & The empty file should be added to the editor, and should also be visible to other users & The new file is displayed in the filemenu &  \textcolor{green}{PASS} \\
 			\hline
-			ST-24 & FR21, FR26 & Each user creates a new file & ach user should be able to see all the files created by the other users in the editor & The new file created by each member is visible to the others & \textcolor{green}{PASS}  \\
+			ST-24 & FR21, FR26 & Each user creates a new file & Each user should be able to see all the files created by the other users in the editor & The new file created by each member is visible to the others & \textcolor{green}{PASS}  \\
 			\hline
-			ST-25 & FR27 &  User selects the option to upload a file & he user should be presented a modal to choose their local file & The user is presented with a modal with a file input field that allows the user to select a file from their device &  \textcolor{green}{PASS}  \\
+			ST-25 & FR27 &  User selects the option to upload a file & The user should be presented a modal to choose their local file & The user is presented with a modal with a file input field that allows the user to select a file from their device &  \textcolor{green}{PASS}  \\
 			\hline
-			ST-26 & FR28 & User browses through and chooses a local file to upload & he file should appear in the file list window with the same name and extension as the local file chose to upload with the same file content & The selected file is displayed in the filemenu and the content remains the same & \textcolor{green}{PASS} \\
+			ST-26 & FR28 & User browses through and chooses a local file to upload & The file should appear in the file list window with the same name and extension as the local file chose to upload with the same file content & The selected file is displayed in the filemenu and the content remains the same & \textcolor{green}{PASS} \\
 			\hline
 			ST-27 & FR34 & User tries to insert, delete and modify the text in the latex file & Each action should be carried out without any issues & Each action is carried out without any issues & \textcolor{green}{PASS} \\
 			\hline
 			ST-28 & FR35 & User tries to insert, delete and modify the text in the latex file & This event of the file being edited should be saved alongside the user who made the change & The changes are stored along with the user who made the change & \textcolor{green}{PASS} \\
+			\hline
+			ST-83 &  & User has a file open in a project and a different user deletes the project from the project menu & The editor page should be redirected to the projects menu page with a message stating the current project no longer exists & The page is not found & \textcolor{red}{FAIL} \\
 			\hline
 		\end{longtable}
 	\end{center}
@@ -193,6 +193,8 @@
 			\caption{Project Menu System Tests \label{long}}\\
 			\hline
 			\textbf{Id} & \textbf{Req Id} & \textbf{Input} & \textbf{Expected Result} & \textbf{Actual Result} & \textbf{Result}   \\
+			\hline
+			ST-84 & & The user enters a project name with Arabic letters into the project name form field and clicks the create project button & An error is given stating project names must be English alpha-numeric characters & No error is given &  \textcolor{red}{FAIL} \\
 			\hline
 			ST-31 & FR5 & The user enters a valid project name into the appropriate form field and clicks the create project button & No error is given for creating the project & No error is given for creating the project &  \textcolor{green}{PASS} \\
 			\hline
@@ -250,9 +252,9 @@
 			\hline
 			\textbf{Id} & \textbf{Req Id} & \textbf{Input} & \textbf{Expected Result} & \textbf{Actual Result} & \textbf{Result}   \\
 			\hline
-			ST-48 & FR1 & User clicks on instructions icon & Instructions screen is displayed & & TBD \\
+			ST-48 & FR1 & User clicks on instructions icon & Instructions screen is displayed & Instructions screen is displayed & \textcolor{green}{PASS} \\
 			\hline
-			ST-49 & FR2 & User clicks on the close instructions icon & Instructions screen is no longer displayed & & TBD \\
+			ST-49 & FR2 & User clicks on the close instructions icon & Instructions screen is no longer displayed & Instructions screen is no longer displayed & \textcolor{green}{PASS} \\
 			\hline
 		\end{longtable}
 	\end{center}
@@ -338,7 +340,7 @@
 			\hline
 			ST-59 & NFR16 & Developers on the team are surveyed on the maintainability of the application using a 1-5 rating & The average rating is greater or equal to $\hyperlink{maintain}{M\_RATING}$ seconds & The average rating is greater or equal to $\hyperlink{maintain}{M\_RATING}$ seconds &  \textcolor{green}{PASS} \\
 			\hline
-			ST-61 & NFR20 & Developers will check the project roadmap & Roadmap should indicate project will be done by deadline & Roadmap indicates project will be done by deadline &  \textcolor{yellow}{TBD} \\
+			ST-61 & NFR20 & Developers will check the project roadmap & Roadmap should indicate project will be done by deadline & Roadmap indicates project will be done by deadline &  TBD \\
 			\hline
 			ST-62 & NFR21 NFR22 & N/A & The system is fully documented & The system is fully documented &  \textcolor{green}{{PASS}} \\
 			\hline
@@ -361,6 +363,10 @@
 			ST-78 & NFR40 & Tester opens application and waits for browser session time out and then will access the projects page & The application should ask to re-authenticate & The application asks to re-authenticate &  \textcolor{green}{PASS} \\
 			\hline
 			ST-79 & NFR43 & Tester collects all the media on the application that is there by default  & All media on the application should be copy-right free & All media on the application are copy-right free &  \textcolor{green}{PASS} \\
+			\hline
+			ST-81 & NFR42 & A culture review will be performed on the product by taking a sample population from various demographics and recording their feedback  & The content is deemed appropriate &  The content is deemed appropriate&\textcolor{green}{PASS} \\
+			\hline
+			ST-82 & NFR43 & A The validity of the user agreement will be assessed by a legal professional  & The professional declares that there is no liability & The professional declares that there is no liability &\textcolor{green}{PASS} \\
 			\hline
 		\end{longtable}
 	\end{center}
