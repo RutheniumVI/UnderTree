@@ -39,6 +39,7 @@ async function validateUserAuth(token: string): Promise<Object> {
 			return { validated: false, token: newToken };
 		}
 
+    // If the token is expired, renew it
 		jwt.verify(token, JWT_SECRET, async (err, decoded) => {
 			if (err) {
 				if (err.name === "TokenExpiredError") {
@@ -57,7 +58,7 @@ async function validateUserAuth(token: string): Promise<Object> {
 	}
 }
 
-//
+// Get a specific property of user data given their token
 async function getUserPropertyWithToken(token: string, property: keyof MongoUser): Promise<any> {
 	const user = await AuthDB.getUserWithToken(token);
 	if (user == null || user[property] == null) {
@@ -67,6 +68,7 @@ async function getUserPropertyWithToken(token: string, property: keyof MongoUser
 	return user[property];
 }
 
+// Helper function to retrieve the user from GitHub and store it in our model of a GitHub user
 async function getGitHubUser({ code }: { code: string }): Promise<GitHubUser> {
 	const githubToken = await axios
 		.post(
@@ -82,6 +84,7 @@ async function getGitHubUser({ code }: { code: string }): Promise<GitHubUser> {
 			throw error;
 		});
   
+  // Extract the access token from the response
 	const decoded = querystring.parse(githubToken);
 	const accessToken = decoded.access_token;
 
@@ -90,6 +93,8 @@ async function getGitHubUser({ code }: { code: string }): Promise<GitHubUser> {
 			headers: { Authorization: `Bearer ${accessToken}` },
 		})
 		.then(async (res) => {
+
+      // If the user doesn't have an email, get it from the GitHub Emails API
 			if (res.data.email == null) {
 				console.log("No email found for user, getting email from GitHub Emails API");
 				const userEmail = await axios.get("https://api.github.com/user/emails", {
@@ -109,6 +114,8 @@ async function getGitHubUser({ code }: { code: string }): Promise<GitHubUser> {
 				}
 				res.data.email = userEmail;
 			}
+
+      // Returns the required user information for the GitHubUser model
 			return { 
 				login: res.data.login, 
 				name: res.data.name, 
@@ -125,6 +132,7 @@ async function getGitHubUser({ code }: { code: string }): Promise<GitHubUser> {
 	return user;
 }
 
+// Function that handles the GitHub OAuth callback
 async function getGitHubCode(req: Request, res: Response): Promise<void> {
 	const code = req.query.code as string;
 
@@ -138,6 +146,7 @@ async function getGitHubCode(req: Request, res: Response): Promise<void> {
 		throw "No user found";
 	}
 
+  // Create a JWT token for the user and store it in a cookie in the browser
 	const token = jwt.sign({ username: gitHubUser.login }, JWT_SECRET, { expiresIn: "7d" });
 	res.cookie("undertree-jwt", token, { httpOnly: true, maxAge: 1000*60*60*24*365 });
 
@@ -153,6 +162,7 @@ async function getGitHubCode(req: Request, res: Response): Promise<void> {
 	res.redirect(process.env.FULL_DOMAIN_URL);
 }
 
+// Function to retrieve the username of the user given their token
 async function getUsername(req: Request, res: Response): Promise<void> {
 	const token = req.cookies["undertree-jwt"];
 
@@ -179,6 +189,7 @@ async function getUsername(req: Request, res: Response): Promise<void> {
 	}
 }
 
+// Function to log out the user given their token
 async function logout(req: Request, res: Response): Promise<void> {
 	const token = req.cookies["undertree-jwt"];
 	if (!token) {

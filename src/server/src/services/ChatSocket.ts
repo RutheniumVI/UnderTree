@@ -1,3 +1,9 @@
+/*
+Author: Eesha Qureshi
+Date: February 25, 2023
+Purpose: Chat Socket Module, responsible for managing the socket for the front end.
+*/
+
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
@@ -5,6 +11,7 @@ import { Server } from "socket.io";
 const chatapp = express();
 const chatserver = http.createServer(chatapp);
 
+// Set up the socket for the chat
 function runChatServer(){
 
 	const io = new Server(chatserver, {
@@ -38,7 +45,5 @@ function runChatServer(){
 		console.log("listening on *8001");
 	});
 }
-
-
 
 export default runChatServer;

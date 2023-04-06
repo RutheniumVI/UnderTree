@@ -1,3 +1,9 @@
+/*
+Author: Faiq Ahmed
+Date: February 16, 2023
+Purpose: File Util Module, contains the utility functions for all File related functionality that are used throughout the project
+*/
+
 import { execSync } from "child_process";
 import fs from "fs";
 
@@ -5,6 +11,7 @@ import { PersistenceUtil } from "../utils/PersistenceUtil";
 
 const dataDirectory = "../file_system";
 
+// Set up the file system if it does not exist
 function setUpFileSystem(): void{
 	if(!fs.existsSync(dataDirectory)){
 		fs.mkdirSync(dataDirectory);
@@ -23,6 +30,7 @@ function setUpFileSystem(): void{
 	}
 }
 
+// Create directories in the file system given a path
 function createDirectory(path: string): void {
 	const dirs = path.split("/");
 	let currPath = dataDirectory;
@@ -36,6 +44,7 @@ function createDirectory(path: string): void {
 	});
 }
 
+// Save a file to the file system if it doesn't exist 
 function saveFile(path: string, content: string | Buffer): void {
 	if(!fs.existsSync(dataDirectory+"/"+path)){
 		const dirPath = path.split("/").slice(0, -1).join("/");
@@ -44,6 +53,7 @@ function saveFile(path: string, content: string | Buffer): void {
 	}
 }
 
+// If the path directory exists, it deletes it
 function deleteProjectDirectory(projectName: string, owner: string): void {
 	const path = dataDirectory+"/"+owner+"/"+projectName;
 	if(fs.existsSync(path)){
@@ -51,6 +61,7 @@ function deleteProjectDirectory(projectName: string, owner: string): void {
 	}
 }
 
+// Creates the PDF content and path for a given file
 function createPDFOutput(file: string, dir: string, content: string): Promise<string> {
 	return new Promise(async (resolve, reject) => {
 		try{
@@ -88,6 +99,7 @@ function createPDFOutput(file: string, dir: string, content: string): Promise<st
 	});
 }
 
+// Get the file data from the file system
 function getFileData(file: string){
 	if(fs.existsSync(dataDirectory+"/"+file)){
 		return fs.readFileSync(dataDirectory+"/"+file);
@@ -96,6 +108,7 @@ function getFileData(file: string){
 	}
 }
 
+// Checks if a file exists in the file system
 function fileExists(file: string): boolean {
 	if(fs.existsSync(dataDirectory+"/"+file)){
 		return true;

@@ -1,3 +1,9 @@
+/*
+Author: Faiq Ahmed
+Date: February 10, 2023
+Purpose: Mongo Database Util Module, contains the utility functions for all database related functionality that are used throughout the project
+*/
+
 import dotenv from "dotenv";
 import { MongoClient } from "mongodb";
 
@@ -7,6 +13,7 @@ type collections = "projects" | "users" | "files"
 
 let client;
 
+// Set up and connect to the MongoDB database
 async function connect() {
 	const db = new MongoClient(process.env.MONGODB_URI);
 	await db.connect();

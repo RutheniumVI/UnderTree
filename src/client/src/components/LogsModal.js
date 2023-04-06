@@ -2,12 +2,14 @@ import React from "react";
 import "../Styles/LogsModal.css";
 
 function Modal({ logs, setShowModal }) {
+
+	// Only stores the 10 most recent logs
 	const logsLength = logs.length < 10 ? logs.length : 10;
 	logs = logs.slice(0, logsLength);
 
-	console.log("Modal Logs: ", logs);
+	// Iterates through the logs and displays the 
+	// author, date, message, and commit SHA of each log
 	return (
-
 		<div className="log-modal">
 			<div className="log-modal-content">
 				<div className="log-modal-header">
