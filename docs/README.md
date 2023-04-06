@@ -1,23 +1,27 @@
-<Please keep the folder structure as given in the template repo.  We will
-discuss each artifact as we get to it in the course.  In some cases, like for
-the SRS, you should have a file of the same name.  For other cases, like the
-design documentation, you are required to document your design, but it may not
-be via a module guide and module interface specification documents.>
-
-<The files and folders have been set-up with tex files that have external links
-so that cross-referencing is possible between documents.>
-
-<The tex files Common.tex so that they can share definitions.>
-
-<The files use Comments.tex so that the comments package can be used to embed
-comments into the generated pdf.  Comments can be set to false so that they do
-not appear.>
-
-<None of the files are complete templates.  You will need to add extra
-information.  They are just intended to be a starting point.>
-
 # Documentation folders
 
 The folders and files for this folder are as follows:
 
-Describe ...
+Design: Contains all implementation related documentation such as the MIS, MG, System design document
+
+DevelopmentPlan: Contains documents about our original development plan for this project
+
+HazardAnalysis: Contains documents about our original development plan for this project
+
+Presentations: Slides that were used during the demo
+
+ProblemStatementAndGoals: Contains the initial document made when defining the problem
+
+Reflection: Contains the final reflection written by the team at the end of the project
+
+SRS: Software Requirements Specification, contains all our functional and non-functional requirements
+
+VnVPlan: Verification and Validation documents that entails the testing plan to be done
+
+VnVReport: Verification and Validation documents that contains the results of conducting our tests
+
+Comments.tex: Contains common functionality such as comments used by other documents
+
+Common.tex: Contains the team members name and macid to be used by all documents' title
+
+Makefile: Makefile used to build all the documentation
