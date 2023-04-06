@@ -1,14 +1,14 @@
-import { execSync } from 'child_process';
-import fs from 'fs';
+import { execSync } from "child_process";
+import fs from "fs";
 
 import { PersistenceUtil } from "../utils/PersistenceUtil";
 
 const dataDirectory = "../file_system";
 
 function setUpFileSystem(): void{
-    if(!fs.existsSync(dataDirectory)){
-        fs.mkdirSync(dataDirectory);
-        fs.writeFileSync(dataDirectory+"/default.pdf", "%PDF-1.4\n%����\n1 0 obj\
+	if(!fs.existsSync(dataDirectory)){
+		fs.mkdirSync(dataDirectory);
+		fs.writeFileSync(dataDirectory+"/default.pdf", "%PDF-1.4\n%����\n1 0 obj\
         \n<</Title (Untitled document)\n/Producer (Skia/PDF m111 Google Docs Renderer)>>\
         \nendobj\n3 0 obj\n<</ca 1\n/BM /Normal>>\nendobj\n4 0 obj\n<</Length 84>> stream\
         \n1 0 0 -1 0 842 cm\nq\n.75 0 0 .75 0 0 cm\n1 1 1 RG 1 1 1 rg\n/G3 gs\n0 0 794 1123 re\
@@ -20,98 +20,98 @@ function setUpFileSystem(): void{
         \n0000000277 00000 n\n0000000108 00000 n\n0000000145 00000 n\n0000000465 00000 n\
         \n0000000520 00000 n\ntrailer\n<</Size 7\n/Root 6 0 R\n/Info 1 0 R>>\nstartxref\
         \n567\n%%EOF");
-    }
+	}
 }
 
 function createDirectory(path: string): void {
-    const dirs = path.split("/");
-    let currPath = dataDirectory;
+	const dirs = path.split("/");
+	let currPath = dataDirectory;
 
-    dirs.forEach((dir) => {
-        const checkPath = currPath+"/"+dir;
-        if(!fs.existsSync(checkPath)){
-            fs.mkdirSync(checkPath);
-        }
-        currPath = checkPath;
-    })
+	dirs.forEach((dir) => {
+		const checkPath = currPath+"/"+dir;
+		if(!fs.existsSync(checkPath)){
+			fs.mkdirSync(checkPath);
+		}
+		currPath = checkPath;
+	});
 }
 
 function saveFile(path: string, content: string | Buffer): void {
-    if(!fs.existsSync(dataDirectory+"/"+path)){
-        const dirPath = path.split("/").slice(0, -1).join("/");
-        createDirectory(dirPath);
-        fs.writeFileSync(dataDirectory+"/"+path, content);
-    }
+	if(!fs.existsSync(dataDirectory+"/"+path)){
+		const dirPath = path.split("/").slice(0, -1).join("/");
+		createDirectory(dirPath);
+		fs.writeFileSync(dataDirectory+"/"+path, content);
+	}
 }
 
 function deleteProjectDirectory(projectName: string, owner: string): void {
-    const path = dataDirectory+"/"+owner+"/"+projectName;
-    if(fs.existsSync(path)){
-        fs.rmSync(path, { recursive: true, force: true });
-    }
+	const path = dataDirectory+"/"+owner+"/"+projectName;
+	if(fs.existsSync(path)){
+		fs.rmSync(path, { recursive: true, force: true });
+	}
 }
 
 function createPDFOutput(file: string, dir: string, content: string): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-        try{
-            const containsBib = content.match(/\\bibliography{.+}/g);
-            if(containsBib !== null){
-                const bibFile = containsBib[0].substring(14,containsBib[0].length-1);
+	return new Promise(async (resolve, reject) => {
+		try{
+			const containsBib = content.match(/\\bibliography{.+}/g);
+			if(containsBib !== null){
+				const bibFile = containsBib[0].substring(14,containsBib[0].length-1);
 
-                const bibRelPath = bibFile.split("/");
-                let i = 0;
-                for(i = 0; i < bibRelPath.length; i++){
-                    if(bibRelPath[i] === ".."){
-                        bibRelPath.shift();
-                    } else {
-                        break;
-                    }
-                }
+				const bibRelPath = bibFile.split("/");
+				let i = 0;
+				for(i = 0; i < bibRelPath.length; i++){
+					if(bibRelPath[i] === ".."){
+						bibRelPath.shift();
+					} else {
+						break;
+					}
+				}
 
-                const filePath = file.split("/");
-                const bibFilePath = dir + filePath.slice(0, filePath.length-i-1).concat(bibRelPath).join("/")+".bib";
+				const filePath = file.split("/");
+				const bibFilePath = dir + filePath.slice(0, filePath.length-i-1).concat(bibRelPath).join("/")+".bib";
 
-                fs.writeFileSync(dataDirectory + "/" + bibFilePath, await PersistenceUtil.getDocumentData(bibFilePath));
-            }
-            fs.writeFileSync(dataDirectory + "/" + dir + file, content);
-            const latexCommand = "&& pdflatex " + file;
+				fs.writeFileSync(dataDirectory + "/" + bibFilePath, await PersistenceUtil.getDocumentData(bibFilePath));
+			}
+			fs.writeFileSync(dataDirectory + "/" + dir + file, content);
+			const latexCommand = "&& pdflatex " + file;
             
-            if(containsBib !== null){
-                execSync("cd " + dataDirectory + "/" + dir + latexCommand + "&& bibtex " + file.split(".")[0] + latexCommand + latexCommand);
-            } else {
-                execSync("cd " + dataDirectory + "/" + dir + latexCommand);
-            }
-            resolve("Success");
-        } catch (err) {
-            reject(err.stdout.toString());
-        }
-    })
+			if(containsBib !== null){
+				execSync("cd " + dataDirectory + "/" + dir + latexCommand + "&& bibtex " + file.split(".")[0] + latexCommand + latexCommand);
+			} else {
+				execSync("cd " + dataDirectory + "/" + dir + latexCommand);
+			}
+			resolve("Success");
+		} catch (err) {
+			reject(err.stdout.toString());
+		}
+	});
 }
 
 function getFileData(file: string){
-    if(fs.existsSync(dataDirectory+"/"+file)){
-        return fs.readFileSync(dataDirectory+"/"+file);
-    } else {
-        return fs.readFileSync(dataDirectory+"/default.pdf");
-    }
+	if(fs.existsSync(dataDirectory+"/"+file)){
+		return fs.readFileSync(dataDirectory+"/"+file);
+	} else {
+		return fs.readFileSync(dataDirectory+"/default.pdf");
+	}
 }
 
 function fileExists(file: string): boolean {
-    if(fs.existsSync(dataDirectory+"/"+file)){
-        return true;
-    } else {
-        return false;
-    }
+	if(fs.existsSync(dataDirectory+"/"+file)){
+		return true;
+	} else {
+		return false;
+	}
 }
 
 const FileUtil = {
-    setUpFileSystem,
-    createDirectory,
-    saveFile,
-    deleteProjectDirectory,
-    createPDFOutput,
-    getFileData,
-    fileExists,
-}
+	setUpFileSystem,
+	createDirectory,
+	saveFile,
+	deleteProjectDirectory,
+	createPDFOutput,
+	getFileData,
+	fileExists,
+};
 
-export { FileUtil }
+export { FileUtil };

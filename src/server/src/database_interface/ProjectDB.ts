@@ -1,8 +1,15 @@
+/*
+Author: Faiq Ahmed
+Date: March 3, 2023
+Purpose: Project Database Interface Module, responsible for making changes to database for the projects collection
+*/
+
 import { DBClient } from "../utils/MongoDBUtil";
 import { ProjectData } from "../data/ProjectData";
 
 const collectionName = "projects";
 
+// Check if a project with a specific owner already exists in the system
 async function projectWithUserExists(projectName: string, owner: string, userName: string): Promise<boolean> {
 	const collection = DBClient.getCollection(collectionName);
 	const existingProject = await collection.findOne({
@@ -21,6 +28,7 @@ async function projectWithUserExists(projectName: string, owner: string, userNam
 	}
 }
 
+// Add project along with the owner
 async function addProject(project: ProjectData): Promise<string> {
 	const collection = DBClient.getCollection(collectionName);
 	const existingProject = await collection.findOne({"projectName": project.projectName, "owner": project.owner});
@@ -39,6 +47,7 @@ async function addProject(project: ProjectData): Promise<string> {
 	return "Succesfully added project";
 }
 
+// Get a specific project given the project name and the owner
 async function getProject(projectName: string, owner: string): Promise<ProjectData> {
 	const collection = DBClient.getCollection(collectionName);
 	const existingProject = await collection.findOne({"projectName": projectName, "owner": owner});
@@ -50,9 +59,8 @@ async function getProject(projectName: string, owner: string): Promise<ProjectDa
 	return existingProject as ProjectData;
 }
 
+// Get all projects that a user is a owner of or a collaborator in
 async function getProjects(userName: string): Promise<ProjectData[]> {
-	const projects: ProjectData[] = [];
-
 	const collection = DBClient.getCollection(collectionName);
 	const cursor = await collection.find(
 		{ $or: [
@@ -72,6 +80,7 @@ async function getProjects(userName: string): Promise<ProjectData[]> {
 	return cursor.toArray() as ProjectData[];
 }
 
+// Update information about a specific project
 async function editProject(project: ProjectData): Promise<string> {
 	const collection = DBClient.getCollection(collectionName);
 	const existingProject = await collection.findOne({"projectName": project.projectName, "owner": project.owner});
@@ -97,6 +106,7 @@ async function editProject(project: ProjectData): Promise<string> {
 	return "Succesfully edited project";
 }
 
+// Edit the latest commit information about a specific project
 async function editProjectCommit(project: ProjectData): Promise<string> {
 	const collection = DBClient.getCollection(collectionName);
 	const existingProject = await collection.findOne({"projectName": project.projectName, "owner": project.owner});
@@ -122,6 +132,7 @@ async function editProjectCommit(project: ProjectData): Promise<string> {
 	return "Succesfully edited project commit";
 }
 
+// Delete a project from the database
 async function deleteProject(project: ProjectData): Promise<string> {
 	const collection = DBClient.getCollection(collectionName);
 
