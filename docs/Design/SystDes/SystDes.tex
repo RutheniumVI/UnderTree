@@ -62,15 +62,24 @@
 	\subsection{Abbreviations and Acronyms}
 	
 	\renewcommand{\arraystretch}{1.2}
-	\begin{tabular}{l l} 
-		\toprule		
-		\textbf{symbol} & \textbf{description}\\
-		\midrule 
-		HTTP & Hypertext Transfer Protocol, a protocol used to communicate over the internet\\
-		TCP & Transmission Control Protocol, a protocol used to communicate over the internet\\
-		CSS & Cascading Style Sheets, a language used to design the style of a website page\\
-		\bottomrule
-	\end{tabular}\\
+	\begin{table}[H]
+		\small
+		\centering
+		\begin{tabular}{l p{15cm}} 
+			\toprule		
+			\textbf{symbol} & \textbf{description}\\
+			\midrule
+			API & Application Programming Interface refers to a software with a distinct function\\
+			CSS & Cascading Style Sheets, a language used to design the style of a website page\\
+			GitHub & Internet hosting service for software development and version control using Git\\
+			HTTP & Hypertext Transfer Protocol, a protocol used to communicate over the internet\\
+			REST & Representational state transfer is a software architectural style that describes the architecture of the Web\\
+			SRS & Software Requirement Specification\\
+			TCP & Transmission Control Protocol, a protocol used to communicate over the internet\\
+			UI & User Interface, usually refers to components of a system that can be viewed and interacted with\\
+			\bottomrule
+		\end{tabular}
+	\end{table}
 	
 	\newpage
 	
@@ -87,7 +96,7 @@
 	\pagenumbering{arabic}
 	
 	\section{Introduction}
-	UnderTree is a collaborative LaTex document editor that supports GitHub version control for projects. The aim of this software, as discussed in the Problem Statement, is to provide the ability for multiple people to edit LaTex documents concurrently while viewing real time changes. The stakeholders involved, as discussed in the SRS, include the developers, enterprises, people interested in LaTeX documentation with version control, and researchers.
+	UnderTree is a collaborative LaTeX document editor that supports GitHub version control for projects. The aim of this software, as discussed in the Problem Statement, is to provide the ability for multiple people to edit LaTeX documents concurrently while viewing real time changes. The stakeholders involved, as discussed in the SRS, include the developers, enterprises, people interested in LaTeX documentation with version control, and researchers.
 	
 	This document will discuss system design decisions related to UnderTree.
 	
@@ -102,20 +111,32 @@
 	
 	\subsection{Normal Behaviour}
 	
+	This application is to be user for collaborative LaTeX editing. Users will also be able to login to the application using their GitHub account. The application also supports version control for the LaTeX projects. The users are able to import or create new project to GitHub. They can then edit the LaTeX documents in a project concurrently while viewing real time changes from other collaborators of the project. After editing files, the users are also able to commit their changes to GitHub. 
+	
 	\subsection{Undesired Event Handling}
 	
-	\wss{How you will approach undesired events}
+	When an undesired event happens, the system is designed to log the error and be able to continue operation like usual. In case there is an error during an API call to the server, the system will pass on the error to the caller as debug information. Events are also logged to a local file which can be viewed at a later time. In case of an authentication error, all further action is halted for the task to prevent security risks.
 	
-	\subsection{Component Diagram}
+	\subsection{System Context Diagram}
 	
-	\subsection{Connection Between Requirements and Design} \label{SecConnection}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=0.7]{system_context.png}
+		\caption{Context Diagram of UnderTree}
+	\end{figure}
 	
-	\wss{The intention of this section is to document decisions that are made
-		``between'' the requirements and the design.  To satisfy some requirements,
-		design decisions need to be made.  Rather than make these decisions implicit,
-		they are explicitly recorded here.  For instance, if a program has security
-		requirements, a specific design decision may be made to satisfy those
-		requirements with a password.}
+	% \subsection{Component Diagram}
+	
+	
+	
+	% \subsection{Connection Between Requirements and Design} \label{SecConnection}
+	
+	% \wss{The intention of this section is to document decisions that are made
+		%   ``between'' the requirements and the design.  To satisfy some requirements,
+		%   design decisions need to be made.  Rather than make these decisions implicit,
+		%   they are explicitly recorded here.  For instance, if a program has security
+		%   requirements, a specific design decision may be made to satisfy those
+		%   requirements with a password.}
 	
 	\section{System Variables}
 	
@@ -237,6 +258,9 @@
 		M47. Push Controller Module &  Will be implemented by Kevin by February 5  \\
 		M48. Push View Module &  Will be implemented by Kevin by February 5  \\
 		M51. MongoDB &  Already Implemented  \\
+		Unit tests &  Will be created by March 8th by each team member responsible for the module  \\
+		Revision 0 User Testing &  Will be carried out by the team by March 3rd \\
+		Revision 1 User Testing &  Will be carried out by the team by March 31st \\
 		\bottomrule
 	\end{longtable}
 	\normalsize

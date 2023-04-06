@@ -163,8 +163,8 @@
 		\item[\refstepcounter{acnum} \actheacnum \label{ac1}:] The data structure and algorithm used to implement the virtual hardware.
 		\item[\refstepcounter{acnum} \actheacnum \label{ac2}:]  How the components related to project editing will be displayed
 		\item[\refstepcounter{acnum} \actheacnum \label{ac3}:]  How the current file being edited is displayed
-		\item[\refstepcounter{acnum} \actheacnum \label{ac4}:]  The algorithm used to highlight syntax of the LaTex code
-		\item[\refstepcounter{acnum} \actheacnum \label{ac5}:]  The algorithm used to highlight grammar and spelling errors of the latex code
+		\item[\refstepcounter{acnum} \actheacnum \label{ac4}:]  The algorithm used to highlight syntax of the LaTeX code
+		\refstepcounter{acnum}
 		\item[\refstepcounter{acnum} \actheacnum \label{ac6}:]  How the list of files in the current project being edited will be displayed
 		\item[\refstepcounter{acnum} \actheacnum \label{ac7}:]  The actions available on the file toolbar
 		\item[\refstepcounter{acnum} \actheacnum \label{ac8}:]  Inputs needed to create a new file
@@ -217,9 +217,10 @@
 	decisions will be changed.
 	
 	\begin{description}
-		\item[\refstepcounter{ucnum} \uctheucnum \label{ucIO}:] Input/Output devices
-		(Input: File and/or Keyboard, Output: File, Memory, and/or Screen).
-		\item ...
+		\item[\refstepcounter{ucnum} \uctheucnum \label{uc1}:] Input using mouse and keyboard
+		\item[\refstepcounter{ucnum} \uctheucnum \label{uc2}:] Output using computer monitor. Limited but existing functionality for mobile devices
+		\item[\refstepcounter{ucnum} \uctheucnum \label{uc2}:] Utilizing GitHub for version control
+		\item[\refstepcounter{ucnum} \uctheucnum \label{uc2}:] Using access tokens and JWTs to authentication and security
 	\end{description}
 	
 	\section{Module Hierarchy} \label{SecMH}
@@ -238,7 +239,7 @@
 		\item [\refstepcounter{mnum} \mthemnum: \label{m2}] Project Editing Module
 		\item [\refstepcounter{mnum} \mthemnum: \label{m3}] Editor Module
 		\item [\refstepcounter{mnum} \mthemnum: \label{m4}] Syntax Highlighting Module
-		\item [\refstepcounter{mnum} \mthemnum: \label{m5}] Spelling Error Module
+		\refstepcounter{mnum}
 		\item [\refstepcounter{mnum} \mthemnum: \label{m6}] File List Module
 		\item [\refstepcounter{mnum} \mthemnum: \label{m7}] File Toolbar Module
 		\item [\refstepcounter{mnum} \mthemnum: \label{m8}] New File Module
@@ -273,6 +274,7 @@
 		\item [\refstepcounter{mnum} \mthemnum: \label{m37}] Auth Database Interface Module
 		\item [\refstepcounter{mnum} \mthemnum: \label{m38}] Auth Data Module
 		\item [\refstepcounter{mnum} \mthemnum: \label{m39}] MongoDB
+		\item [\refstepcounter{mnum} \mthemnum: \label{m40}] File Data
 	\end{description}
 	
 	
@@ -290,7 +292,6 @@
 			\multirow{37}{0.3\textwidth}{Behaviour-Hiding Module}  & Project Editing Module \\
 			& Editor Module \\
 			& Syntax Highlighting Module \\
-			& Spelling Error Module \\
 			& File List Module \\
 			& File Toolbar Module \\
 			& New File Module \\
@@ -307,7 +308,6 @@
 			& Chat Services Module \\
 			& Chat Database Interface Module \\
 			& Chat Socket Module \\
-			& Chat Data Module \\
 			& Instructions View Module \\
 			& Projects Module \\
 			& Project List Module \\
@@ -317,16 +317,19 @@
 			& Import Project Module \\
 			& Project Services Module \\
 			& Project Database Interface Module \\
-			& Project Data Module \\
 			& GitHub Module \\
 			& GitHub Services Module \\
 			& Authentication Module \\
 			& Auth Service Module \\
 			& Auth Database Interface Module \\
-			& Auth Data Module \\
 			\midrule
 			\newpage
 			\multirow{1}{0.3\textwidth}{Software Decision Module} & \\
+			& File Data Module \\
+			& Chat Data Module \\
+			& Project Data Module \\
+			& Auth Data Module \\
+			& MongoDB Module \\
 			\bottomrule
 			
 		\end{longtable}
@@ -339,7 +342,7 @@
 	
 	The design of the system is intended to satisfy the requirements developed in
 	the SRS. In this stage, the system is decomposed into modules. The connection
-	between requirements and modules is listed in Table~\ref{TblRT}.
+	between requirements and modules is listed in Table~\ref{TblRT1} and ~\ref{TblRT}.
 	
 	\section{Module Decomposition} \label{SecMD}
 	
@@ -376,8 +379,7 @@
 		\item[Secrets:] How the components related to project editing will be displayed
 		\item[Services:] Displays the various components of project editing which are the file editor, file list, PDF output and information about the project being edited
 		\item[Implemented By:] UnderTree
-		\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-		[Information to include for leaf modules in the decomposition by secrets tree.]
+		\item[Type of Module:] Abstract Object
 	\end{description}
 	
 	\subsubsection{Editor Module (\mref{m3})}
@@ -386,29 +388,26 @@
 		\item[Secrets:] How the current file being edited is displayed
 		\item[Services:] Displays the content of the current file being edited and details about that file
 		\item[Implemented By:] UnderTree
-		\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-		[Information to include for leaf modules in the decomposition by secrets tree.]
+		\item[Type of Module:] Abstract Object
 	\end{description}
 	
 	\subsubsection{Syntax Highlight Module (\mref{m4})}
 	
 	\begin{description}
-		\item[Secrets:] The algorithm used to highlight syntax of the LaTex code
-		\item[Services:] T module will highlight the text based on Latex syntax
+		\item[Secrets:] The algorithm used to highlight syntax of the LaTeX code
+		\item[Services:] T module will highlight the text based on LaTeX syntax
 		\item[Implemented By:] Highlight.js
-		\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-		[Information to include for leaf modules in the decomposition by secrets tree.]
+		\item[Type of Module:] Library
 	\end{description}
 	
-	\subsubsection{Spelling Error Module (\mref{m5})}
+	% \subsubsection{Spelling Error Module (\mref{m5})}
 	
-	\begin{description}
-		\item[Secrets:] The algorithm used to highlight grammar and spelling errors of the latex code
-		\item[Services:] Given input latex code, this module will highlight the grammar and spelling errors in the latex code
-		\item[Implemented By:] BeyondGrammar
-		\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-		[Information to include for leaf modules in the decomposition by secrets tree.]
-	\end{description}
+	% \begin{description}
+		% \item[Secrets:] The algorithm used to highlight grammar and spelling errors of the LaTeX code
+		% \item[Services:] Given input LaTeX code, this module will highlight the grammar and spelling errors in the LaTeX code
+		% \item[Implemented By:] BeyondGrammar
+		% \item[Type of Module:] Library
+		% \end{description}
 	
 	\subsubsection{File List Module (\mref{m6})}
 	
@@ -416,8 +415,7 @@
 		\item[Secrets:] How the list of files in the current project being edited will be displayed
 		\item[Services:] Displays the list of files in the current project and allows the user to open them in the editor, rename or delete a file
 		\item[Implemented By:] UnderTree
-		\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-		[Information to include for leaf modules in the decomposition by secrets tree.]
+		\item[Type of Module:] Abstract Object
 	\end{description}
 	
 	\subsubsection{File Toolbar Module (\mref{m7})}
@@ -426,8 +424,7 @@
 		\item[Secrets:] The actions available on the file toolbar
 		\item[Services:] Allows for actions regarding file such as adding a new file or uploading a new file
 		\item[Implemented By:] UnderTree
-		\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-		[Information to include for leaf modules in the decomposition by secrets tree.]
+		\item[Type of Module:] Abstract Object
 	\end{description}
 	
 	\subsubsection{New File Module (\mref{m8})}
@@ -436,8 +433,7 @@
 		\item[Secrets:] Inputs needed to create a new file
 		\item[Services:] Creates a new file in the project using name and extension as input
 		\item[Implemented By:] UnderTree
-		\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-		[Information to include for leaf modules in the decomposition by secrets tree.]
+		\item[Type of Module:] Abstract Object
 	\end{description}
 	
 	\subsubsection{Upload File Module (\mref{m9})}
@@ -446,8 +442,7 @@
 		\item[Secrets:] Inputs needed to upload a file
 		\item[Services:] Uploads a local file to the current project being edited
 		\item[Implemented By:] UnderTree
-		\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-		[Information to include for leaf modules in the decomposition by secrets tree.]
+		\item[Type of Module:] Abstract Object
 	\end{description}
 	
 	\subsubsection{User Cursors Module (\mref{m10})}
@@ -456,8 +451,7 @@
 		\item[Secrets:] Algorithm used for determine cursor position for all users currently editing the file
 		\item[Services:] Gives the current cursor position for the a spcecifc user in the editor
 		\item[Implemented By:] YJS
-		\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-		[Information to include for leaf modules in the decomposition by secrets tree.]
+		\item[Type of Module:] Library
 	\end{description}
 	
 	\subsubsection{Text Highlighting Module (\mref{m11})}
@@ -466,8 +460,7 @@
 		\item[Secrets:] Algorithm used for highlighting text selected by other users
 		\item[Services:] Gives the current highlighted text for the a specific user in the editor
 		\item[Implemented By:] YJS
-		\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-		[Information to include for leaf modules in the decomposition by secrets tree.]
+		\item[Type of Module:] Library
 	\end{description}
 	
 	\subsubsection{File Synchronization Module (\mref{m12})}
@@ -476,8 +469,7 @@
 		\item[Secrets:] Algorithm used for synchronizing the file for all the users currently editing the file
 		\item[Services:] Displays the file with all the changes made by different collaborators up until that current instance of time
 		\item[Implemented By:] \href{https://docs.yjs.dev/}{YJS}
-		\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-		[Information to include for leaf modules in the decomposition by secrets tree.]
+		\item[Type of Module:] Abstract Object
 	\end{description}
 	
 	\subsubsection{File Services (\mref{m13})}
@@ -486,8 +478,7 @@
 		\item[Secrets:] The data type used to store files
 		\item[Services:] Offers services for creating new file, editing existing files, deleting a file, and getting information about one or more files
 		\item[Implemented By:] UnderTree
-		\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-		[Information to include for leaf modules in the decomposition by secrets tree.]
+		\item[Type of Module:] Abstract Object
 	\end{description}
 	
 	\subsubsection{File Database Interface Module (\mref{m14})}
@@ -496,8 +487,7 @@
 		\item[Secrets:] The database queries used to save and retrieve file data
 		\item[Services:] This module is responsible for providing the functions to make the relevant queries to save and retrieve file data
 		\item[Implemented By:] UnderTree
-		\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-		[Information to include for leaf modules in the decomposition by secrets tree.]
+		\item[Type of Module:] Abstract Object
 	\end{description}
 	
 	\subsubsection{PDF Module (\mref{m15})}
@@ -506,8 +496,7 @@
 		\item[Secrets:] How the user will trigger the compilation of the LaTeX and download of the PDF file
 		\item[Services:] This module is responsible for allowing the user to download, and start the compilation for the LaTeX to PDF
 		\item[Implemented By:] UnderTree
-		\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-		[Information to include for leaf modules in the decomposition by secrets tree.]
+		\item[Type of Module:] Abstract Object
 	\end{description}
 	
 	\subsubsection{PDF Renderer Module (\mref{m16})}
@@ -516,16 +505,15 @@
 		\item[Secrets:] How the user will view the PDF file
 		\item[Services:] This module is responsible for allowing the user to view the LaTeX file
 		\item[Implemented By:] \href{https://mozilla.github.io/pdf.js/examples/}{PDF.js}
-		\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-		[Information to include for leaf modules in the decomposition by secrets tree.]
+		\item[Type of Module:] Abstract Object
 	\end{description}
 	
 	\subsubsection{PDF Compiler Module (\mref{m17})}
 	
 	\begin{description}
 		\item[Secrets:] The algorithm used to compile the LaTeX code into a PDF
-		\item[Services:] Upon getting a request from the PDF module to compile the PDF this module is used to convert the LaTex code into a PDF which the user can view
-		\item[Implemented By:] \href{https://www.npmjs.com/package/node-latex}{node-latex}
+		\item[Services:] Upon getting a request from the PDF module to compile the PDF this module is used to convert the LaTeX code into a PDF which the user can view
+		\item[Implemented By:] \href{https://www.npmjs.com/package/node-LaTeX}{node-LaTeX}
 		\item[Type of Module:] Library
 	\end{description}
 	
@@ -535,8 +523,7 @@
 		\item[Secrets:] How the user will view and interact with the chat messages
 		\item[Services:] This module is responsible for allowing the user to view and input chat messages
 		\item[Implemented By:] UnderTree
-		\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-		[Information to include for leaf modules in the decomposition by secrets tree.]
+		\item[Type of Module:] Abstract Object
 	\end{description}
 	
 	\subsubsection{Chat Services Module (\mref{m19})}
@@ -545,8 +532,7 @@
 		\item[Secrets:] The algorithm used to send and receive chat messages
 		\item[Services:] This module is responsible for sending and receiving chat messages between users
 		\item[Implemented By:] UnderTree
-		\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-		[Information to include for leaf modules in the decomposition by secrets tree.]
+		\item[Type of Module:] Abstract Object
 	\end{description}
 	
 	\subsubsection{Chat Database Interface Module (\mref{m20})}
@@ -555,8 +541,7 @@
 		\item[Secrets:] The database queries used to save and retrieve chat data
 		\item[Services:] This module is responsible for providing the functions needed to make the relevant queries to save and retrieve chat data
 		\item[Implemented By:] UnderTree
-		\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-		[Information to include for leaf modules in the decomposition by secrets tree.]
+		\item[Type of Module:] Abstract Object
 	\end{description}
 	
 	\subsubsection{Chat Socket Module (\mref{m21})}
@@ -565,18 +550,7 @@
 		\item[Secrets:] The communication protocol used to communicate between users
 		\item[Services:] This module is responsible for providing the web sockets needed to communicate between users in a synchronized manner
 		\item[Implemented By:] \href{https://socket.io/docs/v4/}{Socket.IO}
-		\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-		[Information to include for leaf modules in the decomposition by secrets tree.]
-	\end{description}
-	
-	\subsubsection{Chat Data Module (\mref{m22})}
-	
-	\begin{description}
-		\item[Secrets:] The data type used for chat messages
-		\item[Services:] This module stores the datatype that will be used to represent chat messages
-		\item[Implemented By:] UnderTree
-		\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-		[Information to include for leaf modules in the decomposition by secrets tree.]
+		\item[Type of Module:] Abstract Object
 	\end{description}
 	
 	\subsubsection{Instructions View Module (\mref{m23})}
@@ -585,8 +559,7 @@
 		\item[Secrets:] How the instructions are displayed
 		\item[Services:] This module is responsible for allowing users to open and close as well as view the instructions in an organized manner
 		\item[Implemented By:] UnderTree
-		\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-		[Information to include for leaf modules in the decomposition by secrets tree.]
+		\item[Type of Module:] Abstract Object
 	\end{description}
 	
 	\subsubsection{Projects (\mref{m24})}
@@ -595,8 +568,7 @@
 		\item[Secrets:] How informational and actionable items related to project are displayed
 		\item[Services:] This module displays the project list, allows the creation of new project and also displays other items related to projects
 		\item[Implemented By:] UnderTree
-		\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-		[Information to include for leaf modules in the decomposition by secrets tree.]
+		\item[Type of Module:] Abstract Object
 	\end{description}
 	
 	\subsubsection{Project List (\mref{m25})}
@@ -605,8 +577,7 @@
 		\item[Secrets:] How the project list are displayed
 		\item[Services:] This module displays a list of all the available projects to the user which can be opened or deleted
 		\item[Implemented By:] UnderTree
-		\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-		[Information to include for leaf modules in the decomposition by secrets tree.]
+		\item[Type of Module:] Abstract Object
 	\end{description}
 	
 	\subsubsection{Project Deletion (\mref{m26})}
@@ -615,18 +586,16 @@
 		\item[Secrets:] The methods used to delete a project
 		\item[Services:] Allows users to delete the project
 		\item[Implemented By:] UnderTree
-		\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-		[Information to include for leaf modules in the decomposition by secrets tree.]
+		\item[Type of Module:] Abstract Object
 	\end{description}
 	
 	\subsubsection{Project Creation (\mref{m27})}
 	
 	\begin{description}
-		\item[Secrets:] Different methods to create a project
+		\item[Secrets:] The modal that contains the different methods to create a project (creation or import)
 		\item[Services:] Presents a user interface for users to choose how they want to create their project either from scratch or importing a pre-existing project
 		\item[Implemented By:] UnderTree
-		\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-		[Information to include for leaf modules in the decomposition by secrets tree.]
+		\item[Type of Module:] Abstract Object
 	\end{description}
 	
 	\subsubsection{New Project (\mref{m28})}
@@ -635,8 +604,7 @@
 		\item[Secrets:] Inputs needed to create a new project
 		\item[Services:] Presents a user interface for users to create, title and add contributors to a new project from scratch
 		\item[Implemented By:] UnderTree
-		\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-		[Information to include for leaf modules in the decomposition by secrets tree.]
+		\item[Type of Module:] Abstract Object
 	\end{description}
 	
 	\subsubsection{Import Project (\mref{m29})}
@@ -645,8 +613,7 @@
 		\item[Secrets:] Inputs needed to import a project
 		\item[Services:] This module provides a user interface for the user to import pre-existing projects into UnderTree
 		\item[Implemented By:] UnderTree
-		\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-		[Information to include for leaf modules in the decomposition by secrets tree.]
+		\item[Type of Module:] Abstract Object
 	\end{description}
 	
 	\subsubsection{Project Services (\mref{m30})}
@@ -655,8 +622,7 @@
 		\item[Secrets:] The different services offered in regards to creation, editing, and reading projects
 		\item[Services:] Offers services for creating new project, editing existing project, deleting a project, and getting information about one or more projects
 		\item[Implemented By:] UnderTree
-		\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-		[Information to include for leaf modules in the decomposition by secrets tree.]
+		\item[Type of Module:] Abstract Object
 	\end{description}
 	
 	\subsubsection{Project Database Interface (\mref{m31})}
@@ -665,18 +631,7 @@
 		\item[Secrets:] The algorithm used to fetch project data from the database
 		\item[Services:] Offers service to modify project data in the database
 		\item[Implemented By:] UnderTree
-		\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-		[Information to include for leaf modules in the decomposition by secrets tree.]
-	\end{description}
-	
-	\subsubsection{Project Data (\mref{m32})}
-	
-	\begin{description}
-		\item[Secrets:] The format of project data
-		\item[Services:] Represents the format for the project data
-		\item[Implemented By:] UnderTree
-		\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-		[Information to include for leaf modules in the decomposition by secrets tree.]
+		\item[Type of Module:] Abstract Object
 	\end{description}
 	
 	\subsubsection{GitHub Module (\mref{m33})}
@@ -685,6 +640,7 @@
 		\item[Secrets:] The logic to display the GitHub buttons and modal
 		\item[Services:] Responsible for receiving the user data.
 		\item[Implemented By:] UnderTree
+		\item[Type of Module:] Abstract Object
 	\end{description}
 	
 	\subsubsection{GitHub Services Module (\mref{m34})}
@@ -693,6 +649,7 @@
 		\item[Secrets:] The algorithm to communicate with GitHub API
 		\item[Services:] Responsible for performing the GitHub operations.
 		\item[Implemented By:] UnderTree
+		\item[Type of Module:] Abstract Object
 	\end{description}
 	
 	\subsubsection{Authentication Module (\mref{m35})}
@@ -701,23 +658,8 @@
 		\item[Secrets:] The algorithm to access different authorization modules
 		\item[Services:] This module determines which module to use based on the action the user is performing
 		\item[Implemented By:] UnderTree
+		\item[Type of Module:] Abstract Object
 	\end{description}
-	
-	% \subsubsection{Login Controller Module (\mref{m35})}
-	
-	% \begin{description}
-		% \item[Secrets:] The algorithm to log in a user
-		% \item[Services:] This module receives auth information from the user and connects with the GitHub client to log the user in
-		% \item[Implemented By:] UnderTree
-		% \end{description}
-	
-	% \subsubsection{Logout Controller Module (\mref{m36})}
-	
-	% \begin{description}
-		% \item[Secrets:] The algorithm to log out a user
-		% \item[Services:] This module retrieves the specific user from the module call and logs them out of UnderTree. 
-		% \item[Implemented By:] UnderTree
-		% \end{description}
 	
 	\subsubsection{Auth Service Module (\mref{m36})}
 	
@@ -725,6 +667,7 @@
 		\item[Secrets:] The algorithm to handle the HTTPS requests and authentication
 		\item[Services:] This module contains the main logic for authentication with GitHub
 		\item[Implemented By:] UnderTree
+		\item[Type of Module:] Abstract Object
 	\end{description}
 	
 	\subsubsection{Auth Database Interface Module (\mref{m37})}
@@ -733,6 +676,36 @@
 		\item[Secrets:] The algorithm to save user authentication data
 		\item[Services:] This module serves as a wrapper and makes queries with the database MongoDB.
 		\item[Implemented By:] UnderTree
+		\item[Type of Module:] Abstract Object
+	\end{description}
+	
+	\subsection{Software Decision Module}
+	
+	\subsubsection{File Data Module (\mref{m40})}
+	
+	\begin{description}
+		\item[Secrets:] The data type used for files
+		\item[Services:] This module stores the datatype that will be used to represent file system in each project
+		\item[Implemented By:] UnderTree
+		\item[Type of Module:] Record
+	\end{description}
+	
+	\subsubsection{Chat Data Module (\mref{m22})}
+	
+	\begin{description}
+		\item[Secrets:] The data type used for chat messages
+		\item[Services:] This module stores the datatype that will be used to represent chat messages
+		\item[Implemented By:] UnderTree
+		\item[Type of Module:] Record
+	\end{description}
+	
+	\subsubsection{Project Data (\mref{m32})}
+	
+	\begin{description}
+		\item[Secrets:] The format of project data
+		\item[Services:] Represents the format for the project data
+		\item[Implemented By:] UnderTree
+		\item[Type of Module:] Record
 	\end{description}
 	
 	\subsubsection{Auth Data Module (\mref{m38})}
@@ -741,87 +714,8 @@
 		\item[Secrets:] The data types in authentication are declared here
 		\item[Services:] This module allows for the storing and retrieving of several key data structures that will be used for authentication.
 		\item[Implemented By:] UnderTree
+		\item[Type of Module:] Record
 	\end{description}
-	
-	% \subsubsection{Check Permissions Module (\mref{m41})}
-	
-	% \begin{description}
-		% \item[Secrets:] The algorithm to determine whether the user is authorized to perform a GitHub action
-		% \item[Services:] Given a user and the GitHub action to be done, the module verifies whether it is correct and allowed.
-		% \item[Implemented By:] UnderTree
-		% \end{description}
-	
-	% \subsubsection{Sync Module (\mref{m42})}
-	
-	% \begin{description}
-		% \item[Secrets:] The algorithm to access different GitHub Sync modules
-		% \item[Services:] This module determines which module to use based on the action the user is performing
-		% \item[Implemented By:] UnderTree
-		% \end{description}
-	
-	% \subsubsection{Log Controller Module (\mref{m43})}
-	
-	% \begin{description}
-		% \item[Secrets:] The algorithm to retrieve and display the Git log
-		% \item[Services:] Based on information given by user, retrieves and stores the log data from Github.
-		% \item[Implemented By:] UnderTree
-		% \end{description}
-	
-	% \subsubsection{Log View Module (\mref{m44})}
-	
-	% \begin{description}
-		% \item[Secrets:] The algorithm to display the desired logs
-		% \item[Services:] Based on the user's desired view, displays and handles changes to the log.
-		% \item[Implemented By:] UnderTree
-		% \end{description}
-	
-	% \subsubsection{Commit Controller Module (\mref{m45})}
-	
-	% \begin{description}
-		% \item[Secrets:] The algorithm to create a commit that is stored on UnderTree
-		% \item[Services:] This module retrieves the desired content changes from the user and creates a Git Tree object and then stores a commit on UnderTree. 
-		% \item[Implemented By:] UnderTree
-		% \end{description}
-	
-	% \subsubsection{Commit View Module (\mref{m46})}
-	
-	% \begin{description}
-		% \item[Secrets:] The algorithm to have the user determine what changes to commit
-		% \item[Services:] Provides a view for the user to narrow down and select what changes to commit to GitHub
-		% \item[Implemented By:] UnderTree
-		% \end{description}
-	
-	% \subsubsection{Push Controller Module (\mref{m47})}
-	
-	% \begin{description}
-		% \item[Secrets:] The algorithm to push the commits specified to GitHub
-		% \item[Services:] Pushes the commits stored on UnderTree to GitHub
-		% \item[Implemented By:] UnderTree
-		% \end{description}
-	
-	% \subsubsection{Push View Module (\mref{m48})}
-	
-	% \begin{description}
-		% \item[Secrets:] The logic on when and how to display the push operation
-		% \item[Services:] This module allows the user to interact with the operation and collects information to send it to the Push Controller Module.
-		% \item[Implemented By:] UnderTree
-		% \end{description}
-	
-	% \subsubsection{Pull Controller Module (\mref{m49})}
-	
-	% \begin{description}
-		% \item[Secrets:] The algorithm to retrieve all the remote changes on GitHub
-		% \item[Services:] The module handles the operation to retrieve the change and transforms it to view on UnderTree.
-		% \item[Implemented By:] UnderTree
-		% \end{description}
-	
-	% \subsubsection{Pull View Module (\mref{m50})}
-	
-	% \begin{description}
-		% \item[Secrets:] How the project details are updated in the database
-		% \item[Services:] Based on information retrieved from GitHub, displays the changes to UnderTree
-		% \item[Implemented By:] UnderTree
-		% \end{description}
 	
 	\subsubsection{MongoDB Module (\mref{m39})}
 	
@@ -829,20 +723,7 @@
 		\item[Secrets:] How data is stored
 		\item[Services:] Allows you to retrieve and store data from the database
 		\item[Implemented By:] MongoDB
-	\end{description}
-	
-	
-	\subsection{Software Decision Module}
-	
-	\begin{description}
-		\item[Secrets:] The design decision based on mathematical theorems, physical
-		facts, or programming considerations. The secrets of this module are
-		\emph{not} described in the SRS.
-		\item[Services:] Includes data structure and algorithms used in the system that
-		do not provide direct interaction with the user. 
-		% Changes in these modules are more likely to be motivated by a desire to
-		% improve performance than by externally imposed changes.
-		\item[Implemented By:] --
+		\item[Type of Module:] Library
 	\end{description}
 	
 	\newpage
@@ -858,7 +739,7 @@
 		% \centering
 		\begin{longtable}{p{0.2\textwidth} p{0.6\textwidth}}
 			\caption{Trace Between Functional Requirements and Modules}
-			\label{TblRT} \\
+			\label{TblRT1} \\
 			\toprule
 			\textbf{Req.} & \textbf{Modules}\\
 			\midrule
@@ -884,13 +765,13 @@
 			FR20 & \mref{m3}, \mref{m10} \\
 			FR21 & \mref{m3}, \mref{m12} \\
 			FR22 & \mref{m3}, \mref{m4} \\
-			FR23 & \mref{m3}, \mref{m5} \\
+			FR23 & \mref{m3} \\
 			\hline 
 			\newpage
 			\hline
 			FR24 & \mref{m7}, \mref{m8} \\
 			FR25 & \mref{m7}, \mref{m8} \\
-			FR26 & \mref{m6}, \mref{m13}, \mref{m14}\\
+			FR26 & \mref{m6}, \mref{m13}, \mref{m14}, \mref{40}\\
 			FR27 & \mref{m7}, \mref{m9}\\
 			FR28 & \mref{m6}, \mref{m13}, \mref{m14}\\
 			FR29 & \mref{m6}, \mref{m7}\\
@@ -946,7 +827,7 @@
 		NFR20 & \mref{m3}, \mref{m10} \\
 		NFR21 & \mref{m3}, \mref{m12} \\
 		NFR22 & \mref{m3}, \mref{m4} \\
-		NFR23 & \mref{m3}, \mref{m5} \\
+		NFR23 & \mref{m3} \\
 		\hline 
 		\newpage
 		\hline
@@ -987,8 +868,8 @@
 		\acref{ac2} & \mref{m2}\\
 		\acref{ac3} & \mref{m3}\\
 		\acref{ac4} & \mref{m4}\\
-		\acref{ac5} & \mref{m5}\\
-		\acref{ac6} & \mref{m6}\\
+		% \acref{ac5} & \mref{m5}\\
+		\acref{ac6} & \mref{m6}, \mref{40}\\
 		\acref{ac7} & \mref{m7}\\
 		\acref{ac8} & \mref{m8}\\
 		\acref{ac9} & \mref{m9}\\

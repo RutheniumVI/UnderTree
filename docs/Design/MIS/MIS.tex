@@ -25,7 +25,7 @@
 	colorlinks=true,       % false: boxed links; true: colored links
 	linkcolor=red,          % color of internal links (change box color with linkbordercolor)
 	citecolor=blue,      % color of links to bibliography
-	filecolor=black,  % color of file links
+	filecolor=magenta,  % color of file links
 	urlcolor=cyan          % color of external links
 }
 
@@ -115,42 +115,73 @@
 	are defined by the data types of their inputs and outputs. Local functions are
 	described by giving their type signature followed by their specification.
 	
+	\newpage
 	\section{Module Decomposition}
 	
 	The following table is taken directly from the Module Guide document for this project.
 	
-	\begin{table}[h!]
+	\begin{table}[H]
 		\centering
-		\begin{tabular}{p{0.3\textwidth} p{0.6\textwidth}}
+		\scriptsize\begin{longtable}{p{0.3\textwidth} p{0.6\textwidth}}
+			\caption{Module Hierarchy} \\
 			\toprule
 			\textbf{Level 1} & \textbf{Level 2}\\
 			\midrule
 			
-			{Hardware-Hiding} & ~ \\
+			{Hardware-Hiding Module} & ~ \\
 			\midrule
 			
-			\multirow{7}{0.3\textwidth}{Behaviour-Hiding} & Input Parameters\\
-			& Output Format\\
-			& Output Verification\\
-			& Temperature ODEs\\
-			& Energy Equations\\ 
-			& Control Module\\
-			& Specification Parameters Module\\
+			\multirow{37}{0.3\textwidth}{Behaviour-Hiding Module}  & Project Editing Module \\
+			& Editor Module \\
+			& Syntax Highlighting Module \\
+			& File List Module \\
+			& File Toolbar Module \\
+			& New File Module \\
+			& Upload File Module \\
+			& User Cursors Module \\
+			& Text Highlighting Module \\
+			& File Synchronization Module \\
+			& File Services Module \\
+			& File Database Interface Module \\
+			& PDF Module \\
+			& PDF Renderer Module \\
+			& PDF Compiler Module \\
+			& Chat Module \\
+			& Chat Services Module \\
+			& Chat Database Interface Module \\
+			& Chat Socket Module \\
+			& Instructions View Module \\
+			& Projects Module \\
+			& Project List Module \\
+			& Project Deletion Module \\
+			& Project Creation Module \\
+			& New Project Module \\
+			& Import Project Module \\
+			& Project Services Module \\
+			& Project Database Interface Module \\
+			& GitHub Module \\
+			& GitHub Services Module \\
+			& Authentication Module \\
+			& Auth Service Module \\
+			& Auth Database Interface Module \\
 			\midrule
-			
-			\multirow{3}{0.3\textwidth}{Software Decision} & {Sequence Data Structure}\\
-			& ODE Solver\\
-			& Plotting\\
+			\newpage
+			\multirow{1}{0.3\textwidth}{Software Decision Module} & \\
+			& File Data Module \\
+			& Chat Data Module \\
+			& Project Data Module \\
+			& Auth Data Module \\
+			& MongoDB Module \\
 			\bottomrule
 			
-		\end{tabular}
-		\caption{Module Hierarchy}
+		\end{longtable}
+		
 		\label{TblMH}
 	\end{table}
 	
 	\newpage
 	
-	\section{MIS of PDF} \label{Module}
+	\section{MIS of PDF Module} \label{Module}
 	
 	\subsection{Module}
 	
@@ -174,7 +205,7 @@
 			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 			\hline
 			init & String, String & & \\
-			compilePDF & &  &  \\
+			compileLatex & &  &  \\
 			downloadPDF &  &  &  \\
 			\hline
 		\end{tabular}
@@ -196,7 +227,7 @@
 	
 	\noindent \textit{fileDownloader}: The component responsible for downloading a file in a browser\\
 	
-	\noindent \textit{compileButton}: Button that will trigger the compilation of the LaTeX file, specifically calling the \textbf{compilePDF()} function when clicked\\
+	\noindent \textit{compileButton}: Button that will trigger the compilation of the LaTeX file, specifically calling the \textbf{handleCompileClicked()} function when clicked\\
 	
 	\noindent \textit{downloadButton}: Button that will download the PDF unto to the user's PC, specifically calling the \textbf{downloadPDF()} function when clicked
 	
@@ -213,19 +244,16 @@
 		\noindent Render \textit{pdfComponent}. Also render \textit{compileButton}, and \textit{downloadButton} and attach onClickListerners on them. 
 	\end{itemize}
 	
-	\noindent compilePDF():
+	\noindent compileLatex():
 	\begin{itemize}
-		\item transition: \textit{pdfComponent} $:=$ PDFRenderer.render(
-		
-		(FileServices.compilePDF(\textit{projectName}, \textit{fileName}).error $\equiv$ "") $\Rightarrow$\\
+		\item transition: \textit{pdfComponent}, \textit{errorRenderer} $:=$ \\
+		PDFRenderer.render((FileServices.compilePDF(\textit{projectName}, \textit{fileName}).error $\equiv$ "") $\Rightarrow$\\
 		FileServices.compilePDF(\textit{projectName}, \textit{fileName}).fileData$|$\\
-		(FileServices.compilePDF(\textit{projectName}, \textit{fileName}).error $\neq$ "") $\Rightarrow$ NULL)
-		
-		\item transition: \textit{errorRenderer} $:=$
+		true $\Rightarrow$ NULL), 
 		
 		(FileServices.compilePDF(\textit{projectName}, \textit{fileName})).error $\equiv$ "") $\Rightarrow$ NULL\\
-		$|$(FileServices.compilePDF(\textit{projectName}, \textit{fileName})).error $\neq$ "") $\Rightarrow$\\
-		FileServices.compilePDF(\textit{projectName}, \textit{fileName}).error
+		$|$ true $\Rightarrow$\\
+		FileServices.compilePDF(\textit{projectName}, bytes(\textit{fileName}).error)
 	\end{itemize}
 	
 	\noindent downloadPDF():
@@ -239,7 +267,7 @@
 	
 	\newpage
 	
-	\section{MIS of File Services} \label{Module}
+	\section{MIS of File Services Module} \label{Module}
 	
 	\subsection{Module}
 	
@@ -295,10 +323,10 @@
 	\begin{itemize}
 		
 		\item output: out :=
-		AuthService.authenticate(\textit{JWT}, projectName) $\equiv$ true $\Rightarrow$(
+		AuthService.authenticate(\textit{JWT}, projectName) $\Rightarrow$(\\
 		(PDFCompiler.compile(FileDatabaseInterface.getFile(projectName, fileName)).error $\equiv$ NULL) $\Rightarrow$
-		$\langle$\\PDFCompiler.compile(FileDatabaseInterface.getFile(projectName, fileName)).data, ""$\rangle |$\\
-		(PDFCompiler.compile(FileDatabaseInterface.getFile(projectName, fileName)).error $\neq$ NULL) $\Rightarrow$\\
+		$\langle$\\PDFCompiler.compile(FileDatabaseInterface.getFile(projectName, fileName)).data, ""$\rangle |$
+		true $\Rightarrow$\\
 		$\langle$"", PDFCompiler.compile(FileDatabaseInterface.getFile(projectName, fileName)).error$\rangle$) $|$\\
 		AuthService.authenticate(\textit{JWT}, projectName) $\equiv$ false $\Rightarrow$ $\langle$"", "failed to authenticate"$\rangle$
 		
@@ -335,7 +363,55 @@
 	
 	\newpage
 	
-	\section{MIS of Chat} \label{Module}
+	\section{MIS of File Data Module} \label{Module}
+	
+	\subsection{Module}
+	
+	FileData
+	
+	\subsection{Uses}
+	
+	N/A
+	
+	\subsection{Syntax}
+	
+	\subsubsection{Exported Data Types}
+	
+	File: tuple of (fileName: String, fileType: String, filePath: String, contributors: $\langle$String$\rangle$ of size ?, documentID: string)
+	
+	\noindent FileData: tuple of (projectName: String, owner: String, files: $\langle$File$\rangle$ of size ?) of size 1
+	
+	\noindent ConnectedUser: tuple of (userName: String, profilePictureUrl: String) of size ?
+	
+	\subsubsection{Exported Access Programs}
+	
+	N/A
+	
+	\subsection{Semantics}
+	
+	\subsubsection{State Variables}
+	
+	N/A
+	
+	\subsubsection{Environment Variables}
+	
+	N/A
+	
+	\subsubsection{Assumptions}
+	
+	N/A
+	
+	\subsubsection{Access Routine Semantics}
+	
+	N/A
+	
+	\subsubsection{Local Functions}
+	
+	N/A
+	
+	\newpage
+	
+	\section{MIS of Chat Module} \label{Module}
 	
 	\subsection{Module}
 	
@@ -391,7 +467,7 @@
 	
 	\subsubsection{Assumptions}
 	
-	\textit{messages} and \textit{connectedUsers} are automatically re-rendered once they change.
+	The init() function is automatically called by the rendering library when we first render the module by using the project name passed to it from the url.
 	
 	\subsubsection{Access Routine Semantics}
 	
@@ -417,7 +493,7 @@
 	\begin{itemize}
 		\item transition: \textit{chatComponent} $:=$ //Described by the following operational spec 
 		
-		ChatSocket.emit("newMessage",  \textit{chatMessage})
+		ChatSocket.emit(``newMessage",  \textit{chatMessage})
 	\end{itemize}
 	
 	\noindent processSocketEvents():\\
@@ -427,10 +503,10 @@
 	\begin{itemize}
 		
 		\item transition: \textit{connectUsers} $:=$ \\
-		ChatSocket.on("newUser", data) $\Rightarrow$ \textit{connectedUsers}$|| \langle \langle$data.userName, data.profilePictureUrl$\rangle \rangle$ $|$ ChatSocket.on("userRemoved", data) $\Rightarrow \langle$user : tuple of (userName: String, profilePictureUrl: String)$|$user $\in$ \textit{connectedUsers} $\land$ user.userName $\neq$ data.userName : $\langle$user.userName, user.profilePictureUrl$\rangle\rangle$
+		ChatSocket.on(``newUser", data) $\Rightarrow$ \textit{connectedUsers}$|| \langle \langle$data.userName, data.profilePictureUrl$\rangle \rangle$ $|$ ChatSocket.on(``userRemoved", data) $\Rightarrow \langle$user : tuple of (userName: String, profilePictureUrl: String)$|$user $\in$ \textit{connectedUsers} $\land$ user.userName $\neq$ data.userName : $\langle$user.userName, user.profilePictureUrl$\rangle\rangle$
 		
 		\item transition: \textit{messages} $:=$ \\
-		ChatSocket.on("newMessage", data) $\Rightarrow$ \textit{messages}$|| \langle \langle$data.userName, data.message$\rangle \rangle$
+		ChatSocket.on(``newMessage", data) $\Rightarrow$ \textit{messages}$|| \langle \langle$data.userName, data.message$\rangle \rangle$
 	\end{itemize}
 	
 	\subsubsection{Local Functions}
@@ -439,7 +515,7 @@
 	
 	\newpage
 	
-	\section{MIS of Chat Data} \label{Module}
+	\section{MIS of Chat Data Module} \label{Module}
 	
 	\subsection{Module}
 	
@@ -453,9 +529,9 @@
 	
 	\subsubsection{Exported Data Types}
 	
-	ChatMessage: tuple of (userName: String, message: String)
+	ChatMessage: tuple of (userName: String, message: String) of size ?
 	
-	\noindent ConnectedUser: tuple of (userName: String, profilePictureUrl: String)
+	\noindent ConnectedUser: tuple of (userName: String, profilePictureUrl: String) of size ?
 	
 	\subsubsection{Exported Constants}
 	
@@ -489,7 +565,7 @@
 	
 	\newpage
 	
-	\section{MIS of Chat Services} \label{Module}
+	\section{MIS of Chat Services Module} \label{Module}
 	
 	\subsection{Module}
 	
@@ -527,7 +603,7 @@
 	
 	\subsubsection{Environment Variables}
 	
-	\textit{httpServer}: The REST API server setup in the backend that processes all requests on "/connectedUsers" to \textbf{getConnectedUsers(project)} and "/chatMessages" to \textbf{getChatMessages(project)}.\\
+	\textit{httpServer}: The REST API server setup in the backend that processes all requests on ``/connectedUsers" to \textbf{getConnectedUsers(project)} and ``/chatMessages" to \textbf{getChatMessages(project)}.\\
 	
 	\noindent \textit{JWT}: JSON Web Token that is passed to the server from the user's client as a cookie
 	
@@ -559,10 +635,10 @@
 		
 		\item transition: //Described by the following operational spec
 		
-		(ChatSocket.on("connected", data) $\land$ AuthService.authenticate(\textit{JWT}, project) $\equiv$ true) $\Rightarrow$ (ChatDatabaseInterface.addUser(data.userName, data.profilePictureUrl, data.project) $\land$ ChatSocket.emit("newUser", data)) $|$\\
-		ChatSocket.on("connected", data) $\land$ AuthService.authenticate(\textit{JWT}, project) $\equiv$ false) $\Rightarrow$ (ChatSocket.disconnect(data.userName))\\
+		(ChatSocket.on(``connected", data) $\land$ AuthService.authenticate(\textit{JWT}, project) $\equiv$ true) $\Rightarrow$ (ChatDatabaseInterface.addUser(data.userName, data.profilePictureUrl, data.project) $\land$ ChatSocket.emit(``newUser", data)) $|$\\
+		ChatSocket.on(``connected", data) $\land$ AuthService.authenticate(\textit{JWT}, project) $\equiv$ false) $\Rightarrow$ (ChatSocket.disconnect(data.userName))\\
 		
-		(ChatSocket.on("disconnect", data) $\Rightarrow$ (ChatDatabaseInterface.removeUser(data.userName, data.project) $\land$ ChatSocket.emit("userRemoved", data))\\
+		(ChatSocket.on(``disconnect", data) $\Rightarrow$ (ChatDatabaseInterface.removeUser(data.userName, data.project) $\land$ ChatSocket.emit(``userRemoved", data))\\
 		
 		(ChatSocket.on("newMessage", data) $\land$ AuthService.authenticate(\textit{JWT}, project) $\equiv$ true) $\Rightarrow$ (ChatDatabaseInterface.addMessage(data.userName, data.message, data.project) $|$\\
 		(ChatSocket.on("newMessage", data) $\land$ AuthService.authenticate(\textit{JWT}, project) $\equiv$ false) $\Rightarrow$ (ChatSocket.disconnect(data.userName))
@@ -575,7 +651,7 @@
 	
 	\newpage
 	
-	\section{MIS of Chat Database Interface} \label{Module}
+	\section{MIS of Chat Database Interface Module} \label{Module}
 	
 	\subsection{Module}
 	
@@ -662,7 +738,7 @@
 	
 	\newpage
 	
-	\section{MIS of Instructions View} \label{Module}
+	\section{MIS of Instructions View Module} \label{Module}
 	
 	\subsection{Module}
 	
@@ -712,7 +788,7 @@
 	
 	\subsubsection{Access Routine Semantics}
 	
-	\noindent init(project, file):
+	\noindent init():
 	\begin{itemize}
 		\item transition: \textit{isOpen} $:=$ false
 		
@@ -735,7 +811,7 @@
 	
 	\newpage
 	
-	\section{MIS of File Database Interface} \label{Module}
+	\section{MIS of File Database Interface Module} \label{Module}
 	
 	\subsection{Module}
 	
@@ -786,7 +862,7 @@
 	\noindent getFile(projectName, fileName):
 	\begin{itemize}
 		
-		\item output: out := Return the file associated with the projectName and fileName from MongoDB if it exists
+		\item output: out := MongoDB.GetOne(projectName, fileName)
 		
 		\item exception: exc := Throw a RecordDoesNotExist exception if no such record exists in MongoDB
 		
@@ -795,7 +871,7 @@
 	\noindent renameFileByIndex(projectName, index, newName):
 	\begin{itemize}
 		
-		\item output: out := ($\exists p| p \in \text{MongoDB} : \text{p.projectName} \equiv \text{projectName}$) $\Rightarrow$ (p.files[index].fileName $:=$ newName)
+		\item transition: ($\exists p| p \in \text{MongoDB}.getFiles() : \text{p.projectName} \equiv \text{projectName}$) $\Rightarrow$ (p.files[index].fileName $:=$ newName)
 		
 		\item exception: exc := Throw a RecordDoesNotExist exception if no such record exists in MongoDB
 		
@@ -804,7 +880,7 @@
 	\noindent createNewFile(projectName, fileName):
 	\begin{itemize}
 		
-		\item output: out := Creates a new file entry in the MongoDB database with the requested projectName and fileName
+		\item transition: MongoDB.InsertOne(projectName, fileName)
 		
 		\item exception: N/A
 		
@@ -825,7 +901,7 @@
 	
 	\newpage
 	
-	\section{MIS of Project Editing} \label{Module} 
+	\section{MIS of Project Editing Module} \label{Module} 
 	
 	\subsection{Module}
 	
@@ -860,7 +936,7 @@
 	\textit{editor}: editor is the area where the current file to be edited will displayed \\\\ 
 	\textit{fileList}: fileList is the area where the list of file in the current project will be displayed \\\\
 	\textit{projectDetails}: projectDetails is the area where the details such as name and collaborators of the file will be displayed \\\\
-	\textit{pdf}: pdf is the area where the compiled pdf of the current LaTex file will be shown \textit{chat}: chat is the area where chat between collaborators will be shown 
+	\textit{pdf}: pdf is the area where the compiled pdf of the current LaTeX file will be shown \textit{chat}: chat is the area where chat between collaborators will be shown 
 	
 	\subsubsection{Assumptions}
 	N/A
@@ -880,7 +956,7 @@
 	
 	\newpage
 	
-	\section{MIS of File List} \label{Module} 
+	\section{MIS of File List Module} \label{Module} 
 	
 	\subsection{Module}
 	
@@ -900,7 +976,7 @@
 			\hline
 			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 			\hline
-			FileList  & ~ &  & ~ \\
+			FileList  & String &  & ~ \\
 			\hline
 			openFilePressed & $\mathbb{N}$ & ~ & ~ \\
 			\hline
@@ -943,7 +1019,7 @@
 	
 	\newpage
 	
-	\section{MIS of File Toolbar} \label{Module} 
+	\section{MIS of File Toolbar Module} \label{Module} 
 	
 	\subsection{Module}
 	
@@ -963,7 +1039,7 @@
 			\hline
 			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 			\hline
-			FileToolbar  & ~ &  & ~ \\
+			FileToolbar  & string, $\mathbb{N}$ &  & ~ \\
 			\hline
 			newFilePressed & ~ & ~ & ~ \\
 			\hline
@@ -1037,7 +1113,7 @@
 	
 	\newpage
 	
-	\section{MIS of New File} \label{Module} 
+	\section{MIS of New File Module} \label{Module} 
 	\# This module is a GUI component
 	\subsection{Module}
 	
@@ -1057,7 +1133,7 @@
 			\hline
 			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 			\hline
-			NewFile &  &  & - \\
+			NewFile & String &  & - \\
 			\hline
 			confirmButtonPressed &  &  & FileNotCreated \\
 			\hline
@@ -1109,7 +1185,7 @@
 	
 	\newpage
 	
-	\section{MIS of Upload File} \label{Module} 
+	\section{MIS of Upload File Module} \label{Module} 
 	\# This module is a GUI component
 	\subsection{Module}
 	
@@ -1129,7 +1205,7 @@
 			\hline
 			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 			\hline
-			UploadFile &  &  & - \\
+			UploadFile & String &  & - \\
 			\hline
 			confirmButtonPressed &  &  & FileNotCreated \\
 			\hline
@@ -1192,14 +1268,14 @@
 	\newpage
 	
 	
-	\section{MIS of Editor File} \label{Module} 
+	\section{MIS of Editor File Module} \label{Module} 
 	\# This module is a GUI component
 	\subsection{Module}
 	
 	Editor
 	
 	\subsection{Uses}
-	UserCursor, TextHighlighting, SyntaxHighlighting, SpellingError, FileSynchronization
+	UserCursor, TextHighlighting, SyntaxHighlighting, FileSynchronization
 	
 	\subsection{Syntax}
 	
@@ -1208,11 +1284,11 @@
 	\subsubsection{Exported Access Programs}
 	
 	\begin{center}
-		\begin{tabular}{p{2cm} p{4cm} p{4cm} p{2cm}}
+		\begin{tabular}{p{2cm} p{8cm} p{1cm} p{2cm}}
 			\hline
 			\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 			\hline
-			Editor &  &  & - \\
+			init & string, setCurrentText: (string $\rightarrow$ void) &  & - \\
 			\hline
 		\end{tabular}
 	\end{center}
@@ -1220,36 +1296,37 @@
 	\subsection{Semantics}
 	
 	\subsubsection{State Variables}
-	
+	\textit{modified}: $\mathbb{B}$\\
+	\textit{documentID}: string\\
 	
 	\subsubsection{Environment Variables}
 	
-	\textit{quill}: quill is the editor component that is implemented by Quill.js libary\\
+	\textit{codeMirror}: codeMirror is the editor component that is implemented by CodeMirror library\\
 	\textit{localStorage}: localStorage is storage used by the browser which Undertree will use to store data such as username \\
-	\textit{websocketProvider}: websocketProvider is a web socket used by the YJS library to synchronize file content between the collaborators
+	\textit{websocketProvider}: websocketProvider is a web socket used by the YJS library to synchronize file content between the collaborators 
 	
 	\subsubsection{Assumptions}
-	N/A
+	Editor.init() is called during the initial render
 	
 	\subsubsection{Access Routine Semantics}
 	
-	\noindent Editor(project):
+	\noindent init(currentFilePath, setCurrentText):
 	\begin{itemize}
-		\item transition: \\
-		Register UserCursor, SyntaxHighlighting, SpellingError modules with \textit{quill} \\\\
-		Bind \textit{quill} to \textit{webSocketProvider} so that the editor is synchronized using YJS's websocket.\\\\
-		Render the \textit{quill} component
+		\item transition: \textit{webSocketProvider} is assigned a new instance of a socket created using \textit{currentFilePath}. Registers UserCursor, SyntaxHighlighting modules with \textit{codeMirror}. Binds \textit{codeMirror} to \textit{webSocketProvider} so that the editor is synchronized using YJS's websocket. \textit{codeMirror} also gets binded to event listener that will call \textit{setCurrentText}(\textit{t}) and \textit{addUserToModified}() whenever the editor is updated, where \textit{t} is the text in the editor. Lastly, documentID $:=$ currentFilePath
 		\item exception: N/A
 	\end{itemize}
 	
 	\subsubsection{Local Functions}
 	
-	N/A
+	\noindent addUserToModified():
+	\begin{itemize}
+		\item transition: \textit{modified} $=$ \textit{true} $\Rightarrow$ \textit{modified} $:=$ \textit{true} and make a API call to the server to add \textit{localStorage.username} to the list of the contributor for the file with file path equals to \textit{documentID}.
+	\end{itemize}
 	
 	
 	\newpage
 	
-	\section{MIS of Projects} \label{Module} 
+	\section{MIS of Projects Module} \label{Module} 
 	
 	\subsection{Module}
 	
@@ -1302,7 +1379,7 @@
 	
 	\newpage
 	
-	\section{MIS of Project List} \label{Module} 
+	\section{MIS of Project List Module} \label{Module} 
 	
 	\subsection{Module}
 	
@@ -1375,7 +1452,7 @@
 	
 	\newpage
 	
-	\section{MIS of Project Deletion} \label{Module} 
+	\section{MIS of Project Deletion Module} \label{Module} 
 	
 	\subsection{Module}
 	
@@ -1450,7 +1527,7 @@
 	
 	\newpage
 	
-	\section{MIS of Project Creation} \label{Module} 
+	\section{MIS of Project Creation Module} \label{Module} 
 	
 	\subsection{Module}
 	
@@ -1518,7 +1595,7 @@
 	
 	\newpage
 	
-	\section{MIS of New Project} \label{Module} 
+	\section{MIS of New Project Module} \label{Module} 
 	
 	\subsection{Module}
 	
@@ -1586,7 +1663,7 @@
 	N/A
 	
 	\newpage
-	\section{MIS of Import Project} \label{Module} 
+	\section{MIS of Import Project Module} \label{Module} 
 	
 	\subsection{Module}
 	
@@ -1669,7 +1746,7 @@
 	
 	\newpage
 	
-	\section{MIS of Project Database Interface} \label{Module} 
+	\section{MIS of Project Database Interface Module} \label{Module} 
 	
 	\subsection{Module}
 	
@@ -1753,7 +1830,7 @@
 	
 	\newpage
 	
-	\section{MIS of Project Services} \label{Module} 
+	\section{MIS of Project Services Module} \label{Module} 
 	
 	\subsection{Module}
 	
@@ -1838,7 +1915,7 @@
 	
 	% --------------------------- GITHUB ------------------------------
 	
-	\section{MIS of GitHub} \label{Module} 
+	\section{MIS of GitHub Module} \label{Module} 
 	
 	\subsection{Module}
 	GitHub
@@ -1894,7 +1971,7 @@
 	
 	\subsubsection{Access Routine Semantics}
 	
-	\noindent viewLog: calls GitHubServices.retrieveLog(logReqData) and passes in the user that clicked it along with the necessary information in logReqData. The data is then retrieved from the backend and updates the log view. \\
+	\noindent viewLog(): calls GitHubServices.retrieveLog(logReqData) and passes in the user that clicked it along with the necessary information in logReqData. The data is then retrieved from the backend and updates the log view. \\
 	
 	\noindent commitChanges(): calls GitHubServices.createCommit(data) and passes in $changesSelected$ along with other the necessary information in data. \\
 	
@@ -1905,7 +1982,7 @@
 	
 	\newpage
 	
-	\section{MIS of GitHub Services} \label{Module} 
+	\section{MIS of GitHub Services Module} \label{Module} 
 	
 	\subsection{Module}
 	GitHubServices
@@ -2341,7 +2418,7 @@
 	
 	% \newpage
 	
-	\section{MIS of Authentication} \label{Module} 
+	\section{MIS of Authentication Module} \label{Module} 
 	
 	\subsection{Module}
 	Authentication
@@ -2407,7 +2484,7 @@
 	% ------------------------ Auth Service ------------------------
 	
 	
-	\section{MIS of Auth Service} \label{Module} 
+	\section{MIS of Auth Service Module} \label{Module} 
 	
 	\subsection{Module}
 	AuthService
@@ -2466,7 +2543,7 @@
 	
 	\newpage
 	
-	\section{MIS of Auth Database Interface} \label{Module} 
+	\section{MIS of Auth Database Interface Module} \label{Module} 
 	
 	\subsection{Module}
 	AuthDatabaseInterface
@@ -2518,7 +2595,7 @@
 	\newpage
 	
 	
-	\section{MIS of Auth Data} \label{Module} 
+	\section{MIS of Auth Data Module} \label{Module} 
 	
 	\subsection{Module}
 	AuthData
@@ -2565,5 +2642,6 @@
 	
 	\section{Appendix} \label{Appendix}
 	
+	\wss{Extra information if required}
 	
 \end{document}
