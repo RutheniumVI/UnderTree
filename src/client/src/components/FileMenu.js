@@ -1,3 +1,9 @@
+/*
+Authors: Eesha Qureshi, Faiq Ahmed, Veerash Palanichamy
+Date: May 20, 2023
+Purpose: File Menu module to display and interact with all the files in the current project
+*/
+
 import React from 'react'
 import { ProSidebarProvider } from 'react-pro-sidebar';
 import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
@@ -12,7 +18,8 @@ function FileMenu({ currentFile, setCurrentFile }) {
 
 	const username = localStorage.getItem("username");
 	const { owner, projectName } = useParams();
-
+	
+	// Get all files of the project on page load
 	useEffect(() => {
 		axios.get(process.env.REACT_APP_API_URL + "/file/getFiles?owner=" + owner + "&projectName=" + projectName, { withCredentials: true })
 			.then((res) => {
@@ -43,6 +50,7 @@ function FileMenu({ currentFile, setCurrentFile }) {
 	const [newFileRename, setNewFileRename] = useState();
 	const [selectedFile, setSelectedFile] = useState("");
 
+	// Create a tree of files that can be used to render the file menu from a list of files
 	function getFileTreeFromFiles(files) {
 		let tree = { folders: [], files: [] };
 		for (let i = 0; i < files.length; i++) {
@@ -54,6 +62,7 @@ function FileMenu({ currentFile, setCurrentFile }) {
 		setFileTree(tree);
 	}
 
+	// Create a node of the file tree to be rendered. This is a helper function for getFileTreeFromFiles
 	function createFileTreeNode(tree, path, file, currPath) {
 		if (path.length == 1) {
 			if (file.fileName != "March302023")
@@ -73,6 +82,7 @@ function FileMenu({ currentFile, setCurrentFile }) {
 
 	}
 
+	// Handle right clicking on a folder to open up context menu to add, import, or delete file
 	function handleFolderRightClick(e) {
 		e.preventDefault();
 		var top = e.pageY - 10;
@@ -84,6 +94,7 @@ function FileMenu({ currentFile, setCurrentFile }) {
 		}).addClass("show");
 	}
 
+	// Render the file menu using the file tree recursively
 	function renderFileMenu(tree, root) {
 		return (
 			<SubMenu className="folder" label={tree.name} key={tree.path} rootStyles={selectedFile === tree.path ? { backgroundColor: '#d0d0d0' } : { backgroundColor: "#DEDEDE" }}
@@ -111,23 +122,18 @@ function FileMenu({ currentFile, setCurrentFile }) {
 		);
 	}
 
+	// Disable default behaviour of file click
 	function handleClick() {
 		$("#context-menu").removeClass("show").hide();
 	}
 
+	// Handle uploading of a new file and send the data to the backend
 	function handleConfirmFileUploadClick() {
 		handleModalClose();
 
 		console.log(selectedFileObject)
-
-		// const sp = inputtedFilePath.split("/");
 		const fileName = selectedFileObject.name;
-		// let dirPath = sp.slice(0, -1).join("/") + "/"
-		// if(dirPath == "/")
-		//     dirPath = "";
-
 		let dirPath = ""
-		// Remove leading / and add a / at the end
 		if (selectedFile)
 			dirPath = selectedFile.substring(1) + "/";
 		const fileType = selectedFileObject.type;
@@ -175,6 +181,7 @@ function FileMenu({ currentFile, setCurrentFile }) {
 		}
 	}
 
+	// Handle adding a new file and send the data to the backend
 	function handleConfirmNewFileClick() {
 		handleModalClose();
 
@@ -206,6 +213,7 @@ function FileMenu({ currentFile, setCurrentFile }) {
 		});
 	}
 
+	// Handle the creation of a new folder and send the data to the backend
 	function handleConfirmNewFolderClick() {
 		handleModalClose();
 
@@ -231,6 +239,7 @@ function FileMenu({ currentFile, setCurrentFile }) {
 		});
 	}
 
+	// Handle file deletion and send the data to the backend
 	function handleConfirmDeleteClick() {
 		console.log(fileToDelete)
 
@@ -251,6 +260,7 @@ function FileMenu({ currentFile, setCurrentFile }) {
 
 	}
 
+	// Handle editing of a file and send the updated information to the backend
 	function handleEditFileConfirm() {
 		console.log(fileToEdit)
 		console.log(newFileRename)
@@ -321,14 +331,6 @@ function FileMenu({ currentFile, setCurrentFile }) {
 							<button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={(e) => { handleModalClose() }}></button>
 						</div>
 						<div className="modal-body my-modal-body">
-							{/* <label className="form-label"> <h6>File Name:</h6></label>
-                        <div className="input-group">
-                            <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" 
-                            onChange={(event) => {
-                            setInputtedFilePath(event.target.value);
-                            }}/>      
-                        </div> */
-							}
 							<div className="input-group" style={{ "marginTop": "5%" }} >
 								<input type="file" id="input" multiple onChange={(event) => { setSelectedFileObject(document.getElementById('input').files[0]) }} />
 							</div>

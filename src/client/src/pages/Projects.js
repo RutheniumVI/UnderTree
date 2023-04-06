@@ -1,3 +1,10 @@
+/*
+Author: Faiq Ahmed
+Date: March 20, 2023
+Purpose: Projects, New Project, Create Project, and Import Project Modules responsible for rendering all data related to project creation 
+and listing and allow users to update the projects they have by interacting with the backend.
+*/
+
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -8,6 +15,7 @@ import '../Styles/Projects.css'
 
 function Projects() {
 
+    // Get a list of all projects on page load
     useEffect(() => {
         axios.get(process.env.REACT_APP_API_URL + "/projects/getProjects", { withCredentials: true })
             .then((res) => {
@@ -48,6 +56,7 @@ function Projects() {
 
     const [selectedProjectIndex, setSelectedProjectIndex] = useState();
 
+    // Reset the state of all modals back to default once a modal is closed so old information does not persist after its opened again
     function resetModalStates() {
         setCurrentProject({
             "projectName": "",
@@ -71,6 +80,7 @@ function Projects() {
         setCollaboratorValue("");
     }
 
+    // Update information about the current project that the user is updating and handle all errors associated with it
     function updateCurrentProject(e) {
         const value = e.target.value;
         setCurrentProject({ ...currentProject, projectName: value });
@@ -81,6 +91,7 @@ function Projects() {
         }
     }
 
+    // Update the current collaborator value and handle all errors associated with it
     function updateCollaboratorValue(e) {
         const value = e.target.value;
         setCollaboratorValue(value);
@@ -95,6 +106,7 @@ function Projects() {
         }
     }
 
+    // Add collaborator to the list of collaborators for the project and handle all errors
     function addProjectCollaborator() {
         if (collaboratorValue.length == 0) {
             setErrors({ ...errors, collaborators: "User name cannot be empty" });
@@ -114,10 +126,12 @@ function Projects() {
         }
     }
 
+    // Remove specified collaborator from the list of collaborators of the project
     function removeProjectCollaborator(collaborator) {
         setCurrentProject({ ...currentProject, collaborators: currentProject.collaborators.filter((name) => { return name !== collaborator }) })
     }
 
+    // Set the current project to make changes to be the project the user selected
     function selectProject(index) {
         resetModalStates();
 
@@ -127,6 +141,7 @@ function Projects() {
         setCurrentProject(projects[index]);
     }
 
+    // Get a list of all the projects the user can import
     async function getImportProjects() {
         resetModalStates();
 
@@ -147,6 +162,7 @@ function Projects() {
             })
     }
 
+    // Allow user to select a current project to be marked so they can import it when they confirmed
     function clickImportProject(i) {
         if (selectedImportProjects.includes(i)) {
             setSelectedImportProjects(selectedImportProjects.filter((index) => { return index !== i }))
@@ -155,6 +171,7 @@ function Projects() {
         }
     }
 
+    // Import all projects marked to be imported
     async function confirmImportedProjects() {
         let currProjects = [];
         selectedImportProjects.forEach((i) => {
@@ -183,6 +200,7 @@ function Projects() {
         }
     }
 
+    // Add a new project and send the information to be updated in the backend
     async function addProject() {
         if (currentProject.projectName === "") {
             setErrors({ ...errors, projectName: "GitHub repository name cannot be empty" });
@@ -218,6 +236,7 @@ function Projects() {
         }
     }
 
+    // Edit the currently selected project and send the information to the backend
     function editProject() {
         if (errors.collaborators === "") {
             axios.post(process.env.REACT_APP_API_URL + "/projects/editProject", currentProject, { withCredentials: true })
@@ -233,7 +252,8 @@ function Projects() {
                 });
         }
     }
-
+    
+    // Delete the selected project and delete it from database in the backend as well
     function deleteProject() {
         axios.post(process.env.REACT_APP_API_URL + "/projects/deleteProject", currentProject, { withCredentials: true })
             .then((res) => {

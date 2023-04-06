@@ -1,3 +1,9 @@
+/*
+Author: Faiq Ahmed
+Date: March 5, 2023
+Purpose: Instructions Module and Navigation menu to allow users to have easy access to the different pages of the application
+*/
+
 import React from 'react';
 import { useEffect } from 'react';
 import axios from 'axios';
@@ -10,6 +16,7 @@ function Navbar() {
 		handleLogIn();
 	}, []);
 
+	// Check to see if user is logged in, if they are then redirect them to the projects page
 	async function handleLogIn() {
 		let username = localStorage.getItem("username");
 
@@ -27,6 +34,7 @@ function Navbar() {
 		}
 	}
 
+	// Once the user logs out, redirect them to the home page
 	async function handleLogout() {
 		await axios.get(process.env.REACT_APP_API_URL + "/auth/logout", {
 			withCredentials: true,

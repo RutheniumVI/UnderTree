@@ -1,3 +1,9 @@
+/*
+Author: Eesha Qureshi
+Date: May 10, 2023
+Purpose: Chat Module for displaying the chat data on the frontend and interacting with the backend
+*/
+
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
@@ -15,6 +21,7 @@ function NewChat({ socket }) {
 	const [messages, setMessages] = useState([]);
 	const [avatar, setAvatar] = useState("");
 
+	// Get all messages for the room from the backend
 	async function getMessages() {
 		// }
 		console.log("Room Value: ", room);
@@ -34,7 +41,7 @@ function NewChat({ socket }) {
 		}
 	};
 
-	//api calls
+	// Get user profile picture from the backend
 	async function getAvatar() {
 		await axios.get(process.env.REACT_APP_API_URL + "/chat/getAvatar?owner=" + owner + "&projectName=" + projectName, {
 			withCredentials: true,
@@ -51,6 +58,7 @@ function NewChat({ socket }) {
 		return;
 	};
 
+	// Send message to be stored in the backend and to all other users in the chat room
 	async function sendMessage() {
 		if (newMessage !== "") {
 			const messageContent = {
@@ -83,6 +91,7 @@ function NewChat({ socket }) {
 		}
 	};
 
+	// Initialize chat when the page first loads
 	async function setUpChat() {
 		socket.emit("join_room", owner + "/" + projectName);
 		await getAvatar();

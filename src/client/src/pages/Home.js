@@ -1,3 +1,9 @@
+/*
+Author: Faiq Ahmed
+Date: March 5, 2023
+Purpose: Landing page of the application, give a quick intro to the app and let users log in
+*/
+
 import { React } from 'react';
 import { useLayoutEffect } from 'react';
 import '../Styles/Home.css'

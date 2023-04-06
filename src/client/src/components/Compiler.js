@@ -1,3 +1,9 @@
+/*
+Author: Faiq Ahmed
+Date: May 12, 2023
+Purpose: PDF, PDF renderer, and PDF compiler modules. Responsible for all interacts with the compiler and rendering the PDF on the frontend
+*/
+
 import React from 'react';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
@@ -12,10 +18,12 @@ function Compiler({ latexText, documentID }) {
 
     const [pdf, setPdf] = useState("");
 
+    // Get the pdf on page load
     useEffect(() => {
         getPDF()
     }, [documentID]);
 
+    // Get the pdf with the associated file from the backend, file name is same as documentID which is passed into this component
     function getPDF() {
         fetch(process.env.REACT_APP_API_URL + "/file/getPDF?file=" + encodeURIComponent(documentID) + "&owner=" + owner + "&projectName=" + projectName, {
             method: "GET",
@@ -36,6 +44,7 @@ function Compiler({ latexText, documentID }) {
             });
     }
 
+    // Send LaTeX text to the backend to be compiled into a PDF and re-renderer the PDF with the new compiled result
     async function compileLatex() {
         const response = await axios.post(process.env.REACT_APP_API_URL + "/file/compilePDF",
             { text: latexText, projectName: projectName, owner: owner, documentId: documentID },

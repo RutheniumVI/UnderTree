@@ -1,3 +1,9 @@
+/*
+Author: Kevin Kannamalil
+Date: May 10, 2023
+Purpose: Handler for the logout button in the navbar
+*/
+
 import React from 'react';
 import axios from 'axios';
 

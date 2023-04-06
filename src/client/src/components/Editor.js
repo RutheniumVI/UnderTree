@@ -1,3 +1,9 @@
+/*
+Author: Veerash Palanichamy
+Date: May 10, 2023
+Purpose: Editor, and syntax highlight module to allow concurrent editing to the LaTeX documents
+*/
+
 import React, { useLayoutEffect } from 'react';
 import { useEffect } from 'react';
 import { useState } from 'react';

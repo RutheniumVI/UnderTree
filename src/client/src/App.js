@@ -1,4 +1,9 @@
-import logo from './logo.svg';
+/*
+Author: Faiq Ahmed, Veerash Palanichamy
+Date: March 5, 2023
+Purpose: Allow navigation between the different pages by allocating a route to each page
+*/
+
 import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';

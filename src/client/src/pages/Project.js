@@ -1,3 +1,9 @@
+/*
+Author: Faiq Ahmed
+Date: March 28, 2023
+Purpose: Project Module, allow users to access the editor, chat, file menu, and PDF renderer from the single page
+*/
+
 import React, { useLayoutEffect, useEffect } from 'react';
 import { useState } from 'react';
 import Split from 'react-split'

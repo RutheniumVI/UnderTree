@@ -1,3 +1,9 @@
+/*
+Author: Kevin
+Date: March 23, 2023
+Purpose: Login handler to allow users to log in using GitHub
+*/
+
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
