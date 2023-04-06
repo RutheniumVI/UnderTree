@@ -2,29 +2,34 @@
 
 The folders and files for this project are as follows:
 
-...
+- Client: All frontend code and tests
 
-# Deployment
+- Deployment: All deployment files such as docker and caddy files
 
-docker, docker compose, nodejs, and jvm must be installed
+- Server: All backend code and tests
 
-The following environment variables must be added to the current terminal before deploying:
 
-- MONGO_ROOT_USER
-- MONGO_ROOT_PASS
-- MONGO_HOST
-- GITHUB_CI
-- GITHUB_CS
+## Deployment
 
-Deploy mongodb and mongo-express:
+Ensure you have docker, node, and npm installed.
 
-```
-cd deployment
-docker compose up -d
-```
+To deploy the following project follow the given steps:
+
+### Client
+1. run ``npm install`` to download all needed dependencies to run the project
+2. fill in the provided .env file in the client directory with the need information
+3. run ``npm start`` if testing locally, or ``npm run build`` if deploying for production
+
+### Server
+1. run ``npm install`` to download all needed dependencies to run the project
+2. fill in the provided .env file in the client directory with the need information
+
+Once the above steps have been completed we can deploy the project using docker using the following steps:
+
+1. Run ``cd /src/deployment``
+2. Add the following environment variables to your terminal "MONGO_ROOT_USER" and "MONGO_ROOT_PASS", make sure the values of these variables are the same as what you stated in the server environment variables files
+3. Update the Caddy file to point to the correct domain name and change "ports" for in the docker compose file to "expose" for all services except Caddy if you are deploying to a public server.
+3. Run ``docker compose up -d`` to deploy
 
 MongoDB can be access on port 27017
-
 Mongo Express can be accessed on port 8081
-
-Deploy backend using gradle and frontend using node
