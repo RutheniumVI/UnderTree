@@ -57,6 +57,7 @@ async function validateUserAuth(token: string): Promise<Object> {
 	}
 }
 
+//
 async function getUserPropertyWithToken(token: string, property: keyof MongoUser): Promise<any> {
 	const user = await AuthDB.getUserWithToken(token);
 	if (user == null || user[property] == null) {
