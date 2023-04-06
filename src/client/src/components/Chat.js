@@ -1,6 +1,6 @@
 /*
 Author: Eesha Qureshi
-Date: May 10, 2023
+Date: March 10, 2023
 Purpose: Chat Module for displaying the chat data on the frontend and interacting with the backend
 */
 
