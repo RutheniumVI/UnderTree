@@ -1,6 +1,6 @@
 /*
 Author: Veerash Palanichamy
-Date: May 10, 2023
+Date: March 10, 2023
 Purpose: Editor, and syntax highlight module to allow concurrent editing to the LaTeX documents
 */
 
@@ -27,7 +27,7 @@ let editorc = null;
 let documentID = null;
 let modified = false;
 
-function Editor({ socket, currentFile, setCurrentText }) {
+function Editor({currentFile, setCurrentText}) {
     const username = localStorage.getItem("username");
     const { owner, projectName } = useParams();
     documentID = currentFile.filePath; //documentID for synchronization is going to be the file full path
