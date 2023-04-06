@@ -1,28 +1,37 @@
-import express, { Request, RequestHandler, Response } from "express";
+/*
+Author: Faiq Ahmed
+Date: March 28, 2023
+Purpose: Project Service Module, responsible for handling all logic associated with the projects that is transmitted from the frontend.
+*/
 
-import { AuthServices } from "./AuthServices";
+import express from "express";
+
 import { AuthUtil } from "../utils/AuthUtil";
 import { ProjectDB } from "../database_interface/ProjectDB";
 import { FileDB } from "../database_interface/FileDB";
 import { ProjectData } from "../data/ProjectData";
 import { GitHubUtil } from "../utils/GitHubUtil";
 import { FileUtil } from "../utils/FileUtil";
-import { File, FileData } from "../data/FileData";
+import { File } from "../data/FileData";
 import { PersistenceUtil } from "../utils/PersistenceUtil";
 
 const router = express.Router();
 
+// Add middleware to validate the user sending the API request before the request is processed
 router.use(AuthUtil.authorizeJWT);
 router.use(["/deleteProject","/editProject"], AuthUtil.authorizeProjectAccess);
 
+// Set up routes for the api calls that the frontend can use to communicate with each function
 router.route("/addProject").post(addProject);
 router.route("/getProjects").get(getProjects);
 router.route("/editProject").post(editProject);
 router.route("/deleteProject").post(deleteProject);
 router.route("/importProjects").post(importProjects);
 
-const latexTemplate = "\\documentclass{article}\n\\begin{document}\nHello World\n\\end{document}"
+// Basic content of a new LaTeX document
+const latexTemplate = "\\documentclass{article}\n\\begin{document}\nHello World\n\\end{document}";
 
+// Add a new project to the system and let the user know whether the operation was successful or not
 async function addProject(req, res): Promise<void> {
 	const data: ProjectData = req.body as ProjectData;
 	const accessToken = res.locals.accessToken;
@@ -33,7 +42,7 @@ async function addProject(req, res): Promise<void> {
 		await ProjectDB.addProject(data);
 		await FileDB.initializeProject(data);
 		const filePath = data.owner+"/"+data.projectName+"/main.tex";
-		const mainFile: File = {fileName: "main.tex", fileType: "tex", filePath: filePath, contributors: [res.locals.username], documentID: filePath}
+		const mainFile: File = {fileName: "main.tex", fileType: "tex", filePath: filePath, contributors: [res.locals.username], documentID: filePath};
 		await PersistenceUtil.writeDocumentData(filePath, latexTemplate);
 		await FileDB.addProjectFile(data, mainFile);
 		await FileUtil.createDirectory(data.owner+"/"+data.projectName);
@@ -44,12 +53,14 @@ async function addProject(req, res): Promise<void> {
 	}
 }
 
+// Return all projects that a user is a part of
 async function getProjects(req, res): Promise<void>  {
 	const username = res.locals.username;
 	const projects: ProjectData[] = await ProjectDB.getProjects(username);
 	res.status(200).json(projects);
 }
 
+// Update information about a given project in the syste and return whether the operation was successful or not
 async function editProject(req, res): Promise<void>  {
 	const data: ProjectData = req.body as ProjectData;
 	const accessToken = res.locals.accessToken;
@@ -73,6 +84,7 @@ async function editProject(req, res): Promise<void>  {
 	}
 }
 
+// Delete a project from the system and return whether the operation was successful or not
 async function deleteProject(req, res): Promise<void>  {
 	const data: ProjectData = req.body as ProjectData;
 
@@ -86,8 +98,9 @@ async function deleteProject(req, res): Promise<void>  {
 	}
 }
 
+// Import a project into the system and return whether the operation was successful or not
 async function importProjects(req, res): Promise<void>  {
-	let data: ProjectData[] = req.body as ProjectData[]
+	const data: ProjectData[] = req.body as ProjectData[];
 	const accessToken = res.locals.accessToken;
 
 	try{
@@ -99,9 +112,9 @@ async function importProjects(req, res): Promise<void>  {
 				const fileContent = await GitHubUtil.getContentFromBlob(accessToken, project, file);
 				const filePath = project.owner+"/"+project.projectName+"/"+file.path;
 				FileUtil.saveFile(filePath, Buffer.from(fileContent.content, fileContent.encoding as BufferEncoding));
-				const fileInfo: File = {fileName: file.name, fileType: "image", filePath: filePath, contributors: []}
+				const fileInfo: File = {fileName: file.name, fileType: "image", filePath: filePath, contributors: []};
 				FileDB.addProjectFile(project, fileInfo);
-			})
+			});
 
 			files.texFiles.forEach(async (file) => {
 				const fileContent = await GitHubUtil.getContentFromBlob(accessToken, project, file);
@@ -111,7 +124,7 @@ async function importProjects(req, res): Promise<void>  {
 				const fileInfo: File = {fileName: file.name, fileType: ext, filePath: filePath, contributors: [], documentID: file.path};
 				await PersistenceUtil.writeDocumentData(filePath, Buffer.from(fileContent.content, fileContent.encoding as BufferEncoding).toString());
 				FileDB.addProjectFile(project, fileInfo);
-			})
+			});
 			await ProjectDB.addProject(project);
 		}
 		res.status(200).json("Successfully imported project");

@@ -1,3 +1,9 @@
+/*
+Author: Faiq Ahmed
+Date: March 3, 2023
+Purpose: Project Data module, contains the data types for all project related functionality that are used throughout the project
+*/
+
 interface ProjectData {
     projectName: string,
     owner: string,

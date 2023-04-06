@@ -1,9 +1,16 @@
+/*
+Author: Faiq Ahmed, Veerash Palanichamy
+Date: March 20, 2023
+Purpose: File Database Interface Module, responsible for making changes to database for the files collection
+*/
+
 import { DBClient } from "../utils/MongoDBUtil";
 import { FileData, File } from "../data/FileData";
 import { ProjectData } from "../data/ProjectData";
 
 const collectionName = "files";
 
+// Create the file system for a new project in the database
 async function initializeProject(project: ProjectData): Promise<string> {
 	const collection = DBClient.getCollection(collectionName);
 	const existingProject = await collection.findOne({"projectName": project.projectName, "owner": project.owner});
@@ -12,7 +19,7 @@ async function initializeProject(project: ProjectData): Promise<string> {
 		throw "File system corresponding to the project already exists in the database";
 	}
 	try{
-        const fileData: FileData = {projectName: project.projectName, owner: project.owner, files: [], deletedFiles: []};
+		const fileData: FileData = {projectName: project.projectName, owner: project.owner, files: [], deletedFiles: []};
 		await collection.insertOne(fileData);
 	}
 	catch (err) {
@@ -23,6 +30,7 @@ async function initializeProject(project: ProjectData): Promise<string> {
 	return "Succesfully added project file system";
 }
 
+// Add a new file to specific project file system
 async function addProjectFile(project: ProjectData, file: File): Promise<string> {
 	const collection = DBClient.getCollection(collectionName);
 	const existingProject = await collection.findOne({"projectName": project.projectName, "owner": project.owner});
@@ -31,7 +39,7 @@ async function addProjectFile(project: ProjectData, file: File): Promise<string>
 		throw "File system corresponding to the project does not exist in the database";
 	}
 	try{
-        await collection.updateOne({"projectName": project.projectName, "owner": project.owner},
+		await collection.updateOne({"projectName": project.projectName, "owner": project.owner},
 			{
 				$push: {files: file}
 			}
@@ -45,6 +53,7 @@ async function addProjectFile(project: ProjectData, file: File): Promise<string>
 	return "Succesfully added file to project";
 }
 
+// Delete all the files from a specific project file system
 async function deleteProjectFiles(project: ProjectData): Promise<string> {
 	const collection = DBClient.getCollection(collectionName);
 
@@ -57,6 +66,7 @@ async function deleteProjectFiles(project: ProjectData): Promise<string> {
 	return "Succesfully deleted project file system";
 }
 
+// Add a new collaborator to a specific file in a specific project
 async function editFileCollaborator(owner: string, projectName: string, filePath: string, userName: string){
 	const collection = DBClient.getCollection(collectionName);
 
@@ -67,7 +77,7 @@ async function editFileCollaborator(owner: string, projectName: string, filePath
 			"files.filePath": filePath
 		},
 		{
-			$addToSet: {'files.$.contributors': userName}
+			$addToSet: {"files.$.contributors": userName}
 		}
 	);
 	
@@ -80,6 +90,7 @@ async function editFileCollaborator(owner: string, projectName: string, filePath
 
 }
 
+// Remove all collaborators from a specific file in a specific project
 async function resetFileCollaborator(owner: string, projectName: string, filePath: string){
 	const collection = DBClient.getCollection(collectionName);
 
@@ -90,7 +101,7 @@ async function resetFileCollaborator(owner: string, projectName: string, filePat
 			"files.filePath": filePath
 		},
 		{
-			$set: {'files.$.contributors': []}
+			$set: {"files.$.contributors": []}
 		}
 	);
 	
@@ -103,6 +114,7 @@ async function resetFileCollaborator(owner: string, projectName: string, filePat
 
 }
 
+// Rename a file in a specific project
 async function renameFile(project: ProjectData, file: File, newFileName: string, newFilePath: string, userName: string): Promise<string> {
 	const collection = DBClient.getCollection(collectionName);
 
@@ -114,10 +126,10 @@ async function renameFile(project: ProjectData, file: File, newFileName: string,
 		},
 		{
 			$set: {
-				'files.$.fileName': newFileName,
-				'files.$.filePath': newFilePath
+				"files.$.fileName": newFileName,
+				"files.$.filePath": newFilePath
 			},
-			$addToSet: {'files.$.contributors': userName}
+			$addToSet: {"files.$.contributors": userName}
 		}
 	);
 
@@ -128,7 +140,7 @@ async function renameFile(project: ProjectData, file: File, newFileName: string,
 	return "Succesfully changed fileName";
 }
 
-
+// Delete a specific file from a project
 async function deleteFile(project: ProjectData, filePath: string, userName: string): Promise<string> {
 	const collection = DBClient.getCollection(collectionName);
 
@@ -141,7 +153,7 @@ async function deleteFile(project: ProjectData, filePath: string, userName: stri
 			$pull: {
 				"files": {"filePath": filePath}
 			},
-			$addToSet: {'deletedFiles': filePath}
+			$addToSet: {"deletedFiles": filePath}
 		}
 	);
 
@@ -152,6 +164,7 @@ async function deleteFile(project: ProjectData, filePath: string, userName: stri
 	return "Succesfully deleting fileName";
 }
 
+// Get all file from a project file system
 async function getFiles(project: ProjectData): Promise<File[]> {
 	const collection = DBClient.getCollection(collectionName);
 
@@ -169,6 +182,7 @@ async function getFiles(project: ProjectData): Promise<File[]> {
 	return result.files as File[];
 }
 
+// Get all contributors from a specific file in a project
 async function getContributor(project: ProjectData, filePath: string) {
 	const collection = DBClient.getCollection(collectionName);
 	const result = await collection.findOne(
@@ -185,7 +199,7 @@ async function getContributor(project: ProjectData, filePath: string) {
 			console.log(ele);
 			contributor = ele.contributors;
 		}
-	})
+	});
 	return contributor;
 }
 
@@ -193,7 +207,7 @@ async function getContributor(project: ProjectData, filePath: string) {
 const FileDB = {
 	initializeProject,
 	addProjectFile,
-    deleteProjectFiles,
+	deleteProjectFiles,
 	editFileCollaborator,
 	resetFileCollaborator,
 	renameFile,
