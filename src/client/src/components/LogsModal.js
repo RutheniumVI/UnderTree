@@ -1,6 +1,6 @@
 import React from "react";
 import "../Styles/LogsModal.css";
-	
+
 function Modal({ logs, setShowModal }) {
 
 	// Only stores the 10 most recent logs
@@ -28,7 +28,7 @@ function Modal({ logs, setShowModal }) {
 					</ul>
 				</div>
 				<div className="log-modal-footer">
-					<button className="button" onClick={()=> {setShowModal(false)}}>
+					<button className="button" onClick={() => { setShowModal(false) }}>
 						Close
 					</button>
 				</div>
