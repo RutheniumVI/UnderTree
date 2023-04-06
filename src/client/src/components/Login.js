@@ -5,6 +5,7 @@ import axios from 'axios';
 async function signIn() {  
   let username = localStorage.getItem("username");
 
+  // If the username is not stored in local storage, get it from the server`
   if (username === null) {
     await axios.get(process.env.REACT_APP_API_URL+"/auth/getUsername", {
       withCredentials: true,
@@ -18,9 +19,11 @@ async function signIn() {
   }
 }
 
+// This component is used to login with GitHub by redirecting to the GitHub OAuth page
 function Login() {
   let location = useLocation();
-  
+
+  // Every time it renders, it will check if the user is already logged in
   React.useEffect(() => {
     signIn();
   }, [location]);

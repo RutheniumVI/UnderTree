@@ -2,6 +2,7 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 
+// This component is used to logout by calling the server API and clears the local storage
 async function handleLogout() {
   console.log("Logging out");
   await axios.get(process.env.REACT_APP_API_URL+"/auth/logout", {
