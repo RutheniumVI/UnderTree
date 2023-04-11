@@ -29,10 +29,20 @@ async function writeDocumentData(documentId: string, content: string){
 	mdb.storeUpdate(documentId, Y.encodeStateAsUpdate(ydoc));
 }
 
+async function deleteDocument(documentId: string) {
+	try{
+		await mdb.clearDocument(documentId);
+	} catch(err) {
+		console.log("Error clearing yjs document")
+	}
+	
+}
+
 const PersistenceUtil = {
 	mdb,
 	getDocumentData,
-	writeDocumentData
+	writeDocumentData,
+	deleteDocument
 };
 
 export { PersistenceUtil };

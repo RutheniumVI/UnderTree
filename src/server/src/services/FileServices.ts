@@ -232,6 +232,7 @@ async function deleteFile(req, res){
 
 	try{
 		await FileDB.deleteFile(projectD, filePath, userName);
+		await PersistenceUtil.deleteDocument(filePath);
 		const fileData = await getFileList(projectD);
 		res.send(fileData);
 	} catch (err) {

@@ -9,6 +9,7 @@ import { FileData, File } from "../data/FileData";
 import { ProjectData } from "../data/ProjectData";
 
 const collectionName = "files";
+const persistenceCollection = "transactions";
 
 // Create the file system for a new project in the database
 async function initializeProject(project: ProjectData): Promise<string> {
@@ -62,6 +63,10 @@ async function deleteProjectFiles(project: ProjectData): Promise<string> {
 	if(result.deletedCount != 1){
 		throw "File system corresponding to the project has already been deleted";
 	}
+
+	//Deleting all files associated to project in yjs db
+	const pers = DBClient.getCollection(persistenceCollection);
+	await pers.deleteMany({docName: {$regex: "^" + project.owner + "\/" + project.projectName}});
 
 	return "Succesfully deleted project file system";
 }
